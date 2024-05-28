@@ -36,9 +36,14 @@ return [
     */
 
     'guards' => [
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            'hash' => 'bcrypt', // Agrega esta línea para especificar el algoritmo de hash
         ],
     ],
 
