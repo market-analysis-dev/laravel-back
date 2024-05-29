@@ -12,3 +12,4 @@ Route::post('/login', [AuthController::class, 'login']);
 // * COMPANIES
 Route::get('/companies', [CompanyController::class, 'index']);
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
+Route::put('/companies/{id}', [CompanyController::class, 'update']);
