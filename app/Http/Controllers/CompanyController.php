@@ -10,7 +10,7 @@ class CompanyController
     // * Método para obtener todos los registros.
     public function index()
     {
-        $companies = Company::where('status', 1)->get();
+        $companies = Company::where('status', 'Activo')->get();
         return response()->json($companies);
     }
 
@@ -61,8 +61,8 @@ class CompanyController
         // * Buscando la empresa por su ID.
         $company = Company::findOrFail($id);
 
-        // * Actualizar el estado a 0.
-        $empresa->status = 0;
+        // * Actualizar el estado a Inactivo.
+        $empresa->status = 'Inactivo';
         $empresa->save();
 
         return response()->json(['message' => 'Empresa eliminada correctamente.']);
