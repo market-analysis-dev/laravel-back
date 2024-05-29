@@ -14,6 +14,24 @@ class CompanyController
         return response()->json($companies);
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nameCompany' => 'required|string|max:255',
+            'website' => 'required|string|max:255',
+            'status' => 'required|in:Activo,Inactivo',
+            'primaryColor' => 'nullable|string|max:7',
+            'secondaryColor' => 'nullable|string|max:7',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:100',
+            'postalCode' => 'nullable|string|max:20',
+            'country' => 'nullable|string|max:100',
+        ]);
+
+        return Company::create($request->all());
+    }
+
     // * Método para obtener un registro por su ID.
     public function show($id)
     {
@@ -31,53 +49,37 @@ class CompanyController
     {
         // * Validar los datos
         $request->validate([
-            'name_comany' => 'required|string|max:255',
-            'website' => 'nillable|url|max:255',
-            'logo_url' => 'nullable|string|max:255',
-            'address' => 'nillable|string|max:255',
-            'primary_color' => 'nullable|string|max:7',
-            'secondary_color' => 'nullable|string|max:7',
+            'nameCompany' => 'required|string|max:255',
+            'website' => 'required|string|max:255',
+            'status' => 'required|in:Activo,Inactivo',
+            'primaryColor' => 'nullable|string|max:7',
+            'secondaryColor' => 'nullable|string|max:7',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:100',
+            'postalCode' => 'nullable|string|max:20',
+            'country' => 'nullable|string|max:100',
         ]);
 
         // * Buscar la empresa por ID.
         $company = Company::findOrFail($id);
 
         // * UPDATE de la empresa.
-        $company->update([
-            'name_company' => $request->input('name_company'),
-            'website' => $request->input('website'),
-            'logo_url' => $request->input('logo_url'),
-            'address' => $request->input('address'),
-            'primary_color' => $request->input('primary_color'),
-            'secondary_color' => $request->input('secondary_color'),
-        ]);
+        $company->update($request->all());
 
         return response()->json($company);
     }
 
     // * Método para eliminar una epresa.
-    public function delete($id)
+    public function destroy($id)
     {
         // * Buscando la empresa por su ID.
         $company = Company::findOrFail($id);
 
         // * Actualizar el estado a Inactivo.
-        $empresa->status = 'Inactivo';
-        $empresa->save();
+        $company->status = 'Inactivo';
+        $company->save();
 
         return response()->json(['message' => 'Empresa eliminada correctamente.']);
-    }
-
-    public function store(Request $request)
-    {
-        $validateData = $request->validate([
-            'name_company' => 'required|string|max:255',
-            'website' => 'nullable|url',
-            'logo_url' => 'nullable|string',
-            'address' => 'nullable|string',
-            'primary_color' => 'nullable|string|max:7',
-            'secondary_color' => 'nullable|string|max:7',
-            'status' => 'required|integer|in:0,1',
-        ]);
     }
 }
