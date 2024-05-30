@@ -9,11 +9,16 @@ class Company extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nameCompany', 'website', 'logoUrl', 'status', 'primaryColor',
+        'secondaryColor', 'address', 'city', 'state',
+        'postalCode', 'country', 'createdAt', 'modifiedAt',
+    ];
+
     protected $table = 'companies';
 
-    protected $fillable = [
-        'name_company', 'website', 'logo_url', 'status', 'primary_color',
-        'secondary_color', 'altern_color', 'address', 'city', 'state',
-        'postal_code', 'country'
-    ];
+    // Definir columnas de marca de tiempo personalizadas
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'modifiedAt';
+
 }

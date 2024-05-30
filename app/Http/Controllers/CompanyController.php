@@ -73,10 +73,8 @@ class CompanyController
     // * Método para eliminar una epresa.
     public function destroy($id)
     {
-        // * Buscando la empresa por su ID.
-        $company = Company::findOrFail($id);
 
-        // * Actualizar el estado a Inactivo.
+        $company = Company::findOrFail($id);
         $company->status = 'Inactivo';
         $company->save();
 
