@@ -17,7 +17,7 @@ class Company extends Model
 
     protected $table = 'companies';
 
-    // Definir columnas de marca de tiempo personalizadas
+    // * Definir columnas de marca de tiempo personalizadas
     const CREATED_AT = 'createdAt';
     const UPDATED_AT = 'modifiedAt';
 

@@ -9,5 +9,14 @@ class Module extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ModuleName', 'Status'];
+    protected $table = 'modules';
+    protected $fillable = [
+        'moduleName',
+        'status'
+    ];
+
+    // * Definir columnas de marca de tiempo personalizadas
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'modifiedAt';
+
 }

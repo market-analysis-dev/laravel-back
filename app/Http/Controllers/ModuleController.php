@@ -22,8 +22,8 @@ class ModuleController
     public function store(Request $request)
     {
         $request->validate([
-            'ModuleName' => 'required|string|max:255',
-            'Status' => 'required|in:Activo,Inactivo',
+            'moduleName' => 'required|string|max:255',
+            'status' => 'required|in:Activo,Inactivo',
         ]);
 
         $module = Module::create($request->all());
@@ -51,12 +51,12 @@ class ModuleController
     public function update(Request $request, $id)
     {
         $request->validate([
-            'ModuleName' => 'required|string|max:255',
-            'Status' => 'required|in:Activo,Inactivo',
+            'moduleName' => 'required|string|max:255',
+            'status' => 'required|in:Activo,Inactivo',
         ]);
 
         $module = Module::findOrFail($id);
-        $module = update($request->all());
+        $module->update($request->all());
 
         return response()->json($module);
     }

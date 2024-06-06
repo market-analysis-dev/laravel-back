@@ -23,6 +23,7 @@ class SubMarketController
     {
         $request->validate([
             'subMarketName' => 'required|string|max:255',
+            'marketId' => 'required|integer|exists:markets,id',
             'status' => 'required|in:Activo,Inactivo',
         ]);
 
@@ -49,8 +50,9 @@ class SubMarketController
     public function update(Request $request, $id)
     {
         $request->validate([
-            'subMarketName' => 'required|string|max:255',
-            'status' => 'required|in:Activo,Inactivo',
+            'subMarketName' => 'sometimes|required|string|max:255',
+            'marketId' => 'sometimes|required|integer|exists:markets,id',
+            'status' => 'sometimes|required|in:Activo,Inactivo',
         ]);
 
         $submarket = SubMarket::findOrFail($id);

@@ -12,8 +12,8 @@ class PermissionController
      */
     public function index()
     {
-        $permission = Permission::where('status', 'Activo')->get();
-        return response()->json($permission);
+        $permissions = Permission::all();
+        return response()->json($permissions);
     }
 
     /**
@@ -22,10 +22,10 @@ class PermissionController
     public function store(Request $request)
     {
         $request->validate([
-            'userId' => 'required|exists:users,id',
-            'moduleId' => 'required|exists:modules,id',
-            'marketId' => 'required|exists:markets,id',
-            'subMarketId' => 'required|exists:sub_markets,id',
+            'userId' => 'required|integer|exists:users,id',
+            'moduleId' => 'required|integer|exists:modules,id',
+            'marketId' => 'required|integer|exists:markets,id',
+            'subMarketId' => 'required|integer|exists:submarkets,id',
             'year' => 'required|integer',
             'quarter' => 'required|integer',
             'status' => 'required|in:Activo,Inactivo',
@@ -39,13 +39,13 @@ class PermissionController
      */
     public function show($id)
     {
-        $permission = Permission::find($id);
+        $permissions = Permission::find($id);
 
-        if (!$permission) {
+        if (!$permissions) {
             return response()->json(['message' => 'Permission not found'], 404);
         }
 
-        return response()->json($permission);
+        return response()->json($permissions);
     }
 
     /**
@@ -63,10 +63,10 @@ class PermissionController
             'status' => 'required|in:Activo,Inactivo',
         ]);
 
-        $permission = Permission::findOrFail($id);
-        $permission->update($request->all());
+        $permissions = Permission::findOrFail($id);
+        $permissions->update($request->all());
 
-        return response()->json($permission);
+        return response()->json($permissions);
     }
 
     /**
@@ -74,10 +74,10 @@ class PermissionController
      */
     public function destroy(string $id)
     {
-        $permission = Permission::findOrFail($id);
+        $permissions = Permission::findOrFail($id);
 
-        $permission->status = 'Inactivo';
-        $permission->save();
+        $permissions->status = 'Inactivo';
+        $permissions->save();
 
         return response()->json(['message' => 'Permiso eliminado correctamente']);
     }

@@ -30,8 +30,8 @@ class UserDetailsController
             'state' => 'required|string|max:100',
             'city' => 'required|string|max:100',
             'status' => 'required|in:Activo,Inactivo',
-            'emailAddress' => 'required|email|max:255',
-            'phoneNumber' => 'nullable|string|max:20',
+            'emailAddress' => 'required|email|max:255|unique:userdetails,emailAddress',
+            'phoneNumber' => 'nullable|string|max:20|unique:userdetails,phoneNumber',
         ]);
 
         return UserDetails::create($request->all());
@@ -65,8 +65,8 @@ class UserDetailsController
             'state' => 'required|string|max:100',
             'city' => 'required|string|max:100',
             'status' => 'required|in:Activo,Inactivo',
-            'emailAddress' => 'required|email|max:255',
-            'phoneNumber' => 'nullable|string|max:20',
+            'emailAddress' => 'required|email|max:255|unique:userdetails,emailAddress,' . $id,
+            'phoneNumber' => 'nullable|string|max:20|unique:userdetails,phoneNumber,' . $id,
         ]);
 
         $userDetail = UserDetails::findOrFail($id);

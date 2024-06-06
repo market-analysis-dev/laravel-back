@@ -11,5 +11,30 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+
     protected $table = 'users';
+
+    protected $fillable = [
+        'name',
+        'lastName',
+        'middleName',
+        'userName',
+        'password',
+        'userTypeId',
+        'totalScreens',
+        'status',
+    ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    // * Definir columnas de marca de tiempo personalizadas
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'modifiedAt';
+
+    public function usertypes()
+    {
+        return $this->belongsTo(Usertype::class, 'userTypeId');
+    }
 }

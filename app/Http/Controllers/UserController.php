@@ -28,7 +28,7 @@ class UserController
             'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users',
             'password' => 'required|string|max:255',
-            'userTypeId' => 'required|exists:user_types,id',
+            'userTypeId' => 'required|exists:usertypes,id',
             'totalScreens' => 'required|integer',
             'status' => 'required|in:Activo,Inactivo',
         ]);
@@ -61,7 +61,7 @@ class UserController
             'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users,userName,' . $id,
             'password' => 'nullable|string|max:255',
-            'userTypeId' => 'required|exists:user_types,id',
+            'userTypeId' => 'required|exists:usertypes,id',
             'totalScreens' => 'required|integer',
             'status' => 'required|in:Activo,Inactivo',
         ]);

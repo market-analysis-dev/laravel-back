@@ -38,7 +38,7 @@ class ModulesColumnController
         $cols = ModulesColumn::find($id);
 
         if (!$cols) {
-            return response()-json(['message' => 'Cols not found'], 404);
+            return response()->json(['message' => 'Cols not found'], 404);
         }
 
         return response()->json($cols);
