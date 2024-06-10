@@ -19,6 +19,7 @@ class CompanyController
         $request->validate([
             'nameCompany' => 'required|string|max:255',
             'website' => 'required|string|max:255',
+            'logoUrl' => 'nullable|string|max:255',
             'status' => 'required|in:Activo,Inactivo',
             'primaryColor' => 'nullable|string|max:7',
             'secondaryColor' => 'nullable|string|max:7',
@@ -51,6 +52,7 @@ class CompanyController
         $request->validate([
             'nameCompany' => 'required|string|max:255',
             'website' => 'required|string|max:255',
+            'logoUrl' => 'nullable|string|max:255',
             'status' => 'required|in:Activo,Inactivo',
             'primaryColor' => 'nullable|string|max:7',
             'secondaryColor' => 'nullable|string|max:7',
