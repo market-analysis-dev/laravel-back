@@ -13,8 +13,13 @@ class UserController
      */
     public function index()
     {
-        $user = User::where('status', 'Activo')->get();
-        return response()->json($user);
+        $users = User::where('users.status', 'Activo')
+            ->select('users.id', 'users.name', 'users.lastName', 'users.middleName', 'users.userName', 'companies.nameCompany', 'usertypes.typeName', 'users.totalScreens', 'users.status')
+            ->leftJoin('companies', 'users.companyId', '=', 'companies.id')
+            ->leftJoin('usertypes', 'users.userTypeId', '=', 'usertypes.id')
+            ->get();
+
+        return response()->json($users);
     }
 
     /**
@@ -28,6 +33,7 @@ class UserController
             'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users',
             'password' => 'required|string|max:255',
+            'companyId' => 'required|exists:companies,id',
             'userTypeId' => 'required|exists:usertypes,id',
             'totalScreens' => 'required|integer',
             'status' => 'required|in:Activo,Inactivo',
@@ -61,6 +67,7 @@ class UserController
             'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users,userName,' . $id,
             'password' => 'nullable|string|max:255',
+            'companyId' => 'required|exists:companies,id',
             'userTypeId' => 'required|exists:usertypes,id',
             'totalScreens' => 'required|integer',
             'status' => 'required|in:Activo,Inactivo',

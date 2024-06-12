@@ -20,6 +20,7 @@ class User extends Authenticatable
         'middleName',
         'userName',
         'password',
+        'companyId',
         'userTypeId',
         'totalScreens',
         'status',
