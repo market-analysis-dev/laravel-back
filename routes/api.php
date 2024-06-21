@@ -12,6 +12,7 @@ use App\Http\Controllers\UniquePermissionController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\SubMarketController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExcelController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -84,3 +85,6 @@ Route::get('/submarket/{id}', [SubMarketController::class, 'show']);
 Route::put('/submarket/{id}', [SubMarketController::class, 'update']);
 Route::put('/submarket/{id}/delete', [SubMarketController::class, 'destroy']);
 Route::post('/submarket', [SubMarketController::class, 'store']);
+
+// * AVAILABILITY
+Route::get('/excel-data', [ExcelController::class, 'getData']);
