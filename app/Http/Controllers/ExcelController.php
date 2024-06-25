@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
-use League\Csv\Reader;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use League\Csv\Reader;
 
 class ExcelController
 {
@@ -30,18 +32,29 @@ class ExcelController
 
             $body = $response->getBody()->getContents();
 
-            // * Leer el archivo CSV
-            $csv = Reader::createFromString($body);
-            $csv->setHeaderOffset(0); // * Si el CSV tiene encabezados
+            // * Guardar el archivo temporalmente para poder leerlo con PhpSpreadsheet
+            $tempFilePath =  tempnam(sys_get_temp_dir(), 'xlsx');
+            file_put_contents($tempFilePath, $body);
 
-            $records = iterator_to_array($csv->getRecords());
+            // * Leer el archivo Excel
+            $spreadsheet = IOFactory::load($tempFilePath);
+            $worksheet = $spreadsheet->getActiveSheet();
+            $records = $worksheet->toArray();
+
+            // * Eliminar el archivo temporal
+            unlink($tempFilePath);
 
             // * Verificar que $records es un array
             if (!is_array($records)) {
-                throw new \Exception('Failed to parse CSV records into an array');
+                throw new \Exception('Failed to parse XLSX records into an array');
             }
 
-            $cleanRecords = array_values($records);
+            // * Obtener los encabezados
+            $headers = array_shift($records);
+
+            $cleanRecords = array_map(function($records) use ($headers){
+                return array_combine($headers, $records);
+            }, $records);
 
             // * Devolver los registros en formato JSON
             return response()->json($cleanRecords);
