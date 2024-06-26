@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-// use League\Csv\Reader;
 
 class ExcelController
 {
@@ -17,11 +16,15 @@ class ExcelController
     {
         $client = new Client();
         $filePath = env('DROPBOX_FILE_PATH');
-        $accessToken = env('DROPBOX_ACCESS_TOKEN');
+        $accessToken = env('DROPBOX_AUTH_TOKEN');
 
         try {
             if (empty($accessToken) || empty($filePath)) {
                 throw new \Exception('Access token or file path is not set.');
+            }
+
+            if ($this->isTokenExpired($accessToken)) {
+                $accessToken = $this->renewAccessToken($client);
             }
 
             $response = $this->downloadFile($client, $filePath, $accessToken);
@@ -32,31 +35,25 @@ class ExcelController
 
             $body = $response->getBody()->getContents();
 
-            // * Guardar el archivo temporalmente para poder leerlo con PhpSpreadsheet
             $tempFilePath =  tempnam(sys_get_temp_dir(), 'xlsx');
             file_put_contents($tempFilePath, $body);
 
-            // * Leer el archivo Excel
             $spreadsheet = IOFactory::load($tempFilePath);
             $worksheet = $spreadsheet->getActiveSheet();
             $records = $worksheet->toArray();
 
-            // * Eliminar el archivo temporal
             unlink($tempFilePath);
 
-            // * Verificar que $records es un array
             if (!is_array($records)) {
                 throw new \Exception('Failed to parse XLSX records into an array');
             }
 
-            // * Obtener los encabezados
             $headers = array_shift($records);
 
             $cleanRecords = array_map(function($records) use ($headers){
                 return array_combine($headers, $records);
             }, $records);
 
-            // * Devolver los registros en formato JSON
             return response()->json($cleanRecords);
 
         } catch (\Exception $e) {
@@ -78,9 +75,7 @@ class ExcelController
             ]);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
-                // * El token ha expirado, renovar
                 $accessToken = $this->renewAccessToken($client);
-                // * Intentar descargar el archivo nuevamente
                 return $client->post($this->dropboxApiUrl, [
                     'headers' => [
                         'Authorization' => 'Bearer ' . $accessToken,
@@ -95,26 +90,31 @@ class ExcelController
 
     private function renewAccessToken(Client $client)
     {
-        $response = $client->post($this->dropboxTokenUrl, [
-            'form_params' => [
-                'grant_type' => 'refresh_token',
-                'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
-                'client_id' => env('DROPBOX_CLIENT_ID'),
-                'client_secret' => env('DROPBOX_CLIENT_SECRET'),
-            ]
-        ]);
+        try {
+            
+            $response = $client->post($this->dropboxTokenUrl, [
+                'form_params' => [
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
+                    'client_id' => env('DROPBOX_CLIENT_ID'),
+                    'client_secret' => env('DROPBOX_CLIENT_SECRET'),
+                ]
+            ]);
 
-        $data = json_decode($response->getBody(), true);
+            $data = json_decode($response->getBody(), true);
 
-        if (!isset($data['access_token'])) {
-            throw new \Exception('Failed to refresh access token');
+            if (!isset($data['access_token'])) {
+                throw new \Exception('Failed to refresh access token');
+            }
+
+            $newAccessToken = $data['access_token'];
+            $this->updateEnvFile('DROPBOX_AUTH_TOKEN', $newAccessToken);
+
+            return $newAccessToken;
+        } catch (\Exception $e) {
+            logger()->error('Error refreshing Dropbox token: ' . $e->getMessage());
+            throw $e;
         }
-
-        // * Guardar el nuevo token de acceso en el archivo .env o en la caché
-        $newAccessToken = $data['access_token'];
-        $this->updateEnvFile('DROPBOX_ACCESS_TOKEN', $newAccessToken);
-
-        return $newAccessToken;
     }
 
     private function updateEnvFile($key, $value)
@@ -126,6 +126,23 @@ class ExcelController
                 $key . '=' . $value,
                 file_get_contents($path)
             ));
+        }
+    }
+
+    private function isTokenExpired($accessToken)
+    {
+        $client = new Client();
+        try {
+            $response = $client->post('https://api.dropboxapi.com/2/check/user', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => null
+            ]);
+            return false; // * Token is valid
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return $e->getResponse()->getStatusCode() === 401;
         }
     }
 }
