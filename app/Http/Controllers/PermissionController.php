@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PermissionController
 {
@@ -39,11 +40,28 @@ class PermissionController
      */
     public function show($id)
     {
-        $permissions = Permission::find($id);
+        // * Buscar permisos en cada tabla
+        $permissionsModule = DB::table('UserPermissionsModule')->where('userId', $id)->get();
+        $permissionsMarket = DB::table('UserPermissionsMarket')->where('userId', $id)->get();
+        $permissionsSubmarket = DB::table('UserPermissionsSubmarket')->where('userId', $id)->get();
+        $permissionsYears = DB::table('UserPermissionsYears')->where('userId', $id)->get();
+        $permissionsQuarters = DB::table('UserPermissionsQuarters')->where('userId', $id)->get();
 
-        if (!$permissions) {
-            return response()->json(['message' => 'Permission not found'], 404);
+        // Verificar si no se encontraron permisos en ninguna tabla
+        if ($permissionsModule->isEmpty() && $permissionsMarket->isEmpty() && 
+            $permissionsSubmarket->isEmpty() && $permissionsYears->isEmpty() && 
+            $permissionsQuarters->isEmpty()) {
+            return response()->json(['message' => 'Permissions not found'], 404);
         }
+
+        // Construir la respuesta con los permisos de cada tabla
+        $permissions = [
+            'module' => $permissionsModule,
+            'market' => $permissionsMarket,
+            'submarket' => $permissionsSubmarket,
+            'years' => $permissionsYears,
+            'quarters' => $permissionsQuarters,
+        ];
 
         return response()->json($permissions);
     }

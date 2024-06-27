@@ -59,11 +59,11 @@ Route::put('/modules-col/{id}/delete', [ModulesColumnController::class, 'destroy
 Route::post('/modules-col', [ModulesColumnController::class, 'store']);
 
 // * PERMISSIONS (COMPLETADO)
-Route::get('/premission', [PermissionController::class, 'index']);
-Route::get('/premission/{id}', [PermissionController::class, 'show']);
-Route::put('/premission/{id}', [PermissionController::class, 'update']);
-Route::put('/premission/{id}/delete', [PermissionController::class, 'destroy']);
-Route::post('/premission', [PermissionController::class, 'store']);
+Route::get('/permission', [PermissionController::class, 'index']);
+Route::get('/permission/{userId}', [PermissionController::class, 'show']);
+Route::put('/permission/{id}', [PermissionController::class, 'update']);
+Route::put('/permission/{id}/delete', [PermissionController::class, 'destroy']);
+Route::post('/permission', [PermissionController::class, 'store']);
 
 // * UNIQUE PERMISSIONS
 Route::get('/unique', [UniquePermissionController::class, 'index']);
