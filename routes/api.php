@@ -63,7 +63,8 @@ Route::get('/permission', [PermissionController::class, 'index']);
 Route::get('/permission/{userId}', [PermissionController::class, 'show']);
 Route::put('/permission/{id}', [PermissionController::class, 'update']);
 Route::put('/permission/{id}/delete', [PermissionController::class, 'destroy']);
-Route::post('/permission', [PermissionController::class, 'store']);
+
+Route::post('/permission/{userId}', [PermissionController::class, 'store']);
 
 // * UNIQUE PERMISSIONS
 Route::get('/unique', [UniquePermissionController::class, 'index']);

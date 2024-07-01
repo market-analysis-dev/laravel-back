@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permission;
+use App\Models\Market;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -22,17 +23,115 @@ class PermissionController
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'userId' => 'required|integer|exists:users,id',
-            'moduleId' => 'required|integer|exists:modules,id',
-            'marketId' => 'required|integer|exists:markets,id',
-            'subMarketId' => 'required|integer|exists:submarkets,id',
-            'year' => 'required|integer',
-            'quarter' => 'required|integer',
-            'status' => 'required|in:Activo,Inactivo',
-        ]);
+        $quartersArray = explode(",", $request->quarters);
+        $yearsArray = explode(",", $request->years);
+        $marketArray = explode(",", $request->markets);
+        $subMarketArray = explode(",", $request->submarkets);
+        $modulesArray = explode(",", $request->modules);
+        $userId = $request->userId;
 
-        return Permission::create($request->all());
+        // > INSERTANDO PERMISOS DE QUARTERS
+        foreach ($quartersArray as $key => $quarters) {
+            // * Separando año de quarter
+            $splitValue = explode("_", $quarters);
+            $yearValue = $splitValue[0];
+            $quarterValue = $splitValue[1];
+
+            // * Verificar si el registro ya existe
+            $exists = DB::table('userpermissionsquarters')
+                ->where('userId', $userId)
+                ->where('year', $yearValue)
+                ->where('quarter', $quarterValue)
+                ->exists();
+
+            if (!$exists) {
+                // * Insert de permisos por año y quarters
+                DB::table('userpermissionsquarters')->insert([
+                    'userId' => $userId,
+                    'year' => $yearValue,
+                    'quarter' => $quarterValue,
+                    'status' => 1
+                ]);
+            }
+        }
+
+        // > INSERTANDO PERMISOS DE AÑOS
+        foreach ($yearsArray as $key => $year) {
+            // * Verificar si el registro ya existe
+            $exists = DB::table('userpermissionsyears')
+                ->where('userId', $userId)
+                ->where('year', $yearValue)
+                ->exists();
+
+            if (!$exists) {
+                // * Insert de permisos por año y quarters
+                DB::table('userpermissionsyears')->insert([
+                    'userId' => $userId,
+                    'year' => $yearValue,
+                    'status' => 1
+                ]);
+            }
+        }
+
+        // > INSERTANDO PERMISOS DE MERCADOS
+        foreach ($marketArray as $key => $market) {
+            // * Eliminando "market_" del string
+            $marketId = str_replace("market_", "", $market);
+
+            // * Verificar si el registro ya existe
+            $exists = DB::table('userpermissionsmarket')
+                ->where('userId', $userId)
+                ->where('marketId', $marketId)
+                ->exists();
+            
+            if (!$exists) {
+                // * Insert de permisos de market
+                DB::table('userpermissionsmarket')->insert([
+                    'userId' => $userId,
+                    'marketId' => $marketId,
+                    'status' => 1
+                ]);
+            }
+        }
+
+        // > INSERTANDO PERMISOS DE SUBMERCADOS
+        foreach ($subMarketArray as $key => $subMarketId) {
+
+            // * Verificar si el registro ya existe
+            $exists = DB::table('userpermissionssubmarket')
+                ->where('userId', $userId)
+                ->where('subMarketId', $subMarketId)
+                ->exists();
+            
+            if (!$exists) {
+                // * Insert de permisos de market
+                DB::table('userpermissionssubmarket')->insert([
+                    'userId' => $userId,
+                    'subMarketId' => $subMarketId,
+                    'status' => 1
+                ]);
+            }
+        }
+
+        // > INSERTANDO PERMISOS DE MODULOS
+        foreach ($modulesArray as $key => $moduleId) {
+            
+            // * Verificar si el registro ya existe
+            $exists = DB::table('userpermissionsmodule')
+                ->where('userId', $userId)
+                ->where('moduleId', $moduleId)
+                ->exists();
+            
+            if (!$exists) {
+                DB::table('userpermissionsmodule')->insert([
+                    'userId' => $userId,
+                    'moduleId' => $moduleId,
+                    'status' => 1
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Permissions added successfully!']);
     }
 
     /**
