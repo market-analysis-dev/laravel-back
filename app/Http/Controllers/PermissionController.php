@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permission;
-use App\Models\Market;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -143,23 +142,48 @@ class PermissionController
         $permissionsModule = DB::table('UserPermissionsModule')->where('userId', $id)->get();
         $permissionsMarket = DB::table('UserPermissionsMarket')->where('userId', $id)->get();
         $permissionsSubmarket = DB::table('UserPermissionsSubmarket')->where('userId', $id)->get();
-        $permissionsYears = DB::table('UserPermissionsYears')->where('userId', $id)->get();
-        $permissionsQuarters = DB::table('UserPermissionsQuarters')->where('userId', $id)->get();
+        $permissionsQuarters = DB::table('UserPermissionsQuarters')
+            ->where('userId', $id)
+            // ->select('id', 'userId', 'year', 'quarter', 'status')
+            ->select('userId', 'year', 'quarter', 'status')
+            ->orderBy('year', 'asc')
+            ->get();
+        // // $permissionsYears = DB::table('UserPermissionsYears')->where('userId', $id)->get();
 
-        // Verificar si no se encontraron permisos en ninguna tabla
-        if ($permissionsModule->isEmpty() && $permissionsMarket->isEmpty() && 
-            $permissionsSubmarket->isEmpty() && $permissionsYears->isEmpty() && 
-            $permissionsQuarters->isEmpty()) {
+        // * Verificar si no se encontraron permisos en ninguna tabla
+        if ($permissionsModule->isEmpty() && $permissionsMarket->isEmpty() && $permissionsSubmarket->isEmpty() && $permissionsQuarters->isEmpty()) {
             return response()->json(['message' => 'Permissions not found'], 404);
         }
+        
+        // * Organizar los permisos por año y quarters
+        $organizedPermissions = [];
 
-        // Construir la respuesta con los permisos de cada tabla
+        foreach ($permissionsQuarters as $permission) {
+
+            $year = $permission->year;
+
+            if (!isset($organizedPermissions[$year])) {
+                $organizedPermissions[$year] = [
+                    // 'id' => $permission->id,
+                    'userId' => $permission->userId,
+                    'year' => $year,
+                    'status' => $permission->status,
+                    'quarters' => []
+                ];
+            }
+
+            $organizedPermissions[$year]['quarters'][] = $permission->quarter;
+        }
+
+        // * Convertir la estructura asociativa en un array indexado
+        $quartersArraySort = array_values($organizedPermissions);
+
+        // * Construir la respuesta con los permisos de cada tabla
         $permissions = [
             'module' => $permissionsModule,
             'market' => $permissionsMarket,
             'submarket' => $permissionsSubmarket,
-            'years' => $permissionsYears,
-            'quarters' => $permissionsQuarters,
+            'years' => $quartersArraySort,
         ];
 
         return response()->json($permissions);
