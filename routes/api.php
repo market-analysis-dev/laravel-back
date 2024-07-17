@@ -17,25 +17,25 @@ use App\Http\Controllers\ExcelController;
 Route::post('/login', [AuthController::class, 'login']);
 
 // * COMPANIES (COMPLETADO)
-Route::get('/companies', [CompanyController::class, 'index']);
-Route::get('/companies/{id}', [CompanyController::class, 'show']);
-Route::put('/companies/{id}', [CompanyController::class, 'update']);
-Route::put('/companies/{id}/delete', [CompanyController::class, 'destroy']);
+Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza
+Route::get('/companies/{id}', [CompanyController::class, 'show']); // * Este si se utiliza
+Route::put('/companies/{id}', [CompanyController::class, 'update']); // * Este si se utiliza
+Route::put('/companies/{id}/delete', [CompanyController::class, 'destroy']); // * Este si se utiliza
 Route::post('/companies', [CompanyController::class, 'store']);
 
 // * USERS (COMPLETADO)
-Route::get('/user', [UserController::class, 'index']);
-Route::get('/user/{id}', [UserController::class, 'show']);
-Route::put('/user/{id}', [UserController::class, 'update']);
-Route::put('/user/{id}/delete', [UserController::class, 'destroy']);
-Route::post('/user', [UserController::class, 'store']);
+Route::get('/user', [UserController::class, 'index']); // * Este si se utiliza
+Route::get('/user/{id}', [UserController::class, 'show']); // * Este si se utiliza
+Route::put('/user/{id}', [UserController::class, 'update']); // * Este si se utiliza
+Route::put('/user/{id}/delete', [UserController::class, 'destroy']); // * Este si se utiliza
+Route::post('/user', [UserController::class, 'store']); // * Este si se utiliza
 
 // * USER DETAILS (COMPLETADO)
-Route::get('/user-details', [UserDetailsController::class, 'index']);
-Route::get('/user-details/{id}', [UserDetailsController::class, 'show']);
-Route::put('/user-details/{id}', [UserDetailsController::class, 'update']);
-Route::put('/user-details/{id}/delete', [UserDetailsController::class, 'destroy']);
-Route::post('/user-details', [UserDetailsController::class, 'store']);
+Route::get('/user-details', [UserDetailsController::class, 'index']); // ! Este NO se utiliza
+Route::get('/user-details/{id}', [UserDetailsController::class, 'show']); // ! Este NO se utiliza
+Route::put('/user-details/{id}', [UserDetailsController::class, 'update']); // ! Este NO se utiliza
+Route::put('/user-details/{id}/delete', [UserDetailsController::class, 'destroy']); // ! Este NO se utiliza
+Route::post('/user-details', [UserDetailsController::class, 'store']); // ! Este NO se utiliza
 
 // * USER TYPES (COMPLETADO)
 Route::get('/user-types', [UserTypeController::class, 'index']);
@@ -63,7 +63,7 @@ Route::get('/permission', [PermissionController::class, 'index']);
 Route::get('/permission/{userId}', [PermissionController::class, 'show']);
 Route::put('/permission/{id}', [PermissionController::class, 'update']);
 Route::put('/permission/{id}/delete', [PermissionController::class, 'destroy']);
-Route::post('/permission/{userId}', [PermissionController::class, 'store']);
+// Route::post('/permission/{userId}', [PermissionController::class, 'store']);
 
 // * UNIQUE PERMISSIONS
 Route::get('/unique', [UniquePermissionController::class, 'index']);
@@ -87,4 +87,10 @@ Route::put('/submarket/{id}/delete', [SubMarketController::class, 'destroy']);
 Route::post('/submarket', [SubMarketController::class, 'store']);
 
 // * AVAILABILITY
-Route::get('/excel-data', [ExcelController::class, 'getData']);
+Route::get('/excel-data', [ExcelController::class, 'getData']); // ! Este NO se utiliza
+
+/*
+ * API's Pólizas de Acceso
+ */
+
+Route::post('/permissions/multiple/{userId}', [PermissionController::class, 'store']);
