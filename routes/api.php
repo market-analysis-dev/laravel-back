@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\BuildingsController;
 use App\Http\Controllers\UniquePermissionController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\SubMarketController;
@@ -92,5 +93,9 @@ Route::get('/excel-data', [ExcelController::class, 'getData']); // ! Este NO se 
 /*
  * API's Pólizas de Acceso
  */
-
 Route::post('/permissions/multiple/{userId}', [PermissionController::class, 'store']);
+
+/*
+ * API's Buildings
+ */
+Route::get('/buildings/data', [BuildingsController::class, 'index']);
