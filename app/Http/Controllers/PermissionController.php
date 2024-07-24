@@ -233,11 +233,13 @@ class PermissionController
 
                 // * en caso de no recibir un año válido se sale de la función
                 if ($year == 0 || $year == "") {
+                    echo "Invalid year";
                     return;
                 }
 
                 // * en caso de no recibir un quarter válido se sale de la función
                 if ($quarter == "") {
+                    echo "Invalid quarter";
                     return;
                 }
 
