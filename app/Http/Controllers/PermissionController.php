@@ -80,9 +80,9 @@ class PermissionController
         /*
          * Permisos
          */
-
         $modulesArray = explode(",", $request->modulesCbo);
-        $marketArray = $request->marketsArray;
+        // $marketArray = $request->marketsArray;
+        $marketArray = json_decode($request->marketsArray, true);
         $yearsArray = explode(",", $request->yearsCbo);
         $quartersArray = explode(",", $request->quartersCbo);
 
