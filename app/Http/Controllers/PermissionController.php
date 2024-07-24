@@ -17,8 +17,8 @@ class PermissionController
         return response()->json($permissions);
     }
 
-    /**
-     * Store a newly created resource in storage.
+    /*
+     * MULTIPLE INSERT
      */
     public function store(Request $request)
     {
@@ -155,6 +155,150 @@ class PermissionController
         }
 
         return response()->json(['message' => 'Permissions added successfully!']);
+    }
+
+    /*
+     * SHOW INDIVIDUAL PERMISSIONS
+     */
+
+    public function showPermissions(Request $request){
+
+        $userId = $request->userId;
+        $moduleId = $request->moduleId;
+        $year = $request->year;
+        $quarter = $request->quarter;
+
+        $mainReturn = [];
+        $cleanArray = [];
+
+        switch ($moduleId) {
+            case 1:
+            case 5:
+            case 7:
+            case 10:
+            case 14:
+
+                $newArray = [];
+
+                $marketsArray = DB::table('permissions')
+                    ->join('markets', 'permissions.marketId',  '=', 'markets.id')
+                    ->select(
+                        DB::raw('CONCAT("market_", permissions.marketId) AS value'),
+                        'markets.marketName AS label'
+                    )
+                    ->where('permissions.moduleId', $moduleId)
+                    ->where('permissions.userId', $userId)
+                    ->distinct()
+                    ->get();
+
+                foreach ($marketsArray as $key => $marketValue) {
+
+                    $cleanArray = array(
+                        'value' => $marketValue->value,
+                        'label' => $marketValue->label,
+                        'options' => []
+                    );
+
+                    $marketId = str_replace("market_", "", $marketValue->value);
+
+                    // * agrupando los submercados a los mercados
+                    // $mainReturn['markets'][$key]['options'] = DB::table('permissions')
+                    $submarket = DB::table('permissions')
+                        ->join('submarkets', 'permissions.subMarketId',  '=', 'submarkets.id')
+                        ->select('permissions.subMarketId AS value', 'submarkets.subMarketName AS label')
+                        ->where('permissions.moduleId', $moduleId)
+                        ->where('permissions.marketId', $marketId)
+                        ->where('permissions.userId', $userId)
+                        ->get();
+
+                    foreach ($submarket as $key => $subMarketId) {
+                        
+                        $arrayOptions = array(
+                            "value" => $subMarketId->value,
+                            "label" => $subMarketId->label,
+                            "selected" => true
+                        );
+
+                        array_push($cleanArray['options'], $arrayOptions);
+                    }
+
+                    array_push($newArray, $cleanArray);
+                }
+
+                $mainReturn['markets'] = $newArray;
+
+            break;
+            
+            default:
+
+                // * en caso de no recibir un año válido se sale de la función
+                if ($year == 0 || $year == "") {
+                    return;
+                }
+
+                // * en caso de no recibir un quarter válido se sale de la función
+                if ($quarter == "") {
+                    return;
+                }
+
+                $newArray = [];
+
+                $marketsArray = DB::table('permissions')
+                    ->join('markets', 'permissions.marketId',  '=', 'markets.id')
+                    ->select(
+                        DB::raw('CONCAT("market_", permissions.marketId) AS value'),
+                        'markets.marketName AS label'
+                    )
+                    ->where('permissions.moduleId', $moduleId)
+                    ->where('permissions.userId', $userId)
+                    ->where('permissions.year', $year)
+                    ->where('permissions.quarter', $quarter)
+                    ->distinct()
+                    ->get();
+
+                foreach ($marketsArray as $key => $marketValue) {
+
+                    $cleanArray = array(
+                        'value' => $marketValue->value,
+                        'label' => $marketValue->label,
+                        'options' => []
+                    );
+
+                    $marketId = str_replace("market_", "", $marketValue->value);
+
+                    // * agrupando los submercados a los mercados
+                    // $mainReturn['markets'][$key]['options'] = DB::table('permissions')
+                    $submarket = DB::table('permissions')
+                        ->join('submarkets', 'permissions.subMarketId',  '=', 'submarkets.id')
+                        ->select('permissions.subMarketId AS value', 'submarkets.subMarketName AS label')
+                        ->where('permissions.moduleId', $moduleId)
+                        ->where('permissions.marketId', $marketId)
+                        ->where('permissions.userId', $userId)
+                        ->where('permissions.year', $year)
+                        ->where('permissions.quarter', $quarter)
+                        ->distinct()
+                        ->get();
+
+                    foreach ($submarket as $key => $subMarketId) {
+                        
+                        $arrayOptions = array(
+                            "value" => $subMarketId->value,
+                            "label" => $subMarketId->label,
+                            "selected" => true
+                        );
+
+                        array_push($cleanArray['options'], $arrayOptions);
+                    }
+
+                    array_push($newArray, $cleanArray);
+                }
+
+                $mainReturn['markets'] = $newArray;
+
+            break;
+        }
+
+        return response()->json($mainReturn);
     }
 
     /**

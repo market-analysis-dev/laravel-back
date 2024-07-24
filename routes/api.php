@@ -71,7 +71,7 @@ Route::get('/unique', [UniquePermissionController::class, 'index']);
 Route::get('/unique/{id}', [UniquePermissionController::class, 'show']);
 Route::put('/unique/{id}', [UniquePermissionController::class, 'update']);
 Route::put('/unique/{id}/delete', [UniquePermissionController::class, 'destroy']);
-Route::post('/unique', [UniquePermissionController::class, 'store']);
+// Route::post('/unique', [UniquePermissionController::class, 'store']);
 
 // * MARKETS (COMPLETADO)
 Route::get('/market', [MarketController::class, 'index']);
@@ -94,6 +94,7 @@ Route::get('/excel-data', [ExcelController::class, 'getData']); // ! Este NO se 
  * API's Pólizas de Acceso
  */
 Route::post('/permissions/multiple/{userId}', [PermissionController::class, 'store']);
+Route::post('/permissions/{userId}', [PermissionController::class, 'showPermissions']);
 
 /*
  * API's Buildings
