@@ -180,44 +180,55 @@ class PermissionController
 
                 $newArray = [];
 
-                $marketsArray = DB::table('permissions')
-                    ->join('markets', 'permissions.marketId',  '=', 'markets.id')
-                    ->select(
-                        DB::raw('CONCAT("market_", permissions.marketId) AS value'),
-                        'markets.marketName AS label'
-                    )
-                    ->where('permissions.moduleId', $moduleId)
-                    ->where('permissions.userId', $userId)
-                    ->distinct()
+                // * consultar todos los mercados y submercados existentes
+                $allMarkets = DB::table('markets')
+                    ->select('id', 'marketName')
+                    ->where('status', 'Activo')
                     ->get();
 
-                foreach ($marketsArray as $key => $marketValue) {
+                foreach ($allMarkets as $key => $marketData) {
 
                     $cleanArray = array(
-                        'value' => $marketValue->value,
-                        'label' => $marketValue->label,
+                        'value' => "market_" . $marketData->id,
+                        'label' => $marketData->marketName,
+                        'selected' => false,
                         'options' => []
                     );
 
-                    $marketId = str_replace("market_", "", $marketValue->value);
+                    $existMarketPermission = DB::table('permissions')
+                        ->where('moduleId', $moduleId)
+                        ->where('marketId', $marketData->id)
+                        ->where('userId', $userId)
+                        ->exists();
 
-                    // * agrupando los submercados a los mercados
-                    // $mainReturn['markets'][$key]['options'] = DB::table('permissions')
-                    $submarket = DB::table('permissions')
-                        ->join('submarkets', 'permissions.subMarketId',  '=', 'submarkets.id')
-                        ->select('permissions.subMarketId AS value', 'submarkets.subMarketName AS label')
-                        ->where('permissions.moduleId', $moduleId)
-                        ->where('permissions.marketId', $marketId)
-                        ->where('permissions.userId', $userId)
+                    if ($existMarketPermission) {
+                        $cleanArray['selected'] = true;
+                    }
+
+                    $allSubMarkets = DB::table('submarkets')
+                        ->select('id', 'subMarketName')
+                        ->where('marketId', $marketData->id)
+                        ->where('status', 'Activo')
                         ->get();
 
-                    foreach ($submarket as $key => $subMarketId) {
+                    foreach ($allSubMarkets as $key => $subMarketData) {
                         
                         $arrayOptions = array(
-                            "value" => $subMarketId->value,
-                            "label" => $subMarketId->label,
-                            "selected" => true
+                            "value" => $subMarketData->id,
+                            "label" => $subMarketData->subMarketName,
+                            "selected" => false
                         );
+
+                        $existSubMarketPermission = DB::table('permissions')
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketData->id)
+                            ->where('subMarketId', $subMarketData->id)
+                            ->where('userId', $userId)
+                            ->exists();
+
+                        if ($existSubMarketPermission) {
+                            $arrayOptions['selected'] = true;
+                        }
 
                         array_push($cleanArray['options'], $arrayOptions);
                     }
@@ -238,56 +249,80 @@ class PermissionController
                 }
 
                 // * en caso de no recibir un quarter válido se sale de la función
+
                 if ($quarter == "") {
-                    echo "Invalid quarter";
-                    return;
+
+                    // * consultar los quarters disponibles
+                    $getQuarters = DB::table('permissions')
+                        ->select('quarter')
+                        ->where('userId', $userId)
+                        ->where('moduleId', $moduleId)
+                        ->where('year', $year)
+                        ->distinct()
+                        ->get();
+
+                    $quarter = [];
+
+                    foreach ($getQuarters as $key => $quarterValue) {
+                        array_push($quarter, $quarterValue->quarter);
+                    }
                 }
 
                 $newArray = [];
 
-                $marketsArray = DB::table('permissions')
-                    ->join('markets', 'permissions.marketId',  '=', 'markets.id')
-                    ->select(
-                        DB::raw('CONCAT("market_", permissions.marketId) AS value'),
-                        'markets.marketName AS label'
-                    )
-                    ->where('permissions.moduleId', $moduleId)
-                    ->where('permissions.userId', $userId)
-                    ->where('permissions.year', $year)
-                    ->where('permissions.quarter', $quarter)
-                    ->distinct()
+                // * consultar todos los mercados y submercados existentes
+                $allMarkets = DB::table('markets')
+                    ->select('id', 'marketName')
+                    ->where('status', 'Activo')
                     ->get();
 
-                foreach ($marketsArray as $key => $marketValue) {
+                foreach ($allMarkets as $key => $marketData) {
 
                     $cleanArray = array(
-                        'value' => $marketValue->value,
-                        'label' => $marketValue->label,
+                        'value' => "market_" . $marketData->id,
+                        'label' => $marketData->marketName,
+                        'selected' => false,
                         'options' => []
                     );
 
-                    $marketId = str_replace("market_", "", $marketValue->value);
+                    $existMarketPermission = DB::table('permissions')
+                        ->where('userId', $userId)
+                        ->where('moduleId', $moduleId)
+                        ->where('marketId', $marketData->id)
+                        ->where('year', $year)
+                        ->where('quarter', $quarter)
+                        ->exists();
 
-                    // * agrupando los submercados a los mercados
-                    // $mainReturn['markets'][$key]['options'] = DB::table('permissions')
-                    $submarket = DB::table('permissions')
-                        ->join('submarkets', 'permissions.subMarketId',  '=', 'submarkets.id')
-                        ->select('permissions.subMarketId AS value', 'submarkets.subMarketName AS label')
-                        ->where('permissions.moduleId', $moduleId)
-                        ->where('permissions.marketId', $marketId)
-                        ->where('permissions.userId', $userId)
-                        ->where('permissions.year', $year)
-                        ->where('permissions.quarter', $quarter)
-                        ->distinct()
+                    if ($existMarketPermission) {
+                        $cleanArray['selected'] = true;
+                    }
+
+                    $allSubMarkets = DB::table('submarkets')
+                        ->select('id', 'subMarketName')
+                        ->where('marketId', $marketData->id)
+                        ->where('status', 'Activo')
                         ->get();
 
-                    foreach ($submarket as $key => $subMarketId) {
+                    foreach ($allSubMarkets as $key => $subMarketData) {
                         
                         $arrayOptions = array(
-                            "value" => $subMarketId->value,
-                            "label" => $subMarketId->label,
-                            "selected" => true
+                            "value" => $subMarketData->id,
+                            "label" => $subMarketData->subMarketName,
+                            "selected" => false
                         );
+
+                        $existSubMarketPermission = DB::table('permissions')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketData->id)
+                            ->where('subMarketId', $subMarketData->id)
+                            ->where('year', $year)
+                            ->where('quarter', $quarter)
+                            ->exists();
+
+                        if ($existSubMarketPermission) {
+                            $arrayOptions['selected'] = true;
+                        }
 
                         array_push($cleanArray['options'], $arrayOptions);
                     }
