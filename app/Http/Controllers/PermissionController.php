@@ -248,26 +248,6 @@ class PermissionController
                     return;
                 }
 
-                // * en caso de no recibir un quarter válido se sale de la función
-
-                if ($quarter == "") {
-
-                    // * consultar los quarters disponibles
-                    $getQuarters = DB::table('permissions')
-                        ->select('quarter')
-                        ->where('userId', $userId)
-                        ->where('moduleId', $moduleId)
-                        ->where('year', $year)
-                        ->distinct()
-                        ->get();
-
-                    $quarter = [];
-
-                    foreach ($getQuarters as $key => $quarterValue) {
-                        array_push($quarter, $quarterValue->quarter);
-                    }
-                }
-
                 $newArray = [];
 
                 // * consultar todos los mercados y submercados existentes
@@ -285,13 +265,42 @@ class PermissionController
                         'options' => []
                     );
 
-                    $existMarketPermission = DB::table('permissions')
-                        ->where('userId', $userId)
-                        ->where('moduleId', $moduleId)
-                        ->where('marketId', $marketData->id)
-                        ->where('year', $year)
-                        ->where('quarter', $quarter)
-                        ->exists();
+                    if ($quarter == "") {
+
+                        // * consultar los quarters disponibles
+                        $getQuarters = DB::table('permissions')
+                            ->select('quarter')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('year', $year)
+                            ->distinct()
+                            ->get();
+    
+                        $quarter = [];
+    
+                        foreach ($getQuarters as $key => $quarterValue) {
+                            array_push($quarter, $quarterValue->quarter);
+                        }
+
+                        $existMarketPermission = DB::table('permissions')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketData->id)
+                            ->where('year', $year)
+                            ->whereIn('quarter', $quarter)
+                            ->exists();
+
+                    } else {
+
+                        $existMarketPermission = DB::table('permissions')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketData->id)
+                            ->where('year', $year)
+                            ->where('quarter', $quarter)
+                            ->exists();
+                    }
+
 
                     if ($existMarketPermission) {
                         $cleanArray['selected'] = true;
