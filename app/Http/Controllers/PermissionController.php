@@ -108,7 +108,6 @@ class PermissionController
                                 ->exists();
 
                         if (!$exists) {
-                            // echo "userId => $userId, moduleId => $moduleId, marketId => $marketId, subMarketId => $submarketId, year => NULL, quarter => NULL, status => 1 \n";
                             DB::table('permissions')->insert([
                                 'userId' => $userId,
                                 'moduleId' => $moduleId,
@@ -196,9 +195,10 @@ class PermissionController
                     );
 
                     $existMarketPermission = DB::table('permissions')
+                        ->where('userId', $userId)
                         ->where('moduleId', $moduleId)
                         ->where('marketId', $marketData->id)
-                        ->where('userId', $userId)
+                        ->where('status', 'Activo')
                         ->exists();
 
                     if ($existMarketPermission) {
@@ -220,10 +220,11 @@ class PermissionController
                         );
 
                         $existSubMarketPermission = DB::table('permissions')
+                            ->where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketData->id)
                             ->where('subMarketId', $subMarketData->id)
-                            ->where('userId', $userId)
+                            ->where('status', 'Activo')
                             ->exists();
 
                         if ($existSubMarketPermission) {
@@ -273,6 +274,7 @@ class PermissionController
                             ->where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('year', $year)
+                            ->where('status', 'Activo')
                             ->distinct()
                             ->get();
     
@@ -288,6 +290,7 @@ class PermissionController
                             ->where('marketId', $marketData->id)
                             ->where('year', $year)
                             ->whereIn('quarter', $quarter)
+                            ->where('status', 'Activo')
                             ->exists();
 
                     } else {
@@ -298,9 +301,9 @@ class PermissionController
                             ->where('marketId', $marketData->id)
                             ->where('year', $year)
                             ->where('quarter', $quarter)
+                            ->where('status', 'Activo')
                             ->exists();
                     }
-
 
                     if ($existMarketPermission) {
                         $cleanArray['selected'] = true;
@@ -327,6 +330,7 @@ class PermissionController
                             ->where('subMarketId', $subMarketData->id)
                             ->where('year', $year)
                             ->where('quarter', $quarter)
+                            ->where('status', 'Activo')
                             ->exists();
 
                         if ($existSubMarketPermission) {
@@ -347,6 +351,313 @@ class PermissionController
         return response()->json($mainReturn);
     }
 
+    /*
+     * UPDATE SINGLE PERMISSIONS
+    */
+    public function updatePermissions(Request $request){
+        $userId = $request->userId;
+        $moduleId = $request->module;
+        $year = $request->year;
+        $quarter = $request->quarter;
+        $marketsArray = $request->marketsArray;
+
+        // * Si el quarter está vacío se da por entender que los cambios se aplicaran a los 4 quarters...
+        if ($quarter == "") {
+            $quarter = ['Q1', 'Q2', 'Q3', 'Q4'];
+        }
+
+        // * separando mercados y submercados
+        $justMarkets = [];
+        $justSubMarkets = [];
+
+        foreach ($marketsArray as $key => $marketPermissions) {
+
+            if (!in_array($marketPermissions['subMarketId'], $justSubMarkets)) {
+                array_push($justSubMarkets, $marketPermissions['subMarketId']);
+            }
+
+            if (!in_array(str_replace("market_", "", $marketPermissions['marketId']), $justMarkets)) {
+                array_push($justMarkets, str_replace("market_", "", $marketPermissions['marketId']));
+            }
+        }
+
+        switch ($moduleId) {
+            case 1:
+            case 5:
+            case 7:
+            case 10:
+            case 14: // * Módulos de disponibilidad
+
+                // * consultar todos los mercados y submercados existentes
+                $allMarkets = DB::table('markets')
+                    ->select('id', 'marketName')
+                    ->where('status', 'Activo')
+                    ->get();
+
+                foreach ($allMarkets as $key => $marketData) {
+                    
+                    // * Si el mercado está en el post se hace el update
+                    if (in_array($marketData->id, $justMarkets)) {
+                        
+                        // * Obtener los submercados
+                        $allSubMarkets = DB::table('submarkets')
+                            ->select('id', 'subMarketName')
+                            ->where('marketId', $marketData->id)
+                            ->where('status', 'Activo')
+                            ->get();
+
+                        foreach ($allSubMarkets as $key => $subMarketData) {
+
+                            // * Si el submercado está en el post se hace el update
+                            if (in_array($subMarketData->id, $justSubMarkets)) {
+    
+                                $existSubMarketPermission = DB::table('permissions')
+                                    ->where('userId', $userId)
+                                    ->where('moduleId', $moduleId)
+                                    ->where('marketId', $marketData->id)
+                                    ->where('subMarketId', $subMarketData->id)
+                                    ->exists();
+    
+                                if ($existSubMarketPermission) {
+                                    
+                                    DB::table('permissions')
+                                        ->where('userId', $userId)
+                                        ->where('moduleId', $moduleId)
+                                        ->where('marketId', $marketData->id)
+                                        ->where('subMarketId', $subMarketData->id)
+                                        ->update(['status' => 'Activo']);
+    
+                                } else {
+                                
+                                    DB::table('permissions')->insert([
+                                        'userId' => $userId,
+                                        'moduleId' => $moduleId,
+                                        'marketId' => $marketData->id,
+                                        'subMarketId' => $subMarketData->id,
+                                        'year' => NULL,
+                                        'quarter' => NULL,
+                                        'status' => 'Activo'
+                                    ]);
+                                }
+
+                            } else {
+
+                                $existSubMarketPermission = DB::table('permissions')
+                                    ->where('userId', $userId)
+                                    ->where('moduleId', $moduleId)
+                                    ->where('marketId', $marketData->id)
+                                    ->where('subMarketId', $subMarketData->id)
+                                    ->exists();
+    
+                                if ($existSubMarketPermission) {
+                                    
+                                    DB::table('permissions')
+                                        ->where('userId', $userId)
+                                        ->where('moduleId', $moduleId)
+                                        ->where('marketId', $marketData->id)
+                                        ->where('subMarketId', $subMarketData->id)
+                                        ->update(['status' => 'Inactivo']);
+    
+                                }
+                            }
+                        }
+
+                    } else {
+
+                        $existMarketPermission = DB::table('permissions')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketData->id)
+                            ->exists();
+
+                        if($existMarketPermission){
+                            DB::table('permissions')
+                                ->where('userId', $userId)
+                                ->where('moduleId', $moduleId)
+                                ->where('marketId', $marketData->id)
+                                ->update(['status' => 'Inactivo']);
+                        }
+                    }
+                }
+
+            break;
+
+            default: // * Módulos de absorción
+
+                // * consultar todos los mercados y submercados existentes
+                $allMarkets = DB::table('markets')
+                    ->select('id', 'marketName')
+                    ->where('status', 'Activo')
+                    ->get();
+
+                foreach ($allMarkets as $key => $marketData) {
+                    
+                    // * Si el mercado está en el post se hace el update
+                    if (in_array($marketData->id, $justMarkets)) {
+                        
+                        // * Obtener los submercados
+                        $allSubMarkets = DB::table('submarkets')
+                            ->select('id', 'subMarketName')
+                            ->where('marketId', $marketData->id)
+                            ->where('status', 'Activo')
+                            ->get();
+
+                        foreach ($allSubMarkets as $key => $subMarketData) {
+
+                            // * Si el submercado está en el post se hace el update
+                            if (in_array($subMarketData->id, $justSubMarkets)) {
+
+                                if (is_array($quarter)) {
+
+                                    foreach ($quarter as $key => $stringQuarter) {
+                                        
+                                        $existSubMarketPermission = DB::table('permissions')
+                                            ->where('userId', $userId)
+                                            ->where('moduleId', $moduleId)
+                                            ->where('marketId', $marketData->id)
+                                            ->where('subMarketId', $subMarketData->id)
+                                            ->where('year', $year)
+                                            ->where('quarter', $stringQuarter)
+                                            ->exists();
+        
+                                        if ($existSubMarketPermission) {
+                                            
+                                            DB::table('permissions')
+                                                ->where('userId', $userId)
+                                                ->where('moduleId', $moduleId)
+                                                ->where('marketId', $marketData->id)
+                                                ->where('subMarketId', $subMarketData->id)
+                                                ->where('year', $year)
+                                                ->where('quarter', $stringQuarter)
+                                                ->update(['status' => 'Activo']);
+        
+                                        } else {
+                                        
+                                            DB::table('permissions')->insert([
+                                                'userId' => $userId,
+                                                'moduleId' => $moduleId,
+                                                'marketId' => $marketData->id,
+                                                'subMarketId' => $subMarketData->id,
+                                                'year' => $year,
+                                                'quarter' => $stringQuarter,
+                                                'status' => 'Activo'
+                                            ]);
+                                        }
+                                    }
+                                    
+                                } else {
+                                    
+                                    $existSubMarketPermission = DB::table('permissions')
+                                            ->where('userId', $userId)
+                                            ->where('moduleId', $moduleId)
+                                            ->where('marketId', $marketData->id)
+                                            ->where('subMarketId', $subMarketData->id)
+                                            ->where('year', $year)
+                                            ->where('quarter', $quarter)
+                                            ->exists();
+        
+                                    if ($existSubMarketPermission) {
+                                        
+                                        DB::table('permissions')
+                                            ->where('userId', $userId)
+                                            ->where('moduleId', $moduleId)
+                                            ->where('marketId', $marketData->id)
+                                            ->where('subMarketId', $subMarketData->id)
+                                            ->where('year', $year)
+                                            ->where('quarter', $quarter)
+                                            ->update(['status' => 'Activo']);
+    
+                                    } else {
+                                    
+                                        DB::table('permissions')->insert([
+                                            'userId' => $userId,
+                                            'moduleId' => $moduleId,
+                                            'marketId' => $marketData->id,
+                                            'subMarketId' => $subMarketData->id,
+                                            'year' => $year,
+                                            'quarter' => $quarter,
+                                            'status' => 'Activo'
+                                        ]);
+                                    }
+                                }
+
+                            } else {
+
+                                $existSubMarketPermission = DB::table('permissions')
+                                    ->where('userId', $userId)
+                                    ->where('moduleId', $moduleId)
+                                    ->where('marketId', $marketData->id)
+                                    ->where('subMarketId', $subMarketData->id)
+                                    ->where('year', $year)
+                                    ->where('quarter', $quarter)
+                                    ->exists();
+
+                                if ($existSubMarketPermission) {
+                                    
+                                    DB::table('permissions')
+                                        ->where('userId', $userId)
+                                        ->where('moduleId', $moduleId)
+                                        ->where('marketId', $marketData->id)
+                                        ->where('subMarketId', $subMarketData->id)
+                                        ->where('year', $year)
+                                        ->where('quarter', $quarter)
+                                        ->update(['status' => 'Inactivo']);
+
+                                }
+                            }
+                        }
+
+                    } else {
+
+                        if (is_array($quarter)) {
+
+                            foreach ($quarter as $key => $stringQuarter) {
+                                $existMarketPermission = DB::table('permissions')
+                                ->where('userId', $userId)
+                                ->where('moduleId', $moduleId)
+                                ->where('marketId', $marketData->id)
+                                ->where('year', $year)
+                                ->where('quarter', $stringQuarter)
+                                ->exists();
+    
+                                if($existMarketPermission){
+                                    DB::table('permissions')
+                                        ->where('userId', $userId)
+                                        ->where('moduleId', $moduleId)
+                                        ->where('marketId', $marketData->id)
+                                        ->where('year', $year)
+                                        ->where('quarter', $stringQuarter)
+                                        ->update(['status' => 'Inactivo']);
+                                }
+                            }
+
+                        } else {
+
+                            $existMarketPermission = DB::table('permissions')
+                                ->where('userId', $userId)
+                                ->where('moduleId', $moduleId)
+                                ->where('marketId', $marketData->id)
+                                ->where('year', $year)
+                                ->where('quarter', $quarter)
+                                ->exists();
+    
+                            if($existMarketPermission){
+                                DB::table('permissions')
+                                    ->where('userId', $userId)
+                                    ->where('moduleId', $moduleId)
+                                    ->where('marketId', $marketData->id)
+                                    ->where('year', $year)
+                                    ->where('quarter', $quarter)
+                                    ->update(['status' => 'Inactivo']);
+                            }
+                        }
+                    }
+                }
+                
+            break;
+        }
+    }
+    
     /**
      * Display the specified resource.
      */
