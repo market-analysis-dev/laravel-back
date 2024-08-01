@@ -280,9 +280,15 @@ class PermissionController
                             ->get();
     
                         $quarter = [];
+                        $contador = 0;
     
                         foreach ($getQuarters as $key => $quarterValue) {
                             array_push($quarter, $quarterValue->quarter);
+                            $contador++;
+                        }
+
+                        if ($contador < 4) {
+                            return;
                         }
 
                         $existMarketPermission = DB::table('permissions')
