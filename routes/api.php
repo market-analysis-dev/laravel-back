@@ -96,6 +96,7 @@ Route::get('/excel-data', [ExcelController::class, 'getData']); // ! Este NO se 
 Route::post('/permissions/multiple/{userId}', [PermissionController::class, 'store']);
 Route::post('/permissions/{userId}', [PermissionController::class, 'showPermissions']);
 Route::post('/permissions/update/{userId}', [PermissionController::class, 'updatePermissions']);
+Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 
 /*
  * API's Buildings

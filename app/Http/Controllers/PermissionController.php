@@ -123,6 +123,7 @@ class PermissionController
                     default:
 
                         foreach ($yearsArray as $key => $year) {
+                            
                             foreach ($quartersArray as $key => $quarter) {
 
                                 $exists = DB::table('permissions')
@@ -135,7 +136,6 @@ class PermissionController
                                         ->exists();
 
                                 if (!$exists) {
-                                    // echo "userId => $userId, moduleId => $moduleId, marketId => $marketId, subMarketId => $submarketId, year => $year, quarter => $quarter, status => 1 \n";
                                     DB::table('permissions')->insert([
                                         'userId' => $userId,
                                         'moduleId' => $moduleId,
@@ -160,7 +160,8 @@ class PermissionController
      * SHOW INDIVIDUAL PERMISSIONS
      */
 
-    public function showPermissions(Request $request){
+    public function showPermissions(Request $request)
+    {
 
         $userId = $request->userId;
         $moduleId = $request->moduleId;
@@ -354,7 +355,8 @@ class PermissionController
     /*
      * UPDATE SINGLE PERMISSIONS
     */
-    public function updatePermissions(Request $request){
+    public function updatePermissions(Request $request)
+    {
         $userId = $request->userId;
         $moduleId = $request->module;
         $year = $request->year;
@@ -655,6 +657,104 @@ class PermissionController
                 }
                 
             break;
+        }
+    }
+
+    /*
+     * HEREDAR PERMISOS
+    */
+    public function clonePermissions(Request $request)
+    {
+        $userId = $request->userId;
+        $userCloneId = $request->userCloneId;
+
+        // * Primero "eliminamos" los permisos actuales
+        DB::table('permissions')
+            ->where('userId', $userId)
+            ->update(['status' => 'Inactivo']);
+
+        // * Obteniendo los permisos a heredar del otro usuario
+        $userClonePermissions = DB::table('permissions')
+            ->select('moduleId', 'marketId', 'subMarketId', 'year', 'quarter', 'status')
+            ->where('userId', $userCloneId)
+            ->get();
+        // return response()->json($userClonePermissions);
+        // echo "| moduleID | marketId | subMarketId | year | quarter | status | \n";
+        // echo "============ \n";
+        foreach ($userClonePermissions as $key => $permissionsData) {
+
+            $moduleId = $permissionsData->moduleId;
+            $marketId = $permissionsData->marketId;
+            $subMarketId = $permissionsData->subMarketId;
+            $year = $permissionsData->year;
+            $quarter = $permissionsData->quarter;
+            $status = $permissionsData->status;
+            // echo "| $moduleID | $marketId | $subMarketId | $year | $quarter | $status | \n";
+            // echo "============ \n";
+
+            switch ($moduleId) {
+                case 1:
+                case 5:
+                case 7:
+                case 10:
+                case 14: // * Módulos de disponibilidad
+                    $exist = DB::table('permissions')
+                        ->where('userId', $userId)
+                        ->where('moduleId', $moduleId)
+                        ->where('marketId', $marketId)
+                        ->where('subMarketId', $subMarketId)
+                        ->exists();
+
+                    if($exist){
+                        DB::table('permissions')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketId)
+                            ->where('subMarketId', $subMarketId)
+                            ->update(['status' => 'Activo']);
+                    } else {
+                        DB::table('permissions')->insert([
+                            'userId' => $userId,
+                            'moduleId' => $moduleId,
+                            'marketId' => $marketId,
+                            'subMarketId' => $subMarketId,
+                            'status' => 'Activo'
+                        ]);
+                    }
+                break;
+                
+                default:
+                    $exist = DB::table('permissions')
+                        ->where('userId', $userId)
+                        ->where('moduleId', $moduleId)
+                        ->where('marketId', $marketId)
+                        ->where('subMarketId', $subMarketId)
+                        ->where('year', $year)
+                        ->where('quarter', $quarter)
+                        ->exists();
+
+                    if($exist){
+                        DB::table('permissions')
+                            ->where('userId', $userId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketId)
+                            ->where('subMarketId', $subMarketId)
+                            ->where('year', $year)
+                            ->where('quarter', $quarter)
+                            ->update(['status' => 'Inactivo']);
+                    } else {
+                        DB::table('permissions')->insert([
+                            'userId' => $userId,
+                            'moduleId' => $moduleId,
+                            'marketId' => $marketId,
+                            'subMarketId' => $subMarketId,
+                            'year' => $year,
+                            'quarter' => $quarter,
+                            'status' => 'Activo'
+                        ]);
+                    }
+                break;
+            }            
         }
     }
     
