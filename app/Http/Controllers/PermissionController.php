@@ -287,7 +287,7 @@ class PermissionController
                             $contador++;
                         }
 
-                        if ($contador < 4) {
+                        if ($contador <= 3) {
                             return;
                         }
 
