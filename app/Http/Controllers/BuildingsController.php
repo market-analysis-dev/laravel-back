@@ -49,6 +49,65 @@ class BuildingsController
         return response()->json($mainReturn);
     }
 
+    /*
+     * Guardando nuevo registro en la base de datos
+    */
+
+    public function saveRegister(Request $request)
+    {
+        // * Nombre de la tabla en la base de datos.
+        $tableName = $request->tableName;
+        $nameRegister = $request->nameRegister;
+        $marketId = $request->marketId;
+        $subMarketId = $request->subMarketId;
+
+        // * obtener el nombre de la columna
+        switch ($tableName) {
+            case 'cat_industrial_park':
+                
+                $columnName = 'industrialParkName';
+
+                if($marketId != '' && $subMarketId != ''){
+
+                    DB::table($tableName)->insert([
+                        $columnName => $nameRegister,
+                        'marketId' => $marketId,
+                        'subMarketId' => $subMarketId
+                    ]);
+
+                    return;
+
+                } else {
+                    return response()->json(['message' => 'Market or SubMarket Empty']);
+                }
+
+            break;
+
+            case 'cat_developer':
+                $columnName = 'developerName';
+            break;
+
+            case 'cat_loadingdoor':
+                $columnName = 'LoadingDoorName';
+            break;
+
+            case 'cat_owner':
+                $columnName = 'ownerName';
+            break;
+
+            default:
+                return response()->json(['message' => 'Table Name Error']);
+            break;
+            
+        }
+
+        // * INSERT del nuevo registro
+        DB::table($tableName)->insert([
+            $columnName => $nameRegister,
+        ]);
+        
+    }
+
     /**
      * Show the form for creating a new resource.
      */

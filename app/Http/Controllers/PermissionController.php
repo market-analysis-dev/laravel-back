@@ -278,6 +278,8 @@ class PermissionController
                             ->where('status', 'Activo')
                             ->distinct()
                             ->get();
+
+                        return response()->json($getQuarters);
     
                         $quarter = [];
                         $contador = 0;

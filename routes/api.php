@@ -102,3 +102,4 @@ Route::post('/permissions/clone/{userId}', [PermissionController::class, 'cloneP
  * API's Buildings
  */
 Route::get('/buildings/data', [BuildingsController::class, 'index']);
+Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
