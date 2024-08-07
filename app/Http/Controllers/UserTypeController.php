@@ -12,7 +12,11 @@ class UserTypeController
      */
     public function index()
     {
-        $userType = UserType::where('status', 'Activo')->get();
+        $userType = UserType::select('id AS value', 'typeName AS label')
+            ->where('status', 'Activo')
+            ->where('id', '!=', 2)
+            ->get();
+
         return response()->json($userType);
     }
 

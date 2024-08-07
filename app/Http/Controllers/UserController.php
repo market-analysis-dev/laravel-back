@@ -91,4 +91,22 @@ class UserController
 
         return response()->json(['message' => 'Usuario eliminado correctamente.']);
     }
+
+
+    public function newAdminUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'middleName' => 'nullable|string|max:255',
+            'userName' => 'required|string|max:255|unique:users',
+            'password' => 'required|string|max:255',
+            'companyId' => 36,
+            'userTypeId' => 'required|exists:usertypes,id',
+            'totalScreens' => 0,
+            'status' => 'required|in:Activo,Inactivo',
+        ]);
+
+        return User::create($request->all());
+    }
 }

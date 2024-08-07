@@ -103,3 +103,8 @@ Route::post('/permissions/clone/{userId}', [PermissionController::class, 'cloneP
  */
 Route::get('/buildings/data', [BuildingsController::class, 'index']);
 Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
+
+/*
+ * API's Employees
+ */
+Route::post('/employees', [UserController::class, 'store']); // * Este si se utiliza
