@@ -109,4 +109,13 @@ class UserController
 
         return User::create($request->all());
     }
+
+    public function getUsers()
+    {
+        $users = User::where('status', 'Activo')
+            ->where('userTypeId', '!=', 2)
+            ->get();
+
+        return response()->json($users);
+    }
 }
