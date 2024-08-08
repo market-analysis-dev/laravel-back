@@ -112,7 +112,10 @@ class UserController
 
     public function getEmployees()
     {
-        $users = User::where('status', 'Activo')
+        $users = User::where('users.status', 'Activo')
+            ->select('users.id', 'users.name', 'users.lastName', 'users.middleName', 'users.userName', 'companies.nameCompany', 'usertypes.typeName', 'users.totalScreens', 'users.status')
+            ->leftJoin('companies', 'users.companyId', '=', 'companies.id')
+            ->leftJoin('usertypes', 'users.userTypeId', '=', 'usertypes.id')
             ->where('userTypeId', '!=', 2)
             ->get();
 
