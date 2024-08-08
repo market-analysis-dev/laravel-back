@@ -108,4 +108,4 @@ Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveReg
  * API's Employees
  */
 Route::post('/employees', [UserController::class, 'store']); // * Este si se utiliza
-Route::get('/employees', [UserController::class, 'getUsers']); // * Este si se utiliza
+Route::get('/employees', [UserController::class, 'getEmployees']); // * Este si se utiliza

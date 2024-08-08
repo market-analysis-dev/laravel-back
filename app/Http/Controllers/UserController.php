@@ -110,7 +110,7 @@ class UserController
         return User::create($request->all());
     }
 
-    public function getUsers()
+    public function getEmployees()
     {
         $users = User::where('status', 'Activo')
             ->where('userTypeId', '!=', 2)
