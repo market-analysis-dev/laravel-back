@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController
 {
@@ -95,19 +96,49 @@ class UserController
 
     public function newAdminUser(Request $request)
     {
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users',
             'password' => 'required|string|max:255',
-            'companyId' => 36,
             'userTypeId' => 'required|exists:usertypes,id',
-            'totalScreens' => 0,
             'status' => 'required|in:Activo,Inactivo',
         ]);
 
-        return User::create($request->all());
+        $user = User::create($request->all());
+        $userId = $user->id;
+
+        $userTypeId = $request->userTypeId;
+        $modules = explode(",", $request->modules);
+        $markets = explode(",", $request->markets);
+
+        // * Permisos de modulos por usuario.
+        foreach ($modules as $key => $moduleId) {
+
+            DB::table('admin_modules_permissions')->insert([
+                'userId' => $userId,
+                'moduleId' => $moduleId,
+                'status' => 'Activo'
+            ]);
+        }
+
+        // * Si es de campo, se dan permisos de buildings
+        switch ($userTypeId) {
+            case 5:
+                
+                foreach ($markets as $key => $marketId) {
+                    
+                    DB::table('admin_buildings_permissions')->insert([
+                        'userId' => $userId,
+                        'marketId' => $marketId,
+                        'status' => 'Activo'
+                    ]);
+                }
+
+            break;
+        }
     }
 
     public function getEmployees()
