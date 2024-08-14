@@ -141,6 +141,11 @@ class UserController
         }
     }
 
+    public function updateAdminUser(Request $request)
+    {
+        
+    }
+
     public function getEmployees()
     {
         $users = User::where('users.status', 'Activo')
