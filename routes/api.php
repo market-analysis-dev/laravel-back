@@ -109,4 +109,5 @@ Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveReg
  */
 Route::post('/employees', [UserController::class, 'newAdminUser']); // * Este si se utiliza
 Route::get('/employees', [UserController::class, 'getEmployees']); // * Este si se utiliza
+Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']); // * Este si se utiliza
 Route::post('/employee/permission/{userId}', [UserController::class, 'adminPermissions']);
