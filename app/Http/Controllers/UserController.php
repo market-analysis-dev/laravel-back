@@ -153,15 +153,131 @@ class UserController
         return response()->json($users);
     }
 
-    public function getEmployeeId($id)
+    public function getEmployeeId($userId)
     {
-        $user = User::find($id);
+        $userIdExist = User::find($userId);
 
-        if (!$user) {
+        if (!$userIdExist) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        return response()->json($user);
+        $getUserData = User::select('id', 'userTypeId', 'name', 'lastName', 'middleName', 'password')
+            ->where('id', $userId)
+            ->get();
+
+        $userData = [];
+
+        foreach ($getUserData as $key => $data) {
+            $userData = array(
+                'id' => $data->id,
+                'userTypeId' => $data->userTypeId,
+                'name' => $data->name,
+                'middleName' => $data->middleName,
+                'lastName' => $data->lastName,
+                'password' => $data->password,
+            );
+        }
+
+        // * Almacenando los permisos por módulo del usuario.
+        $modulesPermissions = [];
+
+        // * Almacenando los permisos del usuario de campo.
+        $buildingsPermissions = [];
+
+        // * Almacenndo los userTypes en combo.
+        $userTypesCbo = [];
+
+        // * obteniendo todos los módulos.
+        $allModules = DB::table('modules')
+            ->select('id', 'moduleName')
+            ->where('status', 'Activo')
+            ->get();
+
+        foreach ($allModules as $key => $moduleData) {
+
+            $cleanArray = array(
+                'value' => $moduleData->id,
+                'label' => $moduleData->moduleName,
+                'selected' => false,
+                'options' => []
+            );
+
+            $existModulesPermission = DB::table('admin_modules_permissions')
+                ->where('userId', $userId)
+                ->where('moduleId', $moduleData->id)
+                ->where('status', 'Activo')
+                ->exists();
+
+            if ($existModulesPermission) {
+                $cleanArray['selected'] = true;
+            }
+
+            array_push($modulesPermissions, $cleanArray);
+        }
+
+        // * obteniendo todos los userTypes
+        $allUserTypes = DB::table('usertypes')
+            ->select('id', 'typeName')
+            ->where('status', 'Activo')
+            ->get();
+
+        foreach ($allUserTypes as $key => $userType) {
+
+            $cleanArray = array(
+                'value' => $userType->id,
+                'label' => $userType->typeName,
+                'selected' => false,
+                'options' => []
+            );
+
+            if ($userType->id == $userData['userTypeId']) {
+                $cleanArray['selected'] = true;
+            }
+
+            array_push($userTypesCbo, $cleanArray);   
+        }
+
+        // * validando si es userTypeId = 5.
+        switch ($userData['userTypeId']) {
+            case 5:
+                
+                // * obteniendo todos los mercados
+                $allMarkets = DB::table('markets')
+                    ->select('id', 'marketName')
+                    ->where('status', 'Activo')
+                    ->get();
+
+                foreach ($allMarkets as $key => $marketData) {
+                    $cleanArray = array(
+                        'value' => $marketData->id,
+                        'label' => $marketData->marketName,
+                        'selected' => false,
+                        'options' => []
+                    );
+        
+                    $existBuildingsPermission = DB::table('admin_buildings_permissions')
+                        ->where('userId', $userId)
+                        ->where('marketId', $marketData->id)
+                        ->where('status', 'Activo')
+                        ->exists();
+        
+                    if ($existBuildingsPermission) {
+                        $cleanArray['selected'] = true;
+                    }
+        
+                    array_push($buildingsPermissions, $cleanArray);
+                }
+                
+            break;
+        }
+
+        $userData['modules'] = $modulesPermissions;
+        $userData['markets'] = $buildingsPermissions;
+        $userData['userTypes'] = $userTypesCbo;
+
+        return response()->json($userData);
+        exit;
+
     }
 
     public function updateEmployee(Request $request)

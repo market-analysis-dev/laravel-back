@@ -110,4 +110,4 @@ Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveReg
 Route::post('/employees', [UserController::class, 'newAdminUser']);
 Route::get('/employees', [UserController::class, 'getEmployees']);
 Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
-Route::post('/employee/update/{employeeId}', [UserController::class, 'updateEmployee']);
+Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
