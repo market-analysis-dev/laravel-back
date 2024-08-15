@@ -141,11 +141,6 @@ class UserController
         }
     }
 
-    public function updateAdminUser(Request $request)
-    {
-        
-    }
-
     public function getEmployees()
     {
         $users = User::where('users.status', 'Activo')
@@ -167,5 +162,84 @@ class UserController
         }
 
         return response()->json($user);
+    }
+
+    public function updateEmployee(Request $request)
+    {
+        $userId = $request->employeeId;
+        $name = $request->name;
+        $middleName = $request->middleName;
+        $lastName = $request->lastName;
+        $userName = $request->userName;
+        $password = $request->password;
+        $userTypeId = $request->userTypeId;
+
+        $modules = explode(",", $request->modules);
+        $markets = explode(",", $request->markets);
+
+        // * Cambiando todos los permisos de modulos a Inactivo.
+        DB::table('admin_modules_permissions')
+            ->where('userId', $userId)
+            ->update(['status' => 'Inactivo']);
+
+        // * Permisos de modulos por usuario.
+        foreach ($modules as $key => $moduleId) {
+
+            $exist = DB::table('admin_modules_permissions')
+                ->where('userId', $userId)
+                ->where('moduleId', $moduleId)
+                ->exists();
+
+            if ($exist) {
+                
+                DB::table('admin_modules_permissions')
+                    ->where('userId', $userId)
+                    ->where('moduleId', $moduleId)
+                    ->update(['status' => 'Activo']);
+
+            } else {
+
+                DB::table('admin_modules_permissions')->insert([
+                    'userId' => $userId,
+                    'moduleId' => $moduleId,
+                    'status' => 'Activo'
+                ]);
+            }
+        }
+
+        // * Si es de campo, se dan permisos de buildings
+        switch ($userTypeId) {
+            case 5:
+
+                // * Cambiando todos los permisos de buildings a Inactivo.
+                DB::table('admin_buildings_permissions')
+                    ->where('userId', $userId)
+                    ->update(['status' => 'Inactivo']);
+                
+                foreach ($markets as $key => $marketId) {
+
+                    $exist = DB::table('admin_buildings_permissions')
+                        ->where('userId', $userId)
+                        ->where('marketId', $marketId)
+                        ->exists();
+
+                    if ($exist) {
+                        DB::table('admin_buildings_permissions')
+                            ->where('userId', $userId)
+                            ->where('marketId', $marketId)
+                            ->update(['status' => 'Activo']);
+                        
+                    } else {
+
+                        DB::table('admin_buildings_permissions')->insert([
+                            'userId' => $userId,
+                            'marketId' => $marketId,
+                            'status' => 'Activo'
+                        ]);
+                    }
+                }
+
+            break;
+        }     
     }
 }
