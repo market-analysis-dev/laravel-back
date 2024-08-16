@@ -295,19 +295,36 @@ class UserController
         $markets = explode(",", $request->markets);
 
         // * Actualizando la información general del empleado
-        DB::table('users')
-            ->where('id', $userId)
-            ->update([
-                'name' => $name,
-                'lastName' => $lastName,
-                'middleName' => $middleName,
-                'userName' => $userName,
-                'password' => $password,
-                'companyId' => 36,
-                'totalScreens' => 0,
-                'status' => 'Activo',
-                'userTypeId' => $userTypeId
-            ]);
+        if ($password != "") {
+            # code...
+            DB::table('users')
+                ->where('id', $userId)
+                ->update([
+                    'name' => $name,
+                    'lastName' => $lastName,
+                    'middleName' => $middleName,
+                    'userName' => $userName,
+                    'password' => $password,
+                    'companyId' => 36,
+                    'totalScreens' => 0,
+                    'status' => 'Activo',
+                    'userTypeId' => $userTypeId
+                ]);
+        } else {
+            DB::table('users')
+                ->where('id', $userId)
+                ->update([
+                    'name' => $name,
+                    'lastName' => $lastName,
+                    'middleName' => $middleName,
+                    'userName' => $userName,
+                    'companyId' => 36,
+                    'totalScreens' => 0,
+                    'status' => 'Activo',
+                    'userTypeId' => $userTypeId
+                ]);
+        }
+
 
         // * Cambiando todos los permisos de modulos a Inactivo.
         DB::table('admin_modules_permissions')
