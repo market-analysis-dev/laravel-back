@@ -174,6 +174,7 @@ class UserController
                 'name' => $data->name,
                 'middleName' => $data->middleName,
                 'lastName' => $data->lastName,
+                'userName' => $data->userName,
                 'password' => $data->password,
             );
         }
