@@ -188,7 +188,7 @@ class UserController
         $userTypesCbo = [];
 
         // * obteniendo todos los módulos.
-        $allModules = DB::table('modules')
+        $allModules = DB::table('admin_modules')
             ->select('id', 'moduleName')
             ->where('status', 'Activo')
             ->get();
