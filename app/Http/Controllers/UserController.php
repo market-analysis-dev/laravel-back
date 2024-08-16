@@ -161,7 +161,7 @@ class UserController
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $getUserData = User::select('id', 'userTypeId', 'name', 'lastName', 'middleName', 'password')
+        $getUserData = User::select('id', 'userTypeId', 'name', 'lastName', 'middleName', 'userName', 'password')
             ->where('id', $userId)
             ->get();
 
