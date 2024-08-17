@@ -97,6 +97,7 @@ Route::post('/permissions/multiple/{userId}', [PermissionController::class, 'sto
 Route::post('/permissions/{userId}', [PermissionController::class, 'showPermissions']);
 Route::post('/permissions/update/{userId}', [PermissionController::class, 'updatePermissions']);
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
+Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
 /*
  * API's Buildings

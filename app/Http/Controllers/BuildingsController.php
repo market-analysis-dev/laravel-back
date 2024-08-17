@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Market;
+use App\Models\SubMarket;
 use Illuminate\Support\Facades\DB;
 
 class BuildingsController
@@ -22,8 +24,8 @@ class BuildingsController
         $developerData = DB::table('cat_developer')->select('id AS value', 'developerName AS label')->get();
         $developerData = DB::table('cat_developer')->select('id AS value', 'developerName AS label')->get();
         $regionData = DB::table('cat_region')->select('id AS value', 'regionName AS label')->get();
-        $marketData = DB::table('markets')->select('id AS value', 'marketName AS label')->get();
-        $marketData = DB::table('submarkets')->select('id AS value', 'subMarketName AS label')->get();
+        $marketData = Market::select('id AS value', 'marketName AS label')->get();
+        $marketData = SubMarket::select('id AS value', 'subMarketName AS label')->get();
         $loadingDoorData = DB::table('cat_loadingdoor')->select('id AS value', 'LoadingDoorName AS label')->get();
         $dealData = DB::table('cat_deal')->select('id AS value', 'dealName AS label')->get();
         $currencyData = DB::table('cat_currency')->select('id AS value', 'currencyName AS label')->get();

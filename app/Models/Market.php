@@ -9,7 +9,7 @@ class Market extends Model
 {
     use HasFactory;
 
-    protected $table = 'markets';
+    protected $table = 'cat_markets';
 
     protected $fillable = [
         'marketName',

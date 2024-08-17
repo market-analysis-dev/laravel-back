@@ -9,7 +9,7 @@ class SubMarket extends Model
 {
     use HasFactory;
 
-    protected $table = 'submarkets';
+    protected $table = 'cat_submarkets';
 
     protected $fillable = [
         'subMarketName',

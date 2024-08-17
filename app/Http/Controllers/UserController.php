@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AdminCatModules;
+use App\Models\UserType;
+use App\Models\Market;
+use App\Models\AdminBuildingsPermissions;
+use App\Models\AdminModulesPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -14,10 +19,10 @@ class UserController
      */
     public function index()
     {
-        $users = User::where('users.status', 'Activo')
-            ->select('users.id', 'users.name', 'users.lastName', 'users.middleName', 'users.userName', 'companies.nameCompany', 'usertypes.typeName', 'users.totalScreens', 'users.status')
-            ->leftJoin('companies', 'users.companyId', '=', 'companies.id')
-            ->leftJoin('usertypes', 'users.userTypeId', '=', 'usertypes.id')
+        $users = User::where('list_users.status', 'Activo')
+            ->select('list_users.id', 'list_users.name', 'list_users.lastName', 'list_users.middleName', 'list_users.userName', 'list_companies.nameCompany', 'admin_cat_user_types.typeName', 'list_users.totalScreens', 'list_users.status')
+            ->leftJoin('list_companies', 'list_users.companyId', '=', 'list_companies.id')
+            ->leftJoin('admin_cat_user_types', 'list_users.userTypeId', '=', 'admin_cat_user_types.id')
             ->get();
 
         return response()->json($users);
@@ -117,7 +122,7 @@ class UserController
         // * Permisos de modulos por usuario.
         foreach ($modules as $key => $moduleId) {
 
-            DB::table('admin_modules_permissions')->insert([
+            AdminModulesPermissions::insert([
                 'userId' => $userId,
                 'moduleId' => $moduleId,
                 'status' => 'Activo'
@@ -130,7 +135,7 @@ class UserController
                 
                 foreach ($markets as $key => $marketId) {
                     
-                    DB::table('admin_buildings_permissions')->insert([
+                    AdminBuildingsPermissions::insert([
                         'userId' => $userId,
                         'marketId' => $marketId,
                         'status' => 'Activo'
@@ -141,13 +146,18 @@ class UserController
         }
     }
 
+
+    /*
+     * MODULO DE EMPLOYEES
+    */
+
     public function getEmployees()
     {
-        $users = User::where('users.status', 'Activo')
-            ->select('users.id', 'users.name', 'users.lastName', 'users.middleName', 'users.userName', 'companies.nameCompany', 'usertypes.typeName', 'users.totalScreens', 'users.status')
-            ->leftJoin('companies', 'users.companyId', '=', 'companies.id')
-            ->leftJoin('usertypes', 'users.userTypeId', '=', 'usertypes.id')
-            ->where('userTypeId', '!=', 2)
+        $users = User::where('list_users.status', 'Activo')
+            ->select('list_users.id', 'list_users.name', 'list_users.lastName', 'list_users.middleName', 'list_users.userName', 'list_companies.nameCompany', 'admin_cat_user_types.typeName', 'list_users.totalScreens', 'list_users.status')
+            ->leftJoin('list_companies', 'list_users.companyId', '=', 'list_companies.id')
+            ->leftJoin('admin_cat_user_types', 'list_users.userTypeId', '=', 'admin_cat_user_types.id')
+            ->where('list_users.userTypeId', '!=', 2)
             ->get();
 
         return response()->json($users);
@@ -189,8 +199,7 @@ class UserController
         $userTypesCbo = [];
 
         // * obteniendo todos los módulos.
-        $allModules = DB::table('admin_modules')
-            ->select('id', 'moduleName')
+        $allModules = AdminCatModules::select('id', 'moduleName')
             ->where('status', 'Activo')
             ->get();
 
@@ -203,8 +212,7 @@ class UserController
                 'options' => []
             );
 
-            $existModulesPermission = DB::table('admin_modules_permissions')
-                ->where('userId', $userId)
+            $existModulesPermission = AdminModulesPermissions::where('userId', $userId)
                 ->where('moduleId', $moduleData->id)
                 ->where('status', 'Activo')
                 ->exists();
@@ -217,8 +225,7 @@ class UserController
         }
 
         // * obteniendo todos los userTypes
-        $allUserTypes = DB::table('usertypes')
-            ->select('id', 'typeName')
+        $allUserTypes = UserType::select('id', 'typeName')
             ->where('status', 'Activo')
             ->get();
 
@@ -243,8 +250,7 @@ class UserController
             case 5:
                 
                 // * obteniendo todos los mercados
-                $allMarkets = DB::table('markets')
-                    ->select('id', 'marketName')
+                $allMarkets = Market::select('id', 'marketName')
                     ->where('status', 'Activo')
                     ->get();
 
@@ -256,8 +262,7 @@ class UserController
                         'options' => []
                     );
         
-                    $existBuildingsPermission = DB::table('admin_buildings_permissions')
-                        ->where('userId', $userId)
+                    $existBuildingsPermission = AdminBuildingsPermissions::where('userId', $userId)
                         ->where('marketId', $marketData->id)
                         ->where('status', 'Activo')
                         ->exists();
@@ -277,8 +282,6 @@ class UserController
         $userData['userTypes'] = $userTypesCbo;
 
         return response()->json($userData);
-        exit;
-
     }
 
     public function updateEmployee(Request $request)
@@ -297,8 +300,7 @@ class UserController
         // * Actualizando la información general del empleado
         if ($password != "") {
             # code...
-            DB::table('users')
-                ->where('id', $userId)
+            User::where('id', $userId)
                 ->update([
                     'name' => $name,
                     'lastName' => $lastName,
@@ -311,8 +313,7 @@ class UserController
                     'userTypeId' => $userTypeId
                 ]);
         } else {
-            DB::table('users')
-                ->where('id', $userId)
+            User::where('id', $userId)
                 ->update([
                     'name' => $name,
                     'lastName' => $lastName,
@@ -325,30 +326,26 @@ class UserController
                 ]);
         }
 
-
         // * Cambiando todos los permisos de modulos a Inactivo.
-        DB::table('admin_modules_permissions')
-            ->where('userId', $userId)
+        AdminModulesPermissions::where('userId', $userId)
             ->update(['status' => 'Inactivo']);
 
         // * Permisos de modulos por usuario.
         foreach ($modules as $key => $moduleId) {
 
-            $exist = DB::table('admin_modules_permissions')
-                ->where('userId', $userId)
+            $exist = AdminModulesPermissions::where('userId', $userId)
                 ->where('moduleId', $moduleId)
                 ->exists();
 
             if ($exist) {
                 
-                DB::table('admin_modules_permissions')
-                    ->where('userId', $userId)
+                AdminModulesPermissions::where('userId', $userId)
                     ->where('moduleId', $moduleId)
                     ->update(['status' => 'Activo']);
 
             } else {
 
-                DB::table('admin_modules_permissions')->insert([
+                AdminModulesPermissions::insert([
                     'userId' => $userId,
                     'moduleId' => $moduleId,
                     'status' => 'Activo'
@@ -361,26 +358,23 @@ class UserController
             case 5:
 
                 // * Cambiando todos los permisos de buildings a Inactivo.
-                DB::table('admin_buildings_permissions')
-                    ->where('userId', $userId)
+                AdminBuildingsPermissions::where('userId', $userId)
                     ->update(['status' => 'Inactivo']);
                 
                 foreach ($markets as $key => $marketId) {
 
-                    $exist = DB::table('admin_buildings_permissions')
-                        ->where('userId', $userId)
+                    $exist = AdminBuildingsPermissions::where('userId', $userId)
                         ->where('marketId', $marketId)
                         ->exists();
 
                     if ($exist) {
-                        DB::table('admin_buildings_permissions')
-                            ->where('userId', $userId)
+                        AdminBuildingsPermissions::where('userId', $userId)
                             ->where('marketId', $marketId)
                             ->update(['status' => 'Activo']);
                         
                     } else {
 
-                        DB::table('admin_buildings_permissions')->insert([
+                        AdminBuildingsPermissions::insert([
                             'userId' => $userId,
                             'marketId' => $marketId,
                             'status' => 'Activo'

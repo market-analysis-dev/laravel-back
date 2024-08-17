@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permission;
+use App\Models\Market;
+use App\Models\SubMarket;
+use App\Models\PermissionsUnique;
+use App\Models\PermissionsSubModules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -42,13 +46,13 @@ class PermissionController
 
         foreach ($arrayName as $key => $permission) {
 
-            $exists = DB::table('permissions_unique')
-                    ->where('userId', $userId)
+            $exists = PermissionsUnique::where('userId', $userId)
                     ->where('permissionId', $key)
                     ->exists();
 
             if (!$exists && $permission == 1) {
-                DB::table('permissions_unique')->insert([
+
+                PermissionsUnique::insert([
                     'userId' => $userId,
                     'permissionId' => $key,
                     'status' => 1
@@ -63,13 +67,12 @@ class PermissionController
 
         foreach ($biChartsPermission as $key => $module) {
 
-            $exists = DB::table('permissions_submodules')
-                    ->where('userId', $userId)
+            $exists = PermissionsSubModules::where('userId', $userId)
                     ->where('subModuleId', $module)
                     ->exists();
 
             if (!$exists) {
-                DB::table('permissions_submodules')->insert([
+                PermissionsSubModules::insert([
                     'userId' => $userId,
                     'subModuleId' => $module,
                     'status' => 1
@@ -100,15 +103,14 @@ class PermissionController
                     case 10:
                     case 14:
 
-                        $exists = DB::table('permissions')
-                                ->where('userId', $userId)
+                        $exists = Permission::where('userId', $userId)
                                 ->where('moduleId', $moduleId)
                                 ->where('marketId', $marketId)
                                 ->where('subMarketId', $submarketId)
                                 ->exists();
 
                         if (!$exists) {
-                            DB::table('permissions')->insert([
+                            Permission::insert([
                                 'userId' => $userId,
                                 'moduleId' => $moduleId,
                                 'marketId' => $marketId,
@@ -126,8 +128,7 @@ class PermissionController
                             
                             foreach ($quartersArray as $key => $quarter) {
 
-                                $exists = DB::table('permissions')
-                                        ->where('userId', $userId)
+                                $exists = Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketId)
                                         ->where('subMarketId', $submarketId)
@@ -136,7 +137,7 @@ class PermissionController
                                         ->exists();
 
                                 if (!$exists) {
-                                    DB::table('permissions')->insert([
+                                    Permission::insert([
                                         'userId' => $userId,
                                         'moduleId' => $moduleId,
                                         'marketId' => $marketId,
@@ -181,8 +182,7 @@ class PermissionController
                 $newArray = [];
 
                 // * consultar todos los mercados y submercados existentes
-                $allMarkets = DB::table('markets')
-                    ->select('id', 'marketName')
+                $allMarkets = Market::select('id', 'marketName')
                     ->where('status', 'Activo')
                     ->get();
 
@@ -195,8 +195,7 @@ class PermissionController
                         'options' => []
                     );
 
-                    $existMarketPermission = DB::table('permissions')
-                        ->where('userId', $userId)
+                    $existMarketPermission = Permission::where('userId', $userId)
                         ->where('moduleId', $moduleId)
                         ->where('marketId', $marketData->id)
                         ->where('status', 'Activo')
@@ -206,8 +205,7 @@ class PermissionController
                         $cleanArray['selected'] = true;
                     }
 
-                    $allSubMarkets = DB::table('submarkets')
-                        ->select('id', 'subMarketName')
+                    $allSubMarkets = SubMarket::select('id', 'subMarketName')
                         ->where('marketId', $marketData->id)
                         ->where('status', 'Activo')
                         ->get();
@@ -220,8 +218,7 @@ class PermissionController
                             "selected" => false
                         );
 
-                        $existSubMarketPermission = DB::table('permissions')
-                            ->where('userId', $userId)
+                        $existSubMarketPermission = Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketData->id)
                             ->where('subMarketId', $subMarketData->id)
@@ -253,8 +250,7 @@ class PermissionController
                 $newArray = [];
 
                 // * consultar todos los mercados y submercados existentes
-                $allMarkets = DB::table('markets')
-                    ->select('id', 'marketName')
+                $allMarkets = Market::select('id', 'marketName')
                     ->where('status', 'Activo')
                     ->get();
 
@@ -270,8 +266,7 @@ class PermissionController
                     if ($quarter == "") {
 
                         // * consultar los quarters disponibles
-                        $getQuarters = DB::table('permissions')
-                            ->select('quarter')
+                        $getQuarters = Permission::select('quarter')
                             ->where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('year', $year)
@@ -293,8 +288,7 @@ class PermissionController
                             return;
                         }
 
-                        $existMarketPermission = DB::table('permissions')
-                            ->where('userId', $userId)
+                        $existMarketPermission = Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketData->id)
                             ->where('year', $year)
@@ -304,8 +298,7 @@ class PermissionController
 
                     } else {
 
-                        $existMarketPermission = DB::table('permissions')
-                            ->where('userId', $userId)
+                        $existMarketPermission = Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketData->id)
                             ->where('year', $year)
@@ -318,8 +311,7 @@ class PermissionController
                         $cleanArray['selected'] = true;
                     }
 
-                    $allSubMarkets = DB::table('submarkets')
-                        ->select('id', 'subMarketName')
+                    $allSubMarkets = SubMarket::select('id', 'subMarketName')
                         ->where('marketId', $marketData->id)
                         ->where('status', 'Activo')
                         ->get();
@@ -332,8 +324,7 @@ class PermissionController
                             "selected" => false
                         );
 
-                        $existSubMarketPermission = DB::table('permissions')
-                            ->where('userId', $userId)
+                        $existSubMarketPermission = Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketData->id)
                             ->where('subMarketId', $subMarketData->id)
@@ -399,8 +390,7 @@ class PermissionController
             case 14: // * Módulos de disponibilidad
 
                 // * consultar todos los mercados y submercados existentes
-                $allMarkets = DB::table('markets')
-                    ->select('id', 'marketName')
+                $allMarkets = Market::select('id', 'marketName')
                     ->where('status', 'Activo')
                     ->get();
 
@@ -410,8 +400,7 @@ class PermissionController
                     if (in_array($marketData->id, $justMarkets)) {
                         
                         // * Obtener los submercados
-                        $allSubMarkets = DB::table('submarkets')
-                            ->select('id', 'subMarketName')
+                        $allSubMarkets = SubMarket::select('id', 'subMarketName')
                             ->where('marketId', $marketData->id)
                             ->where('status', 'Activo')
                             ->get();
@@ -421,8 +410,7 @@ class PermissionController
                             // * Si el submercado está en el post se hace el update
                             if (in_array($subMarketData->id, $justSubMarkets)) {
     
-                                $existSubMarketPermission = DB::table('permissions')
-                                    ->where('userId', $userId)
+                                $existSubMarketPermission = Permission::where('userId', $userId)
                                     ->where('moduleId', $moduleId)
                                     ->where('marketId', $marketData->id)
                                     ->where('subMarketId', $subMarketData->id)
@@ -430,8 +418,7 @@ class PermissionController
     
                                 if ($existSubMarketPermission) {
                                     
-                                    DB::table('permissions')
-                                        ->where('userId', $userId)
+                                    Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
                                         ->where('subMarketId', $subMarketData->id)
@@ -439,7 +426,7 @@ class PermissionController
     
                                 } else {
                                 
-                                    DB::table('permissions')->insert([
+                                    Permission::insert([
                                         'userId' => $userId,
                                         'moduleId' => $moduleId,
                                         'marketId' => $marketData->id,
@@ -452,8 +439,7 @@ class PermissionController
 
                             } else {
 
-                                $existSubMarketPermission = DB::table('permissions')
-                                    ->where('userId', $userId)
+                                $existSubMarketPermission = Permission::where('userId', $userId)
                                     ->where('moduleId', $moduleId)
                                     ->where('marketId', $marketData->id)
                                     ->where('subMarketId', $subMarketData->id)
@@ -461,8 +447,7 @@ class PermissionController
     
                                 if ($existSubMarketPermission) {
                                     
-                                    DB::table('permissions')
-                                        ->where('userId', $userId)
+                                    Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
                                         ->where('subMarketId', $subMarketData->id)
@@ -474,15 +459,13 @@ class PermissionController
 
                     } else {
 
-                        $existMarketPermission = DB::table('permissions')
-                            ->where('userId', $userId)
+                        $existMarketPermission = Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketData->id)
                             ->exists();
 
                         if($existMarketPermission){
-                            DB::table('permissions')
-                                ->where('userId', $userId)
+                            Permission::where('userId', $userId)
                                 ->where('moduleId', $moduleId)
                                 ->where('marketId', $marketData->id)
                                 ->update(['status' => 'Inactivo']);
@@ -495,8 +478,7 @@ class PermissionController
             default: // * Módulos de absorción
 
                 // * consultar todos los mercados y submercados existentes
-                $allMarkets = DB::table('markets')
-                    ->select('id', 'marketName')
+                $allMarkets = Market::select('id', 'marketName')
                     ->where('status', 'Activo')
                     ->get();
 
@@ -506,8 +488,7 @@ class PermissionController
                     if (in_array($marketData->id, $justMarkets)) {
                         
                         // * Obtener los submercados
-                        $allSubMarkets = DB::table('submarkets')
-                            ->select('id', 'subMarketName')
+                        $allSubMarkets = SubMarket::select('id', 'subMarketName')
                             ->where('marketId', $marketData->id)
                             ->where('status', 'Activo')
                             ->get();
@@ -521,8 +502,7 @@ class PermissionController
 
                                     foreach ($quarter as $key => $stringQuarter) {
                                         
-                                        $existSubMarketPermission = DB::table('permissions')
-                                            ->where('userId', $userId)
+                                        $existSubMarketPermission = Permission::where('userId', $userId)
                                             ->where('moduleId', $moduleId)
                                             ->where('marketId', $marketData->id)
                                             ->where('subMarketId', $subMarketData->id)
@@ -532,8 +512,7 @@ class PermissionController
         
                                         if ($existSubMarketPermission) {
                                             
-                                            DB::table('permissions')
-                                                ->where('userId', $userId)
+                                            Permission::where('userId', $userId)
                                                 ->where('moduleId', $moduleId)
                                                 ->where('marketId', $marketData->id)
                                                 ->where('subMarketId', $subMarketData->id)
@@ -543,7 +522,7 @@ class PermissionController
         
                                         } else {
                                         
-                                            DB::table('permissions')->insert([
+                                            Permission::insert([
                                                 'userId' => $userId,
                                                 'moduleId' => $moduleId,
                                                 'marketId' => $marketData->id,
@@ -557,8 +536,7 @@ class PermissionController
                                     
                                 } else {
                                     
-                                    $existSubMarketPermission = DB::table('permissions')
-                                            ->where('userId', $userId)
+                                    $existSubMarketPermission = Permission::where('userId', $userId)
                                             ->where('moduleId', $moduleId)
                                             ->where('marketId', $marketData->id)
                                             ->where('subMarketId', $subMarketData->id)
@@ -568,8 +546,7 @@ class PermissionController
         
                                     if ($existSubMarketPermission) {
                                         
-                                        DB::table('permissions')
-                                            ->where('userId', $userId)
+                                        Permission::where('userId', $userId)
                                             ->where('moduleId', $moduleId)
                                             ->where('marketId', $marketData->id)
                                             ->where('subMarketId', $subMarketData->id)
@@ -579,7 +556,7 @@ class PermissionController
     
                                     } else {
                                     
-                                        DB::table('permissions')->insert([
+                                        Permission::insert([
                                             'userId' => $userId,
                                             'moduleId' => $moduleId,
                                             'marketId' => $marketData->id,
@@ -593,8 +570,7 @@ class PermissionController
 
                             } else {
 
-                                $existSubMarketPermission = DB::table('permissions')
-                                    ->where('userId', $userId)
+                                $existSubMarketPermission = Permission::where('userId', $userId)
                                     ->where('moduleId', $moduleId)
                                     ->where('marketId', $marketData->id)
                                     ->where('subMarketId', $subMarketData->id)
@@ -604,8 +580,7 @@ class PermissionController
 
                                 if ($existSubMarketPermission) {
                                     
-                                    DB::table('permissions')
-                                        ->where('userId', $userId)
+                                    Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
                                         ->where('subMarketId', $subMarketData->id)
@@ -622,8 +597,7 @@ class PermissionController
                         if (is_array($quarter)) {
 
                             foreach ($quarter as $key => $stringQuarter) {
-                                $existMarketPermission = DB::table('permissions')
-                                ->where('userId', $userId)
+                                $existMarketPermission = Permission::where('userId', $userId)
                                 ->where('moduleId', $moduleId)
                                 ->where('marketId', $marketData->id)
                                 ->where('year', $year)
@@ -631,8 +605,7 @@ class PermissionController
                                 ->exists();
     
                                 if($existMarketPermission){
-                                    DB::table('permissions')
-                                        ->where('userId', $userId)
+                                    Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
                                         ->where('year', $year)
@@ -643,8 +616,7 @@ class PermissionController
 
                         } else {
 
-                            $existMarketPermission = DB::table('permissions')
-                                ->where('userId', $userId)
+                            $existMarketPermission = Permission::where('userId', $userId)
                                 ->where('moduleId', $moduleId)
                                 ->where('marketId', $marketData->id)
                                 ->where('year', $year)
@@ -652,8 +624,7 @@ class PermissionController
                                 ->exists();
     
                             if($existMarketPermission){
-                                DB::table('permissions')
-                                    ->where('userId', $userId)
+                                Permission::where('userId', $userId)
                                     ->where('moduleId', $moduleId)
                                     ->where('marketId', $marketData->id)
                                     ->where('year', $year)
@@ -677,13 +648,10 @@ class PermissionController
         $userCloneId = $request->userCloneId;
 
         // * Primero "eliminamos" los permisos actuales
-        DB::table('permissions')
-            ->where('userId', $userId)
-            ->update(['status' => 'Inactivo']);
+        Permission::where('userId', $userId)->update(['status' => 'Inactivo']);
 
         // * Obteniendo los permisos a heredar del otro usuario
-        $userClonePermissions = DB::table('permissions')
-            ->select('moduleId', 'marketId', 'subMarketId', 'year', 'quarter', 'status')
+        $userClonePermissions = Permission::select('moduleId', 'marketId', 'subMarketId', 'year', 'quarter', 'status')
             ->where('userId', $userCloneId)
             ->get();
         // return response()->json($userClonePermissions);
@@ -706,22 +674,20 @@ class PermissionController
                 case 7:
                 case 10:
                 case 14: // * Módulos de disponibilidad
-                    $exist = DB::table('permissions')
-                        ->where('userId', $userId)
+                    $exist = Permission::where('userId', $userId)
                         ->where('moduleId', $moduleId)
                         ->where('marketId', $marketId)
                         ->where('subMarketId', $subMarketId)
                         ->exists();
 
                     if($exist){
-                        DB::table('permissions')
-                            ->where('userId', $userId)
+                        Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketId)
                             ->where('subMarketId', $subMarketId)
                             ->update(['status' => 'Activo']);
                     } else {
-                        DB::table('permissions')->insert([
+                        Permission::insert([
                             'userId' => $userId,
                             'moduleId' => $moduleId,
                             'marketId' => $marketId,
@@ -732,8 +698,7 @@ class PermissionController
                 break;
                 
                 default:
-                    $exist = DB::table('permissions')
-                        ->where('userId', $userId)
+                    $exist = Permission::where('userId', $userId)
                         ->where('moduleId', $moduleId)
                         ->where('marketId', $marketId)
                         ->where('subMarketId', $subMarketId)
@@ -742,8 +707,7 @@ class PermissionController
                         ->exists();
 
                     if($exist){
-                        DB::table('permissions')
-                            ->where('userId', $userId)
+                        Permission::where('userId', $userId)
                             ->where('moduleId', $moduleId)
                             ->where('marketId', $marketId)
                             ->where('subMarketId', $subMarketId)
@@ -751,7 +715,7 @@ class PermissionController
                             ->where('quarter', $quarter)
                             ->update(['status' => 'Inactivo']);
                     } else {
-                        DB::table('permissions')->insert([
+                        Permission::insert([
                             'userId' => $userId,
                             'moduleId' => $moduleId,
                             'marketId' => $marketId,
@@ -763,6 +727,109 @@ class PermissionController
                     }
                 break;
             }            
+        }
+    }
+
+
+    /*
+     * HEREDAR A MULTIPLES EMPLEADOS
+    */
+
+    public function cloneMultipleUsers(Request $request)
+    {
+
+        $userMain = $request->userId;
+        $userClones = explode(",", $request->userClones);
+
+        // * Validando si el usuario principal tiene permisos asignados
+        $existUserMain = Permission::where('userId', $userMain)
+            ->where('status', 'Activo')
+            ->exists();
+
+        if (!$existUserMain) {
+            return response()->json(['message' => "This user doesn't have permissions"]);
+        }
+
+        // * Obteniendo los permisos a heredar del otro usuario
+        $userClonePermissions = Permission::select('moduleId', 'marketId', 'subMarketId', 'year', 'quarter', 'status')
+            ->where('userId', $userMain)
+            ->where('status', 'Activo')
+            ->get();
+
+        foreach ($userClones as $key => $userCloneId) {
+
+            // * Primero "eliminamos" los permisos actuales
+            Permission::where('userId', $userCloneId)->update(['status' => 'Inactivo']);
+            
+            foreach ($userClonePermissions as $key => $permissionsData) {
+    
+                $moduleId = $permissionsData->moduleId;
+                $marketId = $permissionsData->marketId;
+                $subMarketId = $permissionsData->subMarketId;
+                $year = $permissionsData->year;
+                $quarter = $permissionsData->quarter;
+                // $status = $permissionsData->status;
+    
+                switch ($moduleId) {
+                    case 1:
+                    case 5:
+                    case 7:
+                    case 10:
+                    case 14: // * Módulos de disponibilidad
+                        $exist = Permission::where('userId', $userCloneId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketId)
+                            ->where('subMarketId', $subMarketId)
+                            ->exists();
+    
+                        if($exist){
+                            Permission::where('userId', $userCloneId)
+                                ->where('moduleId', $moduleId)
+                                ->where('marketId', $marketId)
+                                ->where('subMarketId', $subMarketId)
+                                ->update(['status' => 'Activo']);
+                        } else {
+                            Permission::insert([
+                                'userId' => $userCloneId,
+                                'moduleId' => $moduleId,
+                                'marketId' => $marketId,
+                                'subMarketId' => $subMarketId,
+                                'status' => 'Activo'
+                            ]);
+                        }
+                    break;
+                    
+                    default:
+                        $exist = Permission::where('userId', $userCloneId)
+                            ->where('moduleId', $moduleId)
+                            ->where('marketId', $marketId)
+                            ->where('subMarketId', $subMarketId)
+                            ->where('year', $year)
+                            ->where('quarter', $quarter)
+                            ->exists();
+    
+                        if($exist){
+                            Permission::where('userId', $userCloneId)
+                                ->where('moduleId', $moduleId)
+                                ->where('marketId', $marketId)
+                                ->where('subMarketId', $subMarketId)
+                                ->where('year', $year)
+                                ->where('quarter', $quarter)
+                                ->update(['status' => 'Inactivo']);
+                        } else {
+                            Permission::insert([
+                                'userId' => $userCloneId,
+                                'moduleId' => $moduleId,
+                                'marketId' => $marketId,
+                                'subMarketId' => $subMarketId,
+                                'year' => $year,
+                                'quarter' => $quarter,
+                                'status' => 'Activo'
+                            ]);
+                        }
+                    break;
+                }
+            }
         }
     }
     

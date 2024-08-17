@@ -15,7 +15,7 @@ class Company extends Model
         'postalCode', 'country', 'createdAt', 'modifiedAt',
     ];
 
-    protected $table = 'companies';
+    protected $table = 'list_companies';
 
     // * Definir columnas de marca de tiempo personalizadas
     const CREATED_AT = 'createdAt';
