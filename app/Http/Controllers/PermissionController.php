@@ -743,7 +743,7 @@ class PermissionController
 
         // * Validando si el usuario principal tiene permisos asignados
         $existUserMain = Permission::where('userId', $userMain)
-            ->where('status', 'Activo')
+            /* ->where('status', 'Activo') */
             ->exists();
 
         if (!$existUserMain) {
