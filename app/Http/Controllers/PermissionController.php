@@ -747,7 +747,11 @@ class PermissionController
             ->exists();
 
         if (!$existUserMain) {
-            return response()->json(['message' => "This user doesn't have permissions"]);
+            return response()->json([
+                'title' => 'Error',
+                'text' => "This user doesn't have permissions",
+                'icon' => 'error'
+            ]);
         }
 
         // * Obteniendo los permisos a heredar del otro usuario
@@ -831,6 +835,12 @@ class PermissionController
                 }
             }
         }
+
+        return response()->json([
+            'title' => 'Completed',
+            'text' => "Permissions Cloned.",
+            'icon' => 'success'
+        ]);
     }
     
     /**

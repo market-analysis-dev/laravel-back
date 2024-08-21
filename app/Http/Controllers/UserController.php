@@ -10,7 +10,7 @@ use App\Models\AdminBuildingsPermissions;
 use App\Models\AdminModulesPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB;
 
 class UserController
 {
@@ -20,9 +20,26 @@ class UserController
     public function index()
     {
         $users = User::where('list_users.status', 'Activo')
+            ->where('list_users.userTypeId', 2)
             ->select('list_users.id', 'list_users.name', 'list_users.lastName', 'list_users.middleName', 'list_users.userName', 'list_companies.nameCompany', 'admin_cat_user_types.typeName', 'list_users.totalScreens', 'list_users.status')
             ->leftJoin('list_companies', 'list_users.companyId', '=', 'list_companies.id')
             ->leftJoin('admin_cat_user_types', 'list_users.userTypeId', '=', 'admin_cat_user_types.id')
+            ->get();
+
+        return response()->json($users);
+    }
+
+    public function getUsersFilterCombo(Request $request)
+    {
+        $multpleUsersId = json_decode($request->multpleUsersId);
+
+        $users = User::where('list_users.status', 'Activo')
+            ->where('list_users.userTypeId', 2)
+            ->whereNotIn('list_users.id', $multpleUsersId)
+            ->select('list_users.id', 'list_users.name', 'list_users.lastName', 'list_users.middleName', 'list_users.userName', 'list_companies.nameCompany', 'admin_cat_user_types.typeName', 'list_users.totalScreens', 'list_users.status')
+            ->leftJoin('list_companies', 'list_users.companyId', '=', 'list_companies.id')
+            ->leftJoin('admin_cat_user_types', 'list_users.userTypeId', '=', 'admin_cat_user_types.id')
+            ->orderBy('list_users.name', 'asc')
             ->get();
 
         return response()->json($users);

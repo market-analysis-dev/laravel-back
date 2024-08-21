@@ -26,6 +26,7 @@ Route::post('/companies', [CompanyController::class, 'store']);
 
 // * USERS (COMPLETADO)
 Route::get('/user', [UserController::class, 'index']); // * Este si se utiliza
+Route::post('/user/combo', [UserController::class, 'getUsersFilterCombo']); // * Combo de usuarios para heredar permisos
 Route::get('/user/{id}', [UserController::class, 'show']); // * Este si se utiliza
 Route::put('/user/{id}', [UserController::class, 'update']); // * Este si se utiliza
 Route::put('/user/{id}/delete', [UserController::class, 'destroy']); // * Este si se utiliza
