@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use App\Models\SubMarket;
+use App\Models\IndustrialParks;
 use Google\Service\Directory\Building;
 use Illuminate\Support\Facades\DB;
 
@@ -121,6 +122,20 @@ class BuildingsController
             ->get();
 
         return response()->json($subMarkets);
+    }
+
+    public function getIndustrialParks(Request $request)
+    {
+        $marketId = $request->marketId;
+        $subMarketId = $request->subMarketId;
+
+        $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
+            ->where('marketId', $marketId)
+            ->where('subMarketId', $subMarketId)
+            ->get();
+
+        return response()->json($industrialParks);        
+
     }
 
     public function insertBuilding(Request $request)
