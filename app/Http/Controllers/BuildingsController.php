@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use App\Models\SubMarket;
+use Google\Service\Directory\Building;
 use Illuminate\Support\Facades\DB;
 
 class BuildingsController
@@ -108,6 +109,24 @@ class BuildingsController
             $columnName => $nameRegister,
         ]);
         
+    }
+
+    public function SubMarketByMarket(Request $request)
+    {
+        $marketId = $request->marketId;
+
+        $subMarkets = SubMarket::select('id as value', 'subMarketName as label')
+            ->where('marketId', $marketId)
+            ->where('status', 'Activo')
+            ->get();
+
+        return response()->json($subMarkets);
+    }
+
+    public function insertBuilding(Request $request)
+    {
+        // $building = new Building();
+        echo "User Clones String: " . $request->userClones . "\n";
     }
 
     /**
