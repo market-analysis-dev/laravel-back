@@ -129,10 +129,20 @@ class BuildingsController
         $marketId = $request->marketId;
         $subMarketId = $request->subMarketId;
 
-        $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
-            ->where('marketId', $marketId)
-            ->where('subMarketId', $subMarketId)
-            ->get();
+        if ($subMarketId == "") {
+
+            $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
+                ->where('marketId', $marketId)
+                ->get();
+
+        } else {
+
+            $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
+                ->where('marketId', $marketId)
+                ->where('subMarketId', $subMarketId)
+                ->get();
+        }
+
 
         return response()->json($industrialParks);        
 
