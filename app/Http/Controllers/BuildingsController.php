@@ -11,8 +11,10 @@ use App\Models\BuildingsAvailable;
 use App\Models\BuildingsAbsorption;
 use App\Models\BuildingsContacts;
 use App\Models\BuildingsFeatures;
+use App\Models\BuildingsImages;
 // use Google\Service\Directory\Building;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class BuildingsController
 {
@@ -154,7 +156,6 @@ class BuildingsController
     public function insertBuilding(Request $request)
     {
         // * Tabla 'buildings'
-        
         $builderStateId = $request->builderStateId;
         $buildingName = $request->buildingName;
         $classId = $request->classId;
@@ -176,8 +177,8 @@ class BuildingsController
         $latitud = $request->latitud;
         $longitud = $request->longitud;
         $yearBuilt = $request->yearBuilt;
-        $officesSpace = $request->officesSpace;
         $clearHeight = $request->clearHeight;
+        $officesSpace = $request->officesSpace;
         $crane = $request->crane;
         $hvac = $request->hvac;
         $railSpur = $request->railSpur;
@@ -187,14 +188,115 @@ class BuildingsController
         $totalLand = $request->totalLand;
         $hvacProductionArea = $request->hvacProductionArea;
 
-        $building = BuildingsAvailable::create([
-            
+        $building = Buildings::create([
+            'builder_state_id' => $builderStateId,
+            'building_name' => $buildingName,
+            'class_id' => $classId,
+            'building_size_sf' => $buildingSizeSf,
+            'expansion_land' => $expansionLand,
+            'status_id' => $statusId,
+            'industrial_park_id' => $industrialParkId,
+            'type_id' => $typeId,
+            'owner_id' => $ownerId,
+            'developer_id' => $developerId,
+            'builder_id' => $builderId,
+            'region_id' => $regionId,
+            'market_id' => $marketId,
+            'sub_market_id' => $subMarketId,
+            'deal_id' => $dealId,
+            'currency_id' => $currencyId,
+            'sale_price_usd' => $salePriceUsd,
+            'tenancy_id' => $tenancyId,
+            'latitud' => $latitud,
+            'longitud' => $longitud,
+            'year_built' => $yearBuilt,
+            'clear_height' => $clearHeight,
+            'offices_space' => $officesSpace,
+            'crane' => $crane,
+            'hvac' => $hvac,
+            'rail_spur' => $railSpur,
+            'sprinklers' => $sprinklers,
+            'office' => $office,
+            'leed' => $leed,
+            'total_land' => $totalLand,
+            'hvac_production_area' => $hvacProductionArea,
+            'status' => 'Activo'
         ]);
 
         if ($building) {
 
             // * Id del building
             $buildingId = $building->id;
+
+            // * Agregando las imagenes (de la pestaña de imagenes).
+            if ($request->hasFile('photoTypes')) {
+
+                /*
+                 * 1 => Aerea
+                 * 2 => Galería
+                 * 3 => Portada
+                */
+                
+                // * Iterando imagenes para poder diferenciar el tipo de imagen.
+                foreach ($request->file('photoTypes') as $file) {
+
+                    // * Inicializando el tipo de imagen a 0 (no definido aún).
+                    $typePhoto = 0;
+
+                    $originalName = $file->getClientOriginalName();
+                    $stringOriginalName = pathinfo($originalName, PATHINFO_FILENAME);
+
+                    // * switch para definir el tipo de imagen a través del nombre.
+                    switch (strtolower($stringOriginalName)) {
+                        case 'portada': // * Portada.
+                            $typePhoto = 3;
+                        break;
+                        
+                        default:
+
+                            if (is_numeric($stringOriginalName)) { // * Galería.
+                                $typePhoto = 2;
+
+                            } else { // * Aerea
+                                $typePhoto = 1;
+
+                            }
+
+                        break;
+                    }
+
+                    $imageInsert = BuildingsImages::create([
+                        'buildingId' => $buildingId,
+                        'imageTypeId' => $typePhoto,
+                        'Image' => $originalName
+                    ]);
+
+                    // * validando que se inserta en la BD...
+                    if ($imageInsert) {
+                        $imagePath = $file->store('buildingsImages', 'public');
+                    }
+                }
+            }
+
+            // * Agregando las imagenes (de la pestañas de extras [imagenes 360]).
+            if ($request->hasFile('aroundImages')) {
+                
+                foreach ($request->file('aroundImages') as $file) {
+                    
+                    $originalName = $file->getClientOriginalName();
+
+                    $imageInsert = BuildingsImages::create([
+                        'buildingId' => $buildingId,
+                        'imageTypeId' => 0,
+                        'Image' => $originalName
+                    ]);
+
+                    // * validando que se inserta en la BD...
+                    if ($imageInsert) {
+                        $imagePath = $file->store('buildingsImages', 'public');
+                    }
+                }
+            }
 
             // * Agregando Contactos a la BD
             $contactName = $request->contactName;
@@ -338,6 +440,21 @@ class BuildingsController
 
 
         exit;        
+    }
+
+    public function getBuildingById($buildingId)
+    {
+        $building = Buildings::find($buildingId);
+
+        if (!$building) {
+            return response()->json(['message' => 'Building not found'], 404);
+        }
+
+        $mergeData = [];
+
+        // * Datos tabla "buildings"
+
+        return response()->json($building);
     }
 
     /**

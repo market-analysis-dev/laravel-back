@@ -108,6 +108,8 @@ Route::get('/buildings/market/{marketId}', [BuildingsController::class, 'SubMark
 Route::post('/buildings/parks', [BuildingsController::class, 'getIndustrialParks']);
 Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
 Route::post('/buildings', [BuildingsController::class, 'insertBuilding']);
+Route::get('/buildings/{buildingId}', [BuildingsController::class, 'getBuildingById']); // * Este si se utiliza
+
 
 /*
  * API's Employees
