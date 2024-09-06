@@ -14,6 +14,7 @@ use App\Http\Controllers\MarketController;
 use App\Http\Controllers\SubMarketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExcelController;
+use App\Models\BuildingsContacts;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -26,6 +27,7 @@ Route::post('/companies', [CompanyController::class, 'store']);
 
 // * USERS (COMPLETADO)
 Route::get('/user', [UserController::class, 'index']); // * Este si se utiliza
+Route::get('/user/device', [UserController::class, 'getUserDevice']); // * Este si se utiliza
 Route::post('/user/combo', [UserController::class, 'getUsersFilterCombo']); // * Combo de usuarios para heredar permisos
 Route::get('/user/{id}', [UserController::class, 'show']); // * Este si se utiliza
 Route::put('/user/{id}', [UserController::class, 'update']); // * Este si se utiliza
@@ -109,6 +111,7 @@ Route::post('/buildings/parks', [BuildingsController::class, 'getIndustrialParks
 Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
 Route::post('/buildings', [BuildingsController::class, 'insertBuilding']);
 Route::get('/buildings/{buildingId}', [BuildingsController::class, 'getBuildingById']); // * Este si se utiliza
+Route::post('/buildings/docs/{buildingId}', [BuildingsController::class, 'uploadFiles']);
 
 
 /*

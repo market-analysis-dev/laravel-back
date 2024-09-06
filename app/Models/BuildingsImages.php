@@ -13,6 +13,8 @@ class BuildingsImages extends Model
         'buildingId',
         'imageTypeId',
         'Image',
+        'created_at',
+        'updated_at'
     ];
 
     protected $table = 'building_images';

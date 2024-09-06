@@ -437,9 +437,6 @@ class BuildingsController
                 'icon' => 'error'
             ]);
         }
-
-
-        exit;        
     }
 
     public function getBuildingById($buildingId)
@@ -455,6 +452,68 @@ class BuildingsController
         // * Datos tabla "buildings"
 
         return response()->json($building);
+    }
+
+    // * Testing upload files
+    public function uploadFiles(Request $request)
+    {
+        $buildingId = $request->buildingId;
+
+        // * Agregando las imagenes (de la pestaña de imagenes).
+
+        if (!$request->hasFile('photoTypes')) {
+            return response()->json([
+                'title' => 'Error!',
+                'text' => "Something's wrong...",
+                'icon' => 'error'
+            ]);
+        }
+        echo "si hay imagenes \n";
+        /*
+            * 1 => Aerea
+            * 2 => Galería
+            * 3 => Portada
+        */
+        // * Iterando imagenes para poder diferenciar el tipo de imagen.
+        foreach ($request->file('photoTypes') as $file) {
+
+            // * Inicializando el tipo de imagen a 0 (no definido aún).
+            $typePhoto = 0;
+
+            $originalName = $file->getClientOriginalName();
+            $stringOriginalName = pathinfo($originalName, PATHINFO_FILENAME);
+
+            // * switch para definir el tipo de imagen a través del nombre.
+            switch (strtolower($stringOriginalName)) {
+                case 'portada': // * Portada.
+                    $typePhoto = 3;
+                break;
+                
+                default:
+
+                    if (is_numeric($stringOriginalName)) { // * Galería.
+                        $typePhoto = 2;
+
+                    } else { // * Aerea
+                        $typePhoto = 1;
+
+                    }
+
+                break;
+            }
+
+            $imageInsert = BuildingsImages::create([
+                'buildingId' => $buildingId,
+                'imageTypeId' => $typePhoto,
+                'Image' => $originalName
+            ]);
+
+            // * validando que se inserta en la BD...
+            if ($imageInsert) {
+                $imagePath = $file->store('buildingsImages', 'public');
+            }
+        }
+        
     }
 
     /**

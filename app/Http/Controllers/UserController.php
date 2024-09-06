@@ -11,6 +11,7 @@ use App\Models\AdminModulesPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 // use Illuminate\Support\Facades\DB;
+use Jenssegers\Agent\Agent;
 
 class UserController
 {
@@ -401,5 +402,17 @@ class UserController
 
             break;
         }     
+    }
+
+    public function getUserDevice()
+    {
+        // $agent = new Agent();
+        // $device = $agent->device();
+        // $platform = $agent->platform();
+        // $browser = $agent->browser();
+
+        // echo "This device: $device \n";
+        // echo "This platform: $platform \n";
+        // echo "This browser: $browser \n";
     }
 }
