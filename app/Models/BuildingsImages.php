@@ -9,6 +9,8 @@ class BuildingsImages extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'buildingId',
         'imageTypeId',

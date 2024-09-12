@@ -152,41 +152,77 @@ class BuildingsController
 
         return response()->json($industrialParks);
     }
-    
+
+    public function testing(Request $request)
+    {
+        // Obtenemos el JSON enviado desde el front-end
+        $buildingDataJSON = $request->input('buildingData');
+
+        // Decodificamos el JSON en un array asociativo de PHP
+        $buildingData = json_decode($buildingDataJSON, true);
+
+        return response()->json($buildingData);
+        exit;
+
+        // Verificamos si hubo algún error en la decodificación
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // Iteramos sobre el array para manipular los datos
+
+            // echo $buildingData['builderStateId'] . "\n";
+
+            foreach ($buildingData as $key => $value) {
+                // Aquí puedes manipular las variables como desees
+                // Por ejemplo, podrías guardarlas en la base de datos o imprimirlas
+                // echo "Clave: $key, Valor: $value\n";
+            }
+            
+            // Retornamos la respuesta
+            // return response()->json($buildingData); // Devuelve los datos manipulados si es necesario
+        } else {
+            return response()->json(['error' => 'Error al decodificar JSON: ' . json_last_error_msg()], 400);
+        }
+    }
+        
     public function insertBuilding(Request $request)
     {
+        $buildingDataJSON = $request->input('buildingData');
+        $buildingData = json_decode($buildingDataJSON, true);
+        $contactDataJSON = $request->input('contactData');
+        $contactData = json_decode($contactDataJSON, true);
+
         // * Tabla 'buildings'
-        $builderStateId = $request->builderStateId;
-        $buildingName = $request->buildingName;
-        $classId = $request->classId;
-        $buildingSizeSf = $request->buildingSizeSf;
-        $expansionLand = $request->expansionLand;
-        $statusId = $request->statusId;
-        $industrialParkId = $request->industrialParkId;
-        $typeId = $request->typeId;
-        $ownerId = $request->ownerId;
-        $developerId = $request->developerId;
-        $builderId = $request->builderId;
-        $regionId = $request->regionId;
-        $marketId = $request->marketId;
-        $subMarketId = $request->subMarketId;
-        $dealId = $request->dealId;
-        $currencyId = $request->currencyId;
-        $salePriceUsd = $request->salePriceUsd;
-        $tenancyId = $request->tenancyId;
-        $latitud = $request->latitud;
-        $longitud = $request->longitud;
-        $yearBuilt = $request->yearBuilt;
-        $clearHeight = $request->clearHeight;
-        $officesSpace = $request->officesSpace;
-        $crane = $request->crane;
-        $hvac = $request->hvac;
-        $railSpur = $request->railSpur;
-        $sprinklers = $request->sprinklers;
-        $office = $request->office;
-        $leed = $request->leed;
-        $totalLand = $request->totalLand;
-        $hvacProductionArea = $request->hvacProductionArea;
+        $builderStateId = $buildingData['builderStateId'];
+        $buildingName = $buildingData['buildingName'];
+        $classId = $buildingData['classId'];
+        $buildingSizeSf = $buildingData['buildingSizeSf'];
+        $expansionLand = $buildingData['expansionLand'];
+        $statusId = $buildingData['statusId'];
+        // $industrialParkId = $buildingData['industrialParkId'];
+        $industrialParkId = 166;
+        $typeId = $buildingData['typeId'];
+        $ownerId = $buildingData['ownerId'];
+        $developerId = $buildingData['developerId'];
+        $builderId = $buildingData['builderId'];
+        $regionId = $buildingData['regionId'];
+        $marketId = $buildingData['marketId'];
+        $subMarketId = $buildingData['subMarketId'];
+        $dealId = $buildingData['dealId'];
+        $currencyId = $buildingData['currencyId'];
+        $salePriceUsd = $buildingData['salePriceUsd'];
+        $tenancyId = $buildingData['tenancyId'];
+        $latitud = $buildingData['latitud'];
+        $longitud = $buildingData['longitud'];
+        $yearBuilt = $buildingData['yearBuilt'];
+        $clearHeight = $buildingData['clearHeight'];
+        $officesSpace = $buildingData['officesSpace'];
+        $crane = $buildingData['crane'] == true ? 1 : 0;
+        $hvac = $buildingData['hvac'] == true ? 1 : 0;
+        $railSpur = $buildingData['railSpur'] == true ? 1 : 0;
+        $sprinklers = $buildingData['sprinklers'] == true ? 1 : 0;
+        $office = $buildingData['office'] == true ? 1 : 0;
+        $leed = $buildingData['leed'] == true ? 1 : 0;
+        $totalLand = $buildingData['totalLand'];
+        $hvacProductionArea = $buildingData['hvacProductionArea'];
 
         $building = Buildings::create([
             'builder_state_id' => $builderStateId,
@@ -227,82 +263,82 @@ class BuildingsController
 
             // * Id del building
             $buildingId = $building->id;
+            /*
+                // * Agregando las imagenes (de la pestaña de imagenes).
+                if ($request->hasFile('photoTypes')) {
 
-            // * Agregando las imagenes (de la pestaña de imagenes).
-            if ($request->hasFile('photoTypes')) {
-
-                /*
-                 * 1 => Aerea
-                 * 2 => Galería
-                 * 3 => Portada
-                */
-                
-                // * Iterando imagenes para poder diferenciar el tipo de imagen.
-                foreach ($request->file('photoTypes') as $file) {
-
-                    // * Inicializando el tipo de imagen a 0 (no definido aún).
-                    $typePhoto = 0;
-
-                    $originalName = $file->getClientOriginalName();
-                    $stringOriginalName = pathinfo($originalName, PATHINFO_FILENAME);
-
-                    // * switch para definir el tipo de imagen a través del nombre.
-                    switch (strtolower($stringOriginalName)) {
-                        case 'portada': // * Portada.
-                            $typePhoto = 3;
-                        break;
-                        
-                        default:
-
-                            if (is_numeric($stringOriginalName)) { // * Galería.
-                                $typePhoto = 2;
-
-                            } else { // * Aerea
-                                $typePhoto = 1;
-
-                            }
-
-                        break;
-                    }
-
-                    $imageInsert = BuildingsImages::create([
-                        'buildingId' => $buildingId,
-                        'imageTypeId' => $typePhoto,
-                        'Image' => $originalName
-                    ]);
-
-                    // * validando que se inserta en la BD...
-                    if ($imageInsert) {
-                        $imagePath = $file->store('buildingsImages', 'public');
-                    }
-                }
-            }
-
-            // * Agregando las imagenes (de la pestañas de extras [imagenes 360]).
-            if ($request->hasFile('aroundImages')) {
-                
-                foreach ($request->file('aroundImages') as $file) {
                     
-                    $originalName = $file->getClientOriginalName();
+                    // * 1 => Aerea
+                    //  * 2 => Galería
+                    //  * 3 => Portada
+                    
+                    
+                    // * Iterando imagenes para poder diferenciar el tipo de imagen.
+                    foreach ($request->file('photoTypes') as $file) {
 
-                    $imageInsert = BuildingsImages::create([
-                        'buildingId' => $buildingId,
-                        'imageTypeId' => 0,
-                        'Image' => $originalName
-                    ]);
+                        // * Inicializando el tipo de imagen a 0 (no definido aún).
+                        $typePhoto = 0;
 
-                    // * validando que se inserta en la BD...
-                    if ($imageInsert) {
-                        $imagePath = $file->store('buildingsImages', 'public');
+                        $originalName = $file->getClientOriginalName();
+                        $stringOriginalName = pathinfo($originalName, PATHINFO_FILENAME);
+
+                        // * switch para definir el tipo de imagen a través del nombre.
+                        switch (strtolower($stringOriginalName)) {
+                            case 'portada': // * Portada.
+                                $typePhoto = 3;
+                            break;
+                            
+                            default:
+
+                                if (is_numeric($stringOriginalName)) { // * Galería.
+                                    $typePhoto = 2;
+
+                                } else { // * Aerea
+                                    $typePhoto = 1;
+
+                                }
+
+                            break;
+                        }
+
+                        $imageInsert = BuildingsImages::create([
+                            'buildingId' => $buildingId,
+                            'imageTypeId' => $typePhoto,
+                            'Image' => $originalName
+                        ]);
+
+                        // * validando que se inserta en la BD...
+                        if ($imageInsert) {
+                            $imagePath = $file->store('buildingsImages', 'public');
+                        }
                     }
                 }
-            }
 
+                // * Agregando las imagenes (de la pestañas de extras [imagenes 360]).
+                if ($request->hasFile('aroundImages')) {
+                    
+                    foreach ($request->file('aroundImages') as $file) {
+                        
+                        $originalName = $file->getClientOriginalName();
+
+                        $imageInsert = BuildingsImages::create([
+                            'buildingId' => $buildingId,
+                            'imageTypeId' => 0,
+                            'Image' => $originalName
+                        ]);
+
+                        // * validando que se inserta en la BD...
+                        if ($imageInsert) {
+                            $imagePath = $file->store('buildingsImages', 'public');
+                        }
+                    }
+                }
+            */
             // * Agregando Contactos a la BD
-            $contactName = $request->contactName;
-            $contactPhone = $request->contactPhone;
-            $contactEmail = $request->contactEmail;
-            $contactComments = $request->contactComments;
+            $contactName = $contactData['contact'];
+            $contactPhone = $contactData['phone'];
+            $contactEmail = $contactData['email'];
+            $contactComments = $contactData['comments'];
 
             BuildingsContacts::insert([
                 'building_id' => $buildingId,
@@ -313,16 +349,16 @@ class BuildingsController
             ]);
 
             // * Insertando buildings Features
-            $loadingDoorId = $request->loadingDoorId;
-            $lighting = $request->lighting;
-            $ventilation = $request->ventilation;
-            $transformerCapacity = $request->transformerCapacity;
-            $constructionType = $request->constructionType;
-            $constructionState = $request->constructionState;
-            $roofSystem = $request->roofSystem;
-            $fireProtectionSystem = $request->fireProtectionSystem;
-            $skylightsSf = $request->skylightsSf;
-            $coverage = $request->coverage;
+            $loadingDoorId = $buildingData['loadingDoorId'];
+            $lighting = $buildingData['lighting'];
+            $ventilation = $buildingData['ventilation'];
+            $transformerCapacity = $buildingData['transformerCapacity'];
+            $constructionType = $buildingData['constructionType'];
+            $constructionState = $buildingData['constructionState'];
+            $roofSystem = $buildingData['roofSystem'];
+            $fireProtectionSystem = $buildingData['fireProtectionSystem'];
+            $skylightsSf = $buildingData['skylightsSf'];
+            $coverage = $buildingData['coverage'];
 
             BuildingsFeatures::insert([
                 'building_id' => $buildingId,
@@ -339,44 +375,45 @@ class BuildingsController
             ]);
 
             // * Buildings Available
-            $availableSf = $request->availableSf;
-            $minimumSpaceSf = $request->minimumSpaceSf;
-            $expansionUpToSf = $request->expansionUpToSf;
-            $dockDoors = $request->dockDoors;
-            $driveInDoor = $request->driveInDoor;
-            $floorThickness = $request->floorThickness;
-            $floorResistance = $request->floorResistance;
-            $truckCourt = $request->truckCourt;
-            $crossdock = $request->crossdock;
-            $sharedTruck = $request->sharedTruck;
-            $buildingDimensions1 = $request->buildingDimensions1;
-            $buildingDimensions2 = $request->buildingDimensions2;
-            $baySize1 = $request->baySize1;
-            $baySize2 = $request->baySize2;
-            $columnsSpacing1 = $request->columnsSpacing1;
-            $columnsSpacing2 = $request->columnsSpacing2;
-            $knockoutsDocks = $request->knockoutsDocks;
-            $parkingSpace = $request->parkingSpace;
-            $availableMonth = $request->availableMonth;
-            $availableYear = $request->availableYear;
-            $minLease = $request->minLease;
-            $maxLease = $request->maxLease;
+            $availableSf = $buildingData['availableSf'];
+            $minimumSpaceSf = $buildingData['minimumSpaceSf'];
+            $expansionUpToSf = $buildingData['expansionUpToSf'];
+            $dockDoors = $buildingData['dockDoors'];
+            $driveInDoor = $buildingData['driveInDoor'];
+            $floorThickness = $buildingData['floorThickness'];
+            $floorResistance = $buildingData['floorResistance'];
+            $truckCourt = $buildingData['truckCourt'];
+            $crossdock = $buildingData['crossdock'];
+            $sharedTruck = $buildingData['sharedTruck'];
+            $buildingDimensions1 = $buildingData['buildingDimensions1'];
+            $buildingDimensions2 = $buildingData['buildingDimensions2'];
+            $baySize1 = $buildingData['baySize1'];
+            $baySize2 = $buildingData['baySize2'];
+            $columnsSpacing1 = $buildingData['columnsSpacing1'];
+            $columnsSpacing2 = $buildingData['columnsSpacing2'];
+            $knockoutsDocks = $buildingData['knockoutsDocks'];
+            $parkingSpace = $buildingData['parkingSpace'];
+            $arrayAvailableMonth = explode("-", $buildingData['availableMonth']);
+            $availableMonth = intval($arrayAvailableMonth[1]);
+            $availableYear = $buildingData['availableYear'];
+            $minLease = $buildingData['minLease'];
+            $maxLease = $buildingData['maxLease'];
 
             // * Buildings Absorption
-            $leaseTermMonth = $request->leaseTermMonth;
-            $askingRateShell = $request->askingRateShell;
-            $closingRate = $request->closingRate;
-            $KVAS = $request->KVAS;
-            $closingQuarter = $request->closingQuarter;
-            $leaseUp = $request->leaseUp;
-            $month = $request->month;
-            $newConstruction = $request->newConstruction;
-            $startingConstruction = $request->startingConstruction;
-            $tenantId = $request->tenantId;
-            $industryId = $request->industryId;
-            $finalUseId = $request->finalUseId;
-            $shelterId = $request->shelterId;
-            $copanyTypeId = $request->copanyTypeId;
+            $leaseTermMonth = $buildingData['leaseTermMonth'];
+            $askingRateShell = $buildingData['askingRateShell'];
+            $closingRate = $buildingData['closingRate'];
+            $KVAS = $buildingData['KVAS'];
+            $closingQuarter = $buildingData['closingQuarter'];
+            $leaseUp = $buildingData['leaseUp'];
+            $month = $buildingData['month'];
+            $newConstruction = $buildingData['newConstruction'];
+            $startingConstruction = $buildingData['startingConstruction'];
+            $tenantId = $buildingData['tenantId'];
+            $industryId = $buildingData['industryId'];
+            $finalUseId = $buildingData['finalUseId'];
+            $shelterId = $buildingData['shelterId'];
+            $copanyTypeId = $buildingData['copanyTypeId'];
 
             switch ($builderStateId) {
                 case 1: // * Availability
@@ -468,7 +505,6 @@ class BuildingsController
                 'icon' => 'error'
             ]);
         }
-        echo "si hay imagenes \n";
         /*
             * 1 => Aerea
             * 2 => Galería
@@ -490,15 +526,11 @@ class BuildingsController
                 break;
                 
                 default:
-
                     if (is_numeric($stringOriginalName)) { // * Galería.
                         $typePhoto = 2;
-
                     } else { // * Aerea
                         $typePhoto = 1;
-
                     }
-
                 break;
             }
 
@@ -513,7 +545,12 @@ class BuildingsController
                 $imagePath = $file->store('buildingsImages', 'public');
             }
         }
-        
+
+        return response()->json([
+            'title' => 'Completed',
+            'text' => "The files has been uploaded.",
+            'icon' => 'success'
+        ]);
     }
 
     /**
