@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ModuleController;
@@ -12,9 +13,10 @@ use App\Http\Controllers\BuildingsController;
 use App\Http\Controllers\UniquePermissionController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\SubMarketController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExcelController;
 use App\Models\BuildingsContacts;
+
+use App\Http\Controllers\MarketAuthController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -121,3 +123,11 @@ Route::post('/employees', [UserController::class, 'newAdminUser']);
 Route::get('/employees', [UserController::class, 'getEmployees']);
 Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
 Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
+
+/*
+ * 
+ * PLATAFORMA MARKETANALYSIS.MX
+ *
+ */
+
+Route::post('/market/login', [MarketAuthController::class, 'login']);
