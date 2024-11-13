@@ -126,7 +126,7 @@ class UserController
             // 'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users',
             'password' => 'required|string|max:255',
-            'userTypeId' => 'required|exists:usertypes,id',
+            'userTypeId' => 'required|exists:admin_cat_user_types,id',
             'status' => 'required|in:Activo,Inactivo',
         ]);
 
