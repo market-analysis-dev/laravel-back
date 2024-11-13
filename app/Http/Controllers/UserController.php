@@ -123,7 +123,7 @@ class UserController
         $request->validate([
             'name' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'middleName' => 'nullable|string|max:255',
+            // 'middleName' => 'nullable|string|max:255',
             'userName' => 'required|string|max:255|unique:users',
             'password' => 'required|string|max:255',
             'userTypeId' => 'required|exists:usertypes,id',
