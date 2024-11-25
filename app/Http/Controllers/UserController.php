@@ -119,48 +119,72 @@ class UserController
 
     public function newAdminUser(Request $request)
     {
-        
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            // 'middleName' => 'nullable|string|max:255',
-            'userName' => 'required|string|max:255|unique:users',
-            'password' => 'required|string|max:255',
-            'userTypeId' => 'required|exists:admin_cat_user_types,id',
-            'status' => 'required|in:Activo,Inactivo',
-        ]);
-
-        $user = User::create($request->all());
-        $userId = $user->id;
-
-        $userTypeId = $request->userTypeId;
-        $modules = explode(",", $request->modules);
-        $markets = explode(",", $request->markets);
-
-        // * Permisos de modulos por usuario.
-        foreach ($modules as $key => $moduleId) {
-
-            AdminModulesPermissions::insert([
-                'userId' => $userId,
-                'moduleId' => $moduleId,
-                'status' => 'Activo'
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'lastName' => 'required|string|max:255',
+                'userName' => 'required|string|max:255|unique:list_users,userName',
+                'password' => 'required|string|max:255',
+                'userTypeId' => 'required|exists:admin_cat_user_types,id',
+                'status' => 'required|in:Activo,Inactivo',
+                'modules' => 'required|string',
+                'markets' => 'required_if:userTypeId,5|string'
             ]);
-        }
 
-        // * Si es de campo, se dan permisos de buildings
-        switch ($userTypeId) {
-            case 5:
-                
-                foreach ($markets as $key => $marketId) {
-                    
-                    AdminBuildingsPermissions::insert([
-                        'userId' => $userId,
-                        'marketId' => $marketId,
-                        'status' => 'Activo'
-                    ]);
+            // Crear el usuario con valores por defecto para campos requeridos
+            $userData = array_merge($request->all(), [
+                'companyId' => 36,  // Valor por defecto
+                'totalScreens' => 0 // Valor por defecto
+            ]);
+
+            // Hashear el password si es necesario
+            if (isset($userData['password'])) {
+                $userData['password'] = Hash::make($userData['password']);
+            }
+
+            $user = User::create($userData);
+            $userId = $user->id;
+
+            // Procesar módulos
+            if ($request->modules) {
+                $modules = explode(",", $request->modules);
+                foreach ($modules as $moduleId) {
+                    if (!empty($moduleId)) {
+                        AdminModulesPermissions::create([
+                            'userId' => $userId,
+                            'moduleId' => $moduleId,
+                            'status' => 'Activo'
+                        ]);
+                    }
                 }
+            }
 
-            break;
+            // Procesar mercados si es usuario de campo (userTypeId = 5)
+            if ($request->userTypeId == 5 && $request->markets) {
+                $markets = explode(",", $request->markets);
+                foreach ($markets as $marketId) {
+                    if (!empty($marketId)) {
+                        AdminBuildingsPermissions::create([
+                            'userId' => $userId,
+                            'marketId' => $marketId,
+                            'status' => 'Activo'
+                        ]);
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario administrativo creado exitosamente',
+                'user' => $user
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el usuario administrativo',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
