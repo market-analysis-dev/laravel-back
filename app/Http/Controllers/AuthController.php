@@ -11,23 +11,39 @@ class AuthController
 {
     public function login(Request $request)
     {
-        $request->validate([
-            'userName' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'userName' => 'required|string',
+                'password' => 'required|string',
+            ]);
 
-        $user = User::where('userName', $request->userName)->first();
+            $user = User::where('userName', $request->userName)
+                        ->where('userTypeId', '!=', 2)
+                        ->where('status', 'Activo')
+                        ->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas o usuario no autorizado'
+                ], 401);
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'user' => $user,
+                'access_token' => $token,
+                'token_type' => 'Bearer'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error en el proceso de login',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        if(!Hash::check($request->password, $user->password)){
-            return response()->json(['message' => 'Invalid password.'], 401);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
 }
