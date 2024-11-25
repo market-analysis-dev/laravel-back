@@ -128,13 +128,13 @@ class UserController
                 'userTypeId' => 'required|exists:admin_cat_user_types,id',
                 'status' => 'required|in:Activo,Inactivo',
                 'modules' => 'required|string',
-                'markets' => 'required_if:userTypeId,5|string'
+                'markets' => 'nullable|string'
             ]);
 
             // Crear el usuario con valores por defecto para campos requeridos
             $userData = array_merge($request->all(), [
-                'companyId' => 36,  // Valor por defecto
-                'totalScreens' => 0 // Valor por defecto
+                'companyId' => 36,
+                'totalScreens' => 0
             ]);
 
             // Hashear el password si es necesario
@@ -160,7 +160,7 @@ class UserController
             }
 
             // Procesar mercados si es usuario de campo (userTypeId = 5)
-            if ($request->userTypeId == 5 && $request->markets) {
+            if ($request->userTypeId == 5 && !empty($request->markets)) {
                 $markets = explode(",", $request->markets);
                 foreach ($markets as $marketId) {
                     if (!empty($marketId)) {
@@ -180,6 +180,7 @@ class UserController
             ], 201);
 
         } catch (\Exception $e) {
+            // \Log::error('Error en newAdminUser: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al crear el usuario administrativo',
