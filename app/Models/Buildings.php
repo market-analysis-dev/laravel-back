@@ -51,4 +51,30 @@ class Buildings extends Model
     // * Definir columnas de marca de tiempo personalizadas
     const CREATED_AT = 'createdAt';
     const UPDATED_AT = 'modifiedAt';
+
+    // Relaciones que deberían estar definidas en el modelo Buildings
+    public function buildingAvailable()
+    {
+        return $this->hasOne(BuildingsAvailable::class, 'building_id');
+    }
+
+    public function buildingAbsorption()
+    {
+        return $this->hasOne(BuildingsAbsorption::class, 'building_id');
+    }
+
+    public function buildingContacts()
+    {
+        return $this->hasOne(BuildingsContacts::class, 'building_id');
+    }
+
+    public function buildingFeatures()
+    {
+        return $this->hasOne(BuildingsFeatures::class, 'building_id');
+    }
+
+    public function buildingImages()
+    {
+        return $this->hasMany(BuildingsImages::class, 'buildingId');
+    }
 }

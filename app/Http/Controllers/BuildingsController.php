@@ -185,120 +185,77 @@ class BuildingsController
         
     public function insertBuilding(Request $request)
     {
-        $buildingDataJSON = $request->input('buildingData');
-        $buildingData = json_decode($buildingDataJSON, true);
-        $contactDataJSON = $request->input('contactData');
-        $contactData = json_decode($contactDataJSON, true);
+        try {
+            $buildingDataJSON = $request->input('buildingData');
+            $buildingData = json_decode($buildingDataJSON, true);
+            $contactDataJSON = $request->input('contactData');
+            $contactData = json_decode($contactDataJSON, true);
 
-        // * Tabla 'buildings'
-        $builderStateId = $buildingData['builderStateId'];
-        $buildingName = $buildingData['buildingName'];
-        $classId = $buildingData['classId'];
-        $buildingSizeSf = $buildingData['buildingSizeSf'];
-        $expansionLand = $buildingData['expansionLand'];
-        $statusId = $buildingData['statusId'];
-        // $industrialParkId = $buildingData['industrialParkId'];
-        $industrialParkId = 166;
-        $typeId = $buildingData['typeId'];
-        $ownerId = $buildingData['ownerId'];
-        $developerId = $buildingData['developerId'];
-        $builderId = $buildingData['builderId'];
-        $regionId = $buildingData['regionId'];
-        $marketId = $buildingData['marketId'];
-        $subMarketId = $buildingData['subMarketId'];
-        $dealId = $buildingData['dealId'];
-        $currencyId = $buildingData['currencyId'];
-        $salePriceUsd = $buildingData['salePriceUsd'];
-        $tenancyId = $buildingData['tenancyId'];
-        $latitud = $buildingData['latitud'];
-        $longitud = $buildingData['longitud'];
-        $yearBuilt = $buildingData['yearBuilt'];
-        $clearHeight = $buildingData['clearHeight'];
-        $officesSpace = $buildingData['officesSpace'];
-        $crane = $buildingData['crane'] == true ? 1 : 0;
-        $hvac = $buildingData['hvac'] == true ? 1 : 0;
-        $railSpur = $buildingData['railSpur'] == true ? 1 : 0;
-        $sprinklers = $buildingData['sprinklers'] == true ? 1 : 0;
-        $office = $buildingData['office'] == true ? 1 : 0;
-        $leed = $buildingData['leed'] == true ? 1 : 0;
-        $totalLand = $buildingData['totalLand'];
-        $hvacProductionArea = $buildingData['hvacProductionArea'];
+            // Validar que los datos JSON se decodificaron correctamente
+            if (!$buildingData || !$contactData) {
+                throw new \Exception('Error al decodificar los datos JSON');
+            }
 
-        $building = Buildings::create([
-            'builder_state_id' => $builderStateId,
-            'building_name' => $buildingName,
-            'class_id' => $classId,
-            'building_size_sf' => $buildingSizeSf,
-            'expansion_land' => $expansionLand,
-            'status_id' => $statusId,
-            'industrial_park_id' => $industrialParkId,
-            'type_id' => $typeId,
-            'owner_id' => $ownerId,
-            'developer_id' => $developerId,
-            'builder_id' => $builderId,
-            'region_id' => $regionId,
-            'market_id' => $marketId,
-            'sub_market_id' => $subMarketId,
-            'deal_id' => $dealId,
-            'currency_id' => $currencyId,
-            'sale_price_usd' => $salePriceUsd,
-            'tenancy_id' => $tenancyId,
-            'latitud' => $latitud,
-            'longitud' => $longitud,
-            'year_built' => $yearBuilt,
-            'clear_height' => $clearHeight,
-            'offices_space' => $officesSpace,
-            'crane' => $crane,
-            'hvac' => $hvac,
-            'rail_spur' => $railSpur,
-            'sprinklers' => $sprinklers,
-            'office' => $office,
-            'leed' => $leed,
-            'total_land' => $totalLand,
-            'hvac_production_area' => $hvacProductionArea,
-            'status' => 'Activo'
-        ]);
+            // Crear el building principal
+            $building = Buildings::create([
+                'builder_state_id' => $buildingData['builderStateId'],
+                'building_name' => $buildingData['buildingName'],
+                'class_id' => $buildingData['classId'],
+                'building_size_sf' => $buildingData['buildingSizeSf'],
+                'expansion_land' => $buildingData['expansionLand'],
+                'status_id' => $buildingData['statusId'],
+                'industrial_park_id' => 166,
+                'type_id' => $buildingData['typeId'],
+                'owner_id' => $buildingData['ownerId'],
+                'developer_id' => $buildingData['developerId'],
+                'builder_id' => $buildingData['builderId'],
+                'region_id' => $buildingData['regionId'],
+                'market_id' => $buildingData['marketId'],
+                'sub_market_id' => $buildingData['subMarketId'],
+                'deal_id' => $buildingData['dealId'],
+                'currency_id' => $buildingData['currencyId'],
+                'sale_price_usd' => $buildingData['salePriceUsd'],
+                'tenancy_id' => $buildingData['tenancyId'],
+                'latitud' => $buildingData['latitud'],
+                'longitud' => $buildingData['longitud'],
+                'year_built' => $buildingData['yearBuilt'],
+                'clear_height' => $buildingData['clearHeight'],
+                'offices_space' => $buildingData['officesSpace'],
+                'crane' => $buildingData['crane'] ? 1 : 0,
+                'hvac' => $buildingData['hvac'] ? 1 : 0,
+                'rail_spur' => $buildingData['railSpur'] ? 1 : 0,
+                'sprinklers' => $buildingData['sprinklers'] ? 1 : 0,
+                'office' => $buildingData['office'] ? 1 : 0,
+                'leed' => $buildingData['leed'] ? 1 : 0,
+                'total_land' => $buildingData['totalLand'],
+                'hvac_production_area' => $buildingData['hvacProductionArea'],
+                'status' => 'Activo'
+            ]);
 
-        if ($building) {
+            if ($building) {
+                $buildingId = $building->id;
 
-            // * Id del building
-            $buildingId = $building->id;
-            /*
-                // * Agregando las imagenes (de la pestaña de imagenes).
+                // Agregar las imágenes (de la pestaña de imagenes)
                 if ($request->hasFile('photoTypes')) {
-
-                    
-                    // * 1 => Aerea
-                    //  * 2 => Galería
-                    //  * 3 => Portada
-                    
-                    
-                    // * Iterando imagenes para poder diferenciar el tipo de imagen.
                     foreach ($request->file('photoTypes') as $file) {
-
-                        // * Inicializando el tipo de imagen a 0 (no definido aún).
+                        // Inicializando el tipo de imagen a 0 (no definido aún)
                         $typePhoto = 0;
 
                         $originalName = $file->getClientOriginalName();
                         $stringOriginalName = pathinfo($originalName, PATHINFO_FILENAME);
 
-                        // * switch para definir el tipo de imagen a través del nombre.
+                        // switch para definir el tipo de imagen a través del nombre
                         switch (strtolower($stringOriginalName)) {
-                            case 'portada': // * Portada.
+                            case 'portada': // Portada
                                 $typePhoto = 3;
-                            break;
-                            
+                                break;
                             default:
-
-                                if (is_numeric($stringOriginalName)) { // * Galería.
+                                if (is_numeric($stringOriginalName)) { // Galería
                                     $typePhoto = 2;
-
-                                } else { // * Aerea
+                                } else { // Aerea
                                     $typePhoto = 1;
-
                                 }
-
-                            break;
+                                break;
                         }
 
                         $imageInsert = BuildingsImages::create([
@@ -307,18 +264,16 @@ class BuildingsController
                             'Image' => $originalName
                         ]);
 
-                        // * validando que se inserta en la BD...
+                        // validando que se inserta en la BD...
                         if ($imageInsert) {
                             $imagePath = $file->store('buildingsImages', 'public');
                         }
                     }
                 }
 
-                // * Agregando las imagenes (de la pestañas de extras [imagenes 360]).
+                // Agregar las imágenes (de la pestañas de extras [imagenes 360])
                 if ($request->hasFile('aroundImages')) {
-                    
                     foreach ($request->file('aroundImages') as $file) {
-                        
                         $originalName = $file->getClientOriginalName();
 
                         $imageInsert = BuildingsImages::create([
@@ -327,168 +282,241 @@ class BuildingsController
                             'Image' => $originalName
                         ]);
 
-                        // * validando que se inserta en la BD...
+                        // validando que se inserta en la BD...
                         if ($imageInsert) {
                             $imagePath = $file->store('buildingsImages', 'public');
                         }
                     }
                 }
-            */
-            // * Agregando Contactos a la BD
-            $contactName = $contactData['contact'];
-            $contactPhone = $contactData['phone'];
-            $contactEmail = $contactData['email'];
-            $contactComments = $contactData['comments'];
 
-            BuildingsContacts::insert([
-                'building_id' => $buildingId,
-                'contact_name' => $contactName,
-                'contact_phone' => $contactPhone,
-                'contact_email' => $contactEmail,
-                'contact_comments' => $contactComments,
-            ]);
+                // Crear el contacto
+                BuildingsContacts::create([
+                    'building_id' => $buildingId,
+                    'contact_name' => $contactData['contact'],
+                    'contact_phone' => $contactData['phone'],
+                    'contact_email' => $contactData['email'],
+                    'contact_comments' => $contactData['comments'],
+                ]);
 
-            // * Insertando buildings Features
-            $loadingDoorId = $buildingData['loadingDoorId'];
-            $lighting = $buildingData['lighting'];
-            $ventilation = $buildingData['ventilation'];
-            $transformerCapacity = $buildingData['transformerCapacity'];
-            $constructionType = $buildingData['constructionType'];
-            $constructionState = $buildingData['constructionState'];
-            $roofSystem = $buildingData['roofSystem'];
-            $fireProtectionSystem = $buildingData['fireProtectionSystem'];
-            $skylightsSf = $buildingData['skylightsSf'];
-            $coverage = $buildingData['coverage'];
+                // Crear features
+                BuildingsFeatures::create([
+                    'building_id' => $buildingId,
+                    'loading_door_id' => $buildingData['loadingDoorId'],
+                    'lighting' => $buildingData['lighting'],
+                    'ventilation' => $buildingData['ventilation'],
+                    'transformer_capacity' => $buildingData['transformerCapacity'],
+                    'construction_type' => $buildingData['constructionType'],
+                    'construction_state' => $buildingData['constructionState'],
+                    'roof_system' => $buildingData['roofSystem'],
+                    'fire_protection_system' => $buildingData['fireProtectionSystem'],
+                    'skylights_sf' => $buildingData['skylightsSf'],
+                    'coverage' => $buildingData['coverage'],
+                ]);
 
-            BuildingsFeatures::insert([
-                'building_id' => $buildingId,
-                'loading_door_id' => $loadingDoorId,
-                'lighting' => $lighting,
-                'ventilation' => $ventilation,
-                'transformer_capacity' => $transformerCapacity,
-                'construction_type' => $constructionType,
-                'construction_state' => $constructionState,
-                'roof_system' => $roofSystem,
-                'fire_protection_system' => $fireProtectionSystem,
-                'skylights_sf' => $skylightsSf,
-                'coverage' => $coverage,
-            ]);
-
-            // * Buildings Available
-            $availableSf = $buildingData['availableSf'];
-            $minimumSpaceSf = $buildingData['minimumSpaceSf'];
-            $expansionUpToSf = $buildingData['expansionUpToSf'];
-            $dockDoors = $buildingData['dockDoors'];
-            $driveInDoor = $buildingData['driveInDoor'];
-            $floorThickness = $buildingData['floorThickness'];
-            $floorResistance = $buildingData['floorResistance'];
-            $truckCourt = $buildingData['truckCourt'];
-            $crossdock = $buildingData['crossdock'];
-            $sharedTruck = $buildingData['sharedTruck'];
-            $buildingDimensions1 = $buildingData['buildingDimensions1'];
-            $buildingDimensions2 = $buildingData['buildingDimensions2'];
-            $baySize1 = $buildingData['baySize1'];
-            $baySize2 = $buildingData['baySize2'];
-            $columnsSpacing1 = $buildingData['columnsSpacing1'];
-            $columnsSpacing2 = $buildingData['columnsSpacing2'];
-            $knockoutsDocks = $buildingData['knockoutsDocks'];
-            $parkingSpace = $buildingData['parkingSpace'];
-            $arrayAvailableMonth = explode("-", $buildingData['availableMonth']);
-            $availableMonth = intval($arrayAvailableMonth[1]);
-            $availableYear = $buildingData['availableYear'];
-            $minLease = $buildingData['minLease'];
-            $maxLease = $buildingData['maxLease'];
-
-            // * Buildings Absorption
-            $leaseTermMonth = $buildingData['leaseTermMonth'];
-            $askingRateShell = $buildingData['askingRateShell'];
-            $closingRate = $buildingData['closingRate'];
-            $KVAS = $buildingData['KVAS'];
-            $closingQuarter = $buildingData['closingQuarter'];
-            $leaseUp = $buildingData['leaseUp'];
-            $month = $buildingData['month'];
-            $newConstruction = $buildingData['newConstruction'];
-            $startingConstruction = $buildingData['startingConstruction'];
-            $tenantId = $buildingData['tenantId'];
-            $industryId = $buildingData['industryId'];
-            $finalUseId = $buildingData['finalUseId'];
-            $shelterId = $buildingData['shelterId'];
-            $copanyTypeId = $buildingData['copanyTypeId'];
-
-            switch ($builderStateId) {
-                case 1: // * Availability
-                    
-                    BuildingsAvailable::insert([
+                // Procesar según el builder state
+                if ($buildingData['builderStateId'] == 1) { // Availability
+                    BuildingsAvailable::create([
                         'building_id' => $buildingId,
-                        'available_sf' => $availableSf,
-                        'minimum_space_sf' => $minimumSpaceSf,
-                        'expansion_up_to_sf' => $expansionUpToSf,
-                        'dock_doors' => $dockDoors,
-                        'drive_in_door' => $driveInDoor,
-                        'floor_thickness' => $floorThickness,
-                        'floor_resistance' => $floorResistance,
-                        'truck_court' => $truckCourt,
-                        'crossdock' => $crossdock,
-                        'shared_truck' => $sharedTruck,
-                        'building_dimensions_1' => $buildingDimensions1,
-                        'building_dimensions_2' => $buildingDimensions2,
-                        'bay_Size_1' => $baySize1,
-                        'bay_Size_2' => $baySize2,
-                        'columns_spacing_1' => $columnsSpacing1,
-                        'columns_spacing_2' => $columnsSpacing2,
-                        'knockouts_docks' => $knockoutsDocks,
-                        'parking_space' => $parkingSpace,
-                        'available_month' => $availableMonth,
-                        'available_year' => $availableYear,
-                        'min_lease' => $minLease,
-                        'max_lease' => $maxLease
+                        'available_sf' => $buildingData['availableSf'],
+                        'minimum_space_sf' => $buildingData['minimumSpaceSf'],
+                        'expansion_up_to_sf' => $buildingData['expansionUpToSf'],
+                        'dock_doors' => $buildingData['dockDoors'],
+                        'drive_in_door' => $buildingData['driveInDoor'],
+                        'floor_thickness' => $buildingData['floorThickness'],
+                        'floor_resistance' => $buildingData['floorResistance'],
+                        'truck_court' => $buildingData['truckCourt'],
+                        'crossdock' => $buildingData['crossdock'] ? 1 : 0,
+                        'shared_truck' => $buildingData['sharedTruck'] ? 1 : 0,
+                        'building_dimensions_1' => $buildingData['buildingDimensions1'],
+                        'building_dimensions_2' => $buildingData['buildingDimensions2'],
+                        'bay_Size_1' => $buildingData['baySize1'],
+                        'bay_Size_2' => $buildingData['baySize2'],
+                        'columns_spacing_1' => $buildingData['columnsSpacing1'],
+                        'columns_spacing_2' => $buildingData['columnsSpacing2'],
+                        'knockouts_docks' => $buildingData['knockoutsDocks'],
+                        'parking_space' => $buildingData['parkingSpace'],
+                        'available_month' => explode("-", $buildingData['availableMonth'])[1],
+                        'available_year' => $buildingData['availableYear'],
+                        'min_lease' => $buildingData['minLease'],
+                        'max_lease' => $buildingData['maxLease']
                     ]);
-                break;
-    
-                case 2: // * Absorption
-
-                    BuildingsAbsorption::insert([
-                        'lease_term_month' => $leaseTermMonth,
-                        'asking_rate_shell' => $askingRateShell,
-                        'closing_rate' => $closingRate,
-                        'KVAS' => $KVAS,
-                        'closing_quarter' => $closingQuarter,
-                        'lease_up' => $leaseUp,
-                        'month' => $month,
-                        'new_construction' => $newConstruction,
-                        'starting_construction' => $startingConstruction,
+                } elseif ($buildingData['builderStateId'] == 2) { // Absorption
+                    BuildingsAbsorption::create([
                         'building_id' => $buildingId,
-                        'tenant_id' => $tenantId,
-                        'industry_id' => $industryId,
-                        'final_use_id' => $finalUseId,
-                        'shelter_id' => $shelterId,
-                        'copany_type_id' => $copanyTypeId,
+                        'lease_term_month' => $buildingData['leaseTermMonth'],
+                        'asking_rate_shell' => $buildingData['askingRateShell'],
+                        'closing_rate' => $buildingData['closingRate'],
+                        'KVAS' => $buildingData['KVAS'],
+                        'closing_quarter' => $buildingData['closingQuarter'],
+                        'lease_up' => $buildingData['leaseUp'],
+                        'month' => $buildingData['month'],
+                        'new_construction' => $buildingData['newConstruction'],
+                        'starting_construction' => $buildingData['startingConstruction'],
+                        'tenant_id' => $buildingData['tenantId'],
+                        'industry_id' => $buildingData['industryId'],
+                        'final_use_id' => $buildingData['finalUseId'],
+                        'shelter_id' => $buildingData['shelterId'],
+                        'copany_type_id' => $buildingData['copanyTypeId'],
                     ]);
-                break;
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Building created successfully',
+                    'building_id' => $buildingId
+                ], 201);
+
+            } else {
+                return response()->json([
+                    'title' => 'Error',
+                    'text' => "It was not possible to add this building",
+                    'icon' => 'error'
+                ]);
             }
 
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
-                'title' => 'Error',
-                'text' => "It was not possible to add this building",
-                'icon' => 'error'
-            ]);
+                'success' => false,
+                'message' => 'Error al crear el building',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function getBuildingById($buildingId)
     {
-        $building = Buildings::find($buildingId);
+        $building = Buildings::with([
+            'buildingAvailable',
+            'buildingAbsorption',
+            'buildingContacts',
+            'buildingFeatures',
+            'buildingImages'
+        ])->find($buildingId);
 
         if (!$building) {
             return response()->json(['message' => 'Building not found'], 404);
         }
 
-        $mergeData = [];
+        // Preparar los datos en el formato que espera el frontend
+        $buildingData = [
+            'builderStateId' => $building->builder_state_id,
+            'buildingName' => $building->building_name,
+            'classId' => $building->class_id,
+            'buildingSizeSf' => $building->building_size_sf,
+            'expansionLand' => $building->expansion_land,
+            'statusId' => $building->status_id,
+            'industrialParkId' => $building->industrial_park_id,
+            'typeId' => $building->type_id,
+            'ownerId' => $building->owner_id,
+            'developerId' => $building->developer_id,
+            'builderId' => $building->builder_id,
+            'regionId' => $building->region_id,
+            'marketId' => $building->market_id,
+            'subMarketId' => $building->sub_market_id,
+            'dealId' => $building->deal_id,
+            'currencyId' => $building->currency_id,
+            'salePriceUsd' => $building->sale_price_usd,
+            'tenancyId' => $building->tenancy_id,
+            'latitud' => $building->latitud,
+            'longitud' => $building->longitud,
+            'yearBuilt' => $building->year_built,
+            'clearHeight' => $building->clear_height,
+            'officesSpace' => $building->offices_space,
+            'crane' => (bool)$building->crane,
+            'hvac' => (bool)$building->hvac,
+            'railSpur' => (bool)$building->rail_spur,
+            'sprinklers' => (bool)$building->sprinklers,
+            'office' => (bool)$building->office,
+            'leed' => (bool)$building->leed,
+            'totalLand' => $building->total_land,
+            'hvacProductionArea' => $building->hvac_production_area,
+        ];
 
-        // * Datos tabla "buildings"
+        // Datos de contacto
+        $contactData = [];
+        if ($building->buildingContacts) {
+            $contactData = [
+                'contact' => $building->buildingContacts->contact_name,
+                'phone' => $building->buildingContacts->contact_phone,
+                'email' => $building->buildingContacts->contact_email,
+                'comments' => $building->buildingContacts->contact_comments,
+            ];
+        }
 
-        return response()->json($building);
+        // Características del edificio
+        if ($building->buildingFeatures) {
+            $features = $building->buildingFeatures;
+            $buildingData['loadingDoorId'] = $features->loading_door_id;
+            $buildingData['lighting'] = $features->lighting;
+            $buildingData['ventilation'] = $features->ventilation;
+            $buildingData['transformerCapacity'] = $features->transformer_capacity;
+            $buildingData['constructionType'] = $features->construction_type;
+            $buildingData['constructionState'] = $features->construction_state;
+            $buildingData['roofSystem'] = $features->roof_system;
+            $buildingData['fireProtectionSystem'] = $features->fire_protection_system;
+            $buildingData['skylightsSf'] = $features->skylights_sf;
+            $buildingData['coverage'] = $features->coverage;
+        }
+
+        // Datos específicos según el estado del edificio
+        if ($building->builder_state_id == 1 && $building->buildingAvailable) {
+            // Datos de disponibilidad
+            $available = $building->buildingAvailable;
+            $buildingData['availableSf'] = $available->available_sf;
+            $buildingData['minimumSpaceSf'] = $available->minimum_space_sf;
+            $buildingData['expansionUpToSf'] = $available->expansion_up_to_sf;
+            $buildingData['dockDoors'] = $available->dock_doors;
+            $buildingData['driveInDoor'] = $available->drive_in_door;
+            $buildingData['floorThickness'] = $available->floor_thickness;
+            $buildingData['floorResistance'] = $available->floor_resistance;
+            $buildingData['truckCourt'] = $available->truck_court;
+            $buildingData['crossdock'] = (bool)$available->crossdock;
+            $buildingData['sharedTruck'] = (bool)$available->shared_truck;
+            $buildingData['buildingDimensions1'] = $available->building_dimensions_1;
+            $buildingData['buildingDimensions2'] = $available->building_dimensions_2;
+            $buildingData['baySize1'] = $available->bay_Size_1;
+            $buildingData['baySize2'] = $available->bay_Size_2;
+            $buildingData['columnsSpacing1'] = $available->columns_spacing_1;
+            $buildingData['columnsSpacing2'] = $available->columns_spacing_2;
+            $buildingData['knockoutsDocks'] = $available->knockouts_docks;
+            $buildingData['parkingSpace'] = $available->parking_space;
+            $buildingData['availableMonth'] = date('Y-m', strtotime("2024-{$available->available_month}-01"));
+            $buildingData['availableYear'] = $available->available_year;
+            $buildingData['minLease'] = $available->min_lease;
+            $buildingData['maxLease'] = $available->max_lease;
+        } elseif ($building->builder_state_id == 2 && $building->buildingAbsorption) {
+            // Datos de absorción
+            $absorption = $building->buildingAbsorption;
+            $buildingData['leaseTermMonth'] = $absorption->lease_term_month;
+            $buildingData['askingRateShell'] = $absorption->asking_rate_shell;
+            $buildingData['closingRate'] = $absorption->closing_rate;
+            $buildingData['KVAS'] = $absorption->KVAS;
+            $buildingData['closingQuarter'] = $absorption->closing_quarter;
+            $buildingData['leaseUp'] = $absorption->lease_up;
+            $buildingData['month'] = $absorption->month;
+            $buildingData['newConstruction'] = $absorption->new_construction;
+            $buildingData['startingConstruction'] = $absorption->starting_construction;
+            $buildingData['tenantId'] = $absorption->tenant_id;
+            $buildingData['industryId'] = $absorption->industry_id;
+            $buildingData['finalUseId'] = $absorption->final_use_id;
+            $buildingData['shelterId'] = $absorption->shelter_id;
+            $buildingData['copanyTypeId'] = $absorption->copany_type_id;
+        }
+
+        // Imágenes del edificio
+        $images = $building->buildingImages->map(function($image) {
+            return [
+                'id' => $image->id,
+                'imageTypeId' => $image->imageTypeId,
+                'image' => $image->Image
+            ];
+        });
+
+        return response()->json([
+            'buildingData' => $buildingData,
+            'contactData' => $contactData,
+            'images' => $images
+        ]);
     }
 
     // * Testing upload files
