@@ -107,6 +107,7 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
 /*
  * API's Buildings
  */
+Route::get('/buildings/table', [BuildingsController::class, 'getBuildingsTable']);
 Route::get('/buildings/data', [BuildingsController::class, 'index']);
 Route::get('/buildings/market/{marketId}', [BuildingsController::class, 'SubMarketByMarket']);
 Route::post('/buildings/parks', [BuildingsController::class, 'getIndustrialParks']);
