@@ -25,7 +25,7 @@ class BuildingsController
     {
         $mainReturn = [];
         // * cboClass
-        // $classData = DB::table('cat_class')->select('id AS value', 'className AS label')->get();
+        $classData = DB::table('cat_class')->select('id AS value', 'className AS label')->get();
         $statusData = DB::table('cat_status')->select('id AS value', 'statusName AS label')->get();
         $industrialParkData = DB::table('cat_industrial_park')->select('id AS value', 'industrialParkName AS label')->get();
         $typeData = DB::table('cat_type')->select('id AS value', 'typeName AS label')->get();
@@ -41,7 +41,7 @@ class BuildingsController
         $tenancyData = DB::table('cat_tenancy')->select('id AS value', 'tenancyName AS label')->get();
         $listingBrokerData = DB::table('cat_listingbroker')->select('id AS value', 'ListingBrokerName AS label')->get();
 
-        // $mainReturn['classData'] = $classData;
+        $mainReturn['classData'] = $classData;
         $mainReturn['statusData'] = $statusData;
         $mainReturn['industrialParkData'] = $industrialParkData;
         $mainReturn['typeData'] = $typeData;
@@ -406,6 +406,66 @@ class BuildingsController
 
     public function getBuildingById($buildingId)
     {
+
+        /*
+         * Primero cargamos todos los catalogos de los combos
+         */
+        $mainReturn = [];
+        $statesData = DB::table('buildings_cat_states')->select('id AS value', 'buildingStateName AS label')->get();
+        $classData = DB::table('cat_class')->select('id AS value', 'className AS label')->get();
+        $statusData = DB::table('cat_status')->select('id AS value', 'statusName AS label')->get();
+        $regionData = DB::table('cat_region')->select('id AS value', 'regionName AS label')->get();
+        $marketData = Market::select('id AS value', 'marketName AS label')->get();
+        // * Ligando Market->SubMarket->IndustrialPark
+        foreach ($marketData as $x => $market) {
+            $marketId = $market->value;
+            $subMarkets = SubMarket::select('id AS value', 'subMarketName AS label')
+                ->where('marketId', $marketId)
+                ->get();
+
+            $marketData[$x]->subMarkets = $subMarkets;
+
+            foreach ($subMarkets as $y => $subMarket) {
+                $subMarketId = $subMarket->value;
+                $industrialParks = IndustrialParks::select('id AS value', 'industrialParkName AS label')
+                    ->where('marketId', $marketId)
+                    ->where('subMarketId', $subMarketId)
+                    ->get();
+
+                $subMarkets[$y]->industrialParks = $industrialParks;
+            }
+        }
+
+        $ownerData = DB::table('cat_owner')->select('id AS value', 'ownerName AS label')->get();
+        $developerData = DB::table('cat_developer')->select('id AS value', 'developerName AS label')->get();        
+        // > QUEDA PENDIENTE HACER LA TABLA PARA builder_id
+        $listingBrokerData = DB::table('cat_listingbroker')->select('id AS value', 'ListingBrokerName AS label')->get();
+        $currencyData = DB::table('cat_currency')->select('id AS value', 'currencyName AS label')->get();
+        $tenancyData = DB::table('cat_tenancy')->select('id AS value', 'tenancyName AS label')->get();
+        $dealData = DB::table('cat_deal')->select('id AS value', 'dealName AS label')->get();
+        $typeData = DB::table('cat_type')->select('id AS value', 'typeName AS label')->get();
+        
+        $loadingDoorData = DB::table('cat_loadingdoor')->select('id AS value', 'LoadingDoorName AS label')->get();
+        
+        
+
+        $mainReturn['statesData'] = $statesData;
+        $mainReturn['classData'] = $classData;
+        $mainReturn['statusData'] = $statusData;
+        $mainReturn['regionData'] = $regionData;
+        $mainReturn['marketData'] = $marketData;
+
+        $mainReturn['ownerData'] = $ownerData;
+        $mainReturn['developerData'] = $developerData;
+        // > QUEDA PENDIENTE HACER LA TABLA PARA builder_id
+        $mainReturn['listingBrokerData'] = $listingBrokerData;
+        $mainReturn['currencyData'] = $currencyData;
+        $mainReturn['tenancyData'] = $tenancyData;
+        $mainReturn['dealData'] = $dealData;
+        $mainReturn['typeData'] = $typeData;
+
+        $mainReturn['loadingDoorData'] = $loadingDoorData;
+
         $building = Buildings::with([
             'buildingAvailable',
             'buildingAbsorption',
@@ -417,38 +477,151 @@ class BuildingsController
         if (!$building) {
             return response()->json(['message' => 'Building not found'], 404);
         }
+        
+        // * Preparando catálogos seleccionados 
+        // * Building State
+        if ($mainReturn['statesData']->contains('value', $building->builder_state_id)) {
+            $index = $mainReturn['statesData']->search(function($item) use ($building) {
+                return $item->value === $building->builder_state_id;
+            });
 
-        // Preparar los datos en el formato que espera el frontend
+            $mainReturn['statesData'][$index]->selected = "true";
+        }
+
+        // * Class
+        if ($mainReturn['classData']->contains('value', $building->class_id)) {
+            $index = $mainReturn['classData']->search(function($item) use ($building) {
+                return $item->value === $building->class_id;
+            });
+
+            $mainReturn['classData'][$index]->selected = "true";
+        }
+
+        // * statusData
+        if ($mainReturn['statusData']->contains('value', $building->status_id)) {
+            $index = $mainReturn['statusData']->search(function($item) use ($building) {
+                return $item->value === $building->status_id;
+            });
+
+            $mainReturn['statusData'][$index]->selected = "true";
+        }
+
+        // * regionData
+        if ($mainReturn['regionData']->contains('value', $building->status_id)) {
+            $index = $mainReturn['regionData']->search(function($item) use ($building) {
+                return $item->value === $building->region_id;
+            });
+
+            $mainReturn['regionData'][$index]->selected = "true";
+        }
+
+        // * Market->SubMarket->IndustrialPark
+        if ($mainReturn['marketData']->contains('value', $building->market_id)) {
+            $indexMarket = $mainReturn['marketData']->search(function($item) use ($building) {
+                return $item->value === $building->market_id;
+            });
+
+            $mainReturn['marketData'][$indexMarket]->selected = "true";
+
+            if ($mainReturn['marketData'][$indexMarket]['subMarkets']->contains('value', $building->sub_market_id)) {
+                $indexSubMarket = $mainReturn['marketData'][$indexMarket]['subMarkets']->search(function($item) use ($building) {
+                    return $item->value === $building->sub_market_id;
+                });
+
+                $mainReturn['marketData'][$indexMarket]['subMarkets'][$indexSubMarket]->selected = "true";
+
+                if ($mainReturn['marketData'][$indexMarket]['subMarkets'][$indexSubMarket]['industrialParks']->contains('value', $building->industrial_park_id)) {
+                    $indexIndustrialPark = $mainReturn['marketData'][$indexMarket]['subMarkets'][$indexSubMarket]['industrialParks']->search(function($item) use ($building) {
+                        return $item->value === $building->industrial_park_id;
+                    });
+
+                    $mainReturn['marketData'][$indexMarket]['subMarkets'][$indexSubMarket]['industrialParks'][$indexIndustrialPark]->selected = "true";
+                }
+            }
+        }
+        
+        // * Owners
+        if ($mainReturn['ownerData']->contains('value', $building->owner_id)) {
+            $index = $mainReturn['ownerData']->search(function($item) use ($building) {
+                return $item->value === $building->owner_id;
+            });
+
+            $mainReturn['ownerData'][$index]->selected = "true";
+        }
+        
+        // * Developers
+        if ($mainReturn['developerData']->contains('value', $building->developer_id)) {
+            $index = $mainReturn['developerData']->search(function($item) use ($building) {
+                return $item->value === $building->developer_id;
+            });
+
+            $mainReturn['developerData'][$index]->selected = "true";
+        }
+        
+        // > PENDIENTE HACER LA TABLA PARA builder_id
+        // > PENDIENTE AGREGAR broker_id en la tabla buildings
+        
+        // * Currency
+        if ($mainReturn['currencyData']->contains('value', $building->currency_id)) {
+            $index = $mainReturn['currencyData']->search(function($item) use ($building) {
+                return $item->value === $building->currency_id;
+            });
+
+            $mainReturn['currencyData'][$index]->selected = "true";
+        }
+        
+        // * Tenancy
+        if ($mainReturn['tenancyData']->contains('value', $building->tenancy_id)) {
+            $index = $mainReturn['tenancyData']->search(function($item) use ($building) {
+                return $item->value === $building->tenancy_id;
+            });
+
+            $mainReturn['tenancyData'][$index]->selected = "true";
+        }
+        
+        // * Deal
+        if ($mainReturn['dealData']->contains('value', $building->deal_id)) {
+            $index = $mainReturn['dealData']->search(function($item) use ($building) {
+                return $item->value === $building->deal_id;
+            });
+
+            $mainReturn['dealData'][$index]->selected = "true";
+        }
+        
+        // * Type
+        if ($mainReturn['typeData']->contains('value', $building->type_id)) {
+            $index = $mainReturn['typeData']->search(function($item) use ($building) {
+                return $item->value === $building->type_id;
+            });
+
+            $mainReturn['typeData'][$index]->selected = "true";
+        }
+
+        // * Preparar los datos en el formato que espera el frontend
         $buildingData = [
-            'builderStateId' => $building->builder_state_id,
             'buildingName' => $building->building_name,
-            'classId' => $building->class_id,
-            'buildingSizeSf' => $building->building_size_sf,
+            'smSf' => $building->sf_sm == 0 ? false : true,
+            'buildingSizeSf' => $building->sf_sm == 0 ? $building->building_size_sf : $building->building_size_sf / 10.764,
             'expansionLand' => $building->expansion_land,
-            'statusId' => $building->status_id,
-            'industrialParkId' => $building->industrial_park_id,
-            'typeId' => $building->type_id,
-            'ownerId' => $building->owner_id,
-            'developerId' => $building->developer_id,
+            // 'typeId' => $building->type_id,
+            // 'ownerId' => $building->owner_id,
+            // 'developerId' => $building->developer_id,
             'builderId' => $building->builder_id,
-            'regionId' => $building->region_id,
-            'marketId' => $building->market_id,
-            'subMarketId' => $building->sub_market_id,
-            'dealId' => $building->deal_id,
-            'currencyId' => $building->currency_id,
+            // 'dealId' => $building->deal_id,
+            // 'currencyId' => $building->currency_id,
             'salePriceUsd' => $building->sale_price_usd,
-            'tenancyId' => $building->tenancy_id,
+            // 'tenancyId' => $building->tenancy_id,
             'latitud' => $building->latitud,
             'longitud' => $building->longitud,
             'yearBuilt' => $building->year_built,
             'clearHeight' => $building->clear_height,
             'officesSpace' => $building->offices_space,
-            'crane' => (bool)$building->crane,
-            'hvac' => (bool)$building->hvac,
-            'railSpur' => (bool)$building->rail_spur,
-            'sprinklers' => (bool)$building->sprinklers,
-            'office' => (bool)$building->office,
-            'leed' => (bool)$building->leed,
+            'crane' => (bool)$building->crane == 0 ? false : true,
+            'hvac' => (bool)$building->hvac == 0 ? false : true,
+            'railSpur' => (bool)$building->rail_spur == 0 ? false : true,
+            'sprinklers' => (bool)$building->sprinklers == 0 ? false : true,
+            'office' => (bool)$building->office == 0 ? false : true,
+            'leed' => (bool)$building->leed == 0 ? false : true,
             'totalLand' => $building->total_land,
             'hvacProductionArea' => $building->hvac_production_area,
         ];
@@ -483,9 +656,9 @@ class BuildingsController
         if ($building->builder_state_id == 1 && $building->buildingAvailable) {
             // Datos de disponibilidad
             $available = $building->buildingAvailable;
-            $buildingData['availableSf'] = $available->available_sf;
-            $buildingData['minimumSpaceSf'] = $available->minimum_space_sf;
-            $buildingData['expansionUpToSf'] = $available->expansion_up_to_sf;
+            $buildingData['availableSf'] = $building->sf_sm == 0 ? $available->available_sf : $available->available_sf / 10.764;
+            $buildingData['minimumSpaceSf'] = $building->sf_sm == 0 ? $available->minimum_space_sf : $available->minimum_space_sf / 10.764;
+            $buildingData['expansionUpToSf'] = $building->sf_sm == 0 ? $available->expansion_up_to_sf : $available->expansion_up_to_sf / 10.764;
             $buildingData['dockDoors'] = $available->dock_doors;
             $buildingData['driveInDoor'] = $available->drive_in_door;
             $buildingData['floorThickness'] = $available->floor_thickness;
@@ -534,6 +707,7 @@ class BuildingsController
         });
 
         return response()->json([
+            'mainReturn' => $mainReturn,
             'buildingData' => $buildingData,
             'contactData' => $contactData,
             'images' => $images
