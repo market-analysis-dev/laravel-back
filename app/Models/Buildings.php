@@ -12,7 +12,9 @@ class Buildings extends Model
     protected $table = 'buildings';
 
     protected $fillable = [
+        'vo_bo',
         'builder_state_id',
+        'sf_sm',
         'building_name',
         'class_id',
         'building_size_sf',

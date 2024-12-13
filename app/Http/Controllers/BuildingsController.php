@@ -75,6 +75,7 @@ class BuildingsController
         ->leftJoin('cat_submarkets', 'buildings.sub_market_id', '=', 'cat_submarkets.id')
         ->leftJoin('cat_industrial_park', 'buildings.industrial_park_id', '=', 'cat_industrial_park.id')
         ->leftJoin('buildings_cat_states', 'buildings.builder_state_id', '=', 'buildings_cat_states.id')
+        ->where('vo_bo', '0')
         ->where('buildings.status', 'Activo')
         ->get();
 
