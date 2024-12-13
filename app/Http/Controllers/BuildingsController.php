@@ -149,6 +149,10 @@ class BuildingsController
                 $columnName = 'ownerName';
             break;
 
+            case 'cat_broker':
+                $columnName = 'brokerName';
+            break;
+
             default:
                 return response()->json(['message' => 'Table Name Error']);
             break;
@@ -162,70 +166,50 @@ class BuildingsController
         
     }
 
-    public function SubMarketByMarket(Request $request)
+    public function deleteRegister(Request $request)
     {
-        $marketId = $request->marketId;
+        $id = $request->id;
+        $tableName = $request->tableName;
 
-        $subMarkets = SubMarket::select('id as value', 'subMarketName as label')
-            ->where('marketId', $marketId)
-            ->where('status', 'Activo')
-            ->get();
-
-        return response()->json($subMarkets);
+        DB::table($tableName)->where('id', $id)->delete();
     }
 
-    public function getIndustrialParks(Request $request)
-    {
-        $marketId = $request->marketId;
-        $subMarketId = $request->subMarketId;
+    /*
+        public function SubMarketByMarket(Request $request)
+        {
+            $marketId = $request->marketId;
 
-        if ($subMarketId == "") {
-
-            $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
+            $subMarkets = SubMarket::select('id as value', 'subMarketName as label')
                 ->where('marketId', $marketId)
+                ->where('status', 'Activo')
                 ->get();
 
-        } else {
-
-            $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
-                ->where('marketId', $marketId)
-                ->where('subMarketId', $subMarketId)
-                ->get();
+            return response()->json($subMarkets);
         }
 
-        return response()->json($industrialParks);
-    }
+        public function getIndustrialParks(Request $request)
+        {
+            $marketId = $request->marketId;
+            $subMarketId = $request->subMarketId;
 
-    public function testing(Request $request)
-    {
-        // Obtenemos el JSON enviado desde el front-end
-        $buildingDataJSON = $request->input('buildingData');
+            if ($subMarketId == "") {
 
-        // Decodificamos el JSON en un array asociativo de PHP
-        $buildingData = json_decode($buildingDataJSON, true);
+                $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
+                    ->where('marketId', $marketId)
+                    ->get();
 
-        return response()->json($buildingData);
-        exit;
+            } else {
 
-        // Verificamos si hubo algún error en la decodificación
-        if (json_last_error() === JSON_ERROR_NONE) {
-            // Iteramos sobre el array para manipular los datos
-
-            // echo $buildingData['builderStateId'] . "\n";
-
-            foreach ($buildingData as $key => $value) {
-                // Aquí puedes manipular las variables como desees
-                // Por ejemplo, podrías guardarlas en la base de datos o imprimirlas
-                // echo "Clave: $key, Valor: $value\n";
+                $industrialParks = IndustrialParks::select('id as value', 'industrialParkName as label')
+                    ->where('marketId', $marketId)
+                    ->where('subMarketId', $subMarketId)
+                    ->get();
             }
-            
-            // Retornamos la respuesta
-            // return response()->json($buildingData); // Devuelve los datos manipulados si es necesario
-        } else {
-            return response()->json(['error' => 'Error al decodificar JSON: ' . json_last_error_msg()], 400);
+
+            return response()->json($industrialParks);
         }
-    }
-        
+    */
+    
     public function insertBuilding(Request $request)
     {
         try {
@@ -459,18 +443,16 @@ class BuildingsController
         }
 
         $ownerData = DB::table('cat_owner')->select('id AS value', 'ownerName AS label')->get();
-        $developerData = DB::table('cat_developer')->select('id AS value', 'developerName AS label')->get();        
-        // > QUEDA PENDIENTE HACER LA TABLA PARA builder_id
+        $developerData = DB::table('cat_developer')->select('id AS value', 'developerName AS label')->get();
+        $builderData = DB::table('cat_builder')->select('id AS value', 'builderName AS label')->get();
+        $brokerData = DB::table('cat_broker')->select('id AS value', 'brokerName AS label')->get();
         $listingBrokerData = DB::table('cat_listingbroker')->select('id AS value', 'ListingBrokerName AS label')->get();
         $currencyData = DB::table('cat_currency')->select('id AS value', 'currencyName AS label')->get();
         $tenancyData = DB::table('cat_tenancy')->select('id AS value', 'tenancyName AS label')->get();
         $dealData = DB::table('cat_deal')->select('id AS value', 'dealName AS label')->get();
         $typeData = DB::table('cat_type')->select('id AS value', 'typeName AS label')->get();
-        
         $loadingDoorData = DB::table('cat_loadingdoor')->select('id AS value', 'LoadingDoorName AS label')->get();
         
-        
-
         $mainReturn['statesData'] = $statesData;
         $mainReturn['classData'] = $classData;
         $mainReturn['statusData'] = $statusData;
@@ -479,7 +461,8 @@ class BuildingsController
 
         $mainReturn['ownerData'] = $ownerData;
         $mainReturn['developerData'] = $developerData;
-        // > QUEDA PENDIENTE HACER LA TABLA PARA builder_id
+        $mainReturn['builderData'] = $builderData;
+        $mainReturn['brokerData'] = $brokerData;
         $mainReturn['listingBrokerData'] = $listingBrokerData;
         $mainReturn['currencyData'] = $currencyData;
         $mainReturn['tenancyData'] = $tenancyData;
@@ -487,6 +470,13 @@ class BuildingsController
         $mainReturn['typeData'] = $typeData;
 
         $mainReturn['loadingDoorData'] = $loadingDoorData;
+
+        // * En caso de que sea un nuevo registro, se retorna el array con los catálogos
+        if ($buildingId == 0) {
+            return response()->json([
+                'mainReturn' => $mainReturn
+            ]);
+        }
 
         $building = Buildings::with([
             'buildingAvailable',
@@ -580,8 +570,23 @@ class BuildingsController
             $mainReturn['developerData'][$index]->selected = "true";
         }
         
-        // > PENDIENTE HACER LA TABLA PARA builder_id
-        // > PENDIENTE AGREGAR broker_id en la tabla buildings
+        // * Builder
+        if ($mainReturn['builderData']->contains('value', $building->builder_id)) {
+            $index = $mainReturn['builderData']->search(function($item) use ($building) {
+                return $item->value === $building->builder_id;
+            });
+
+            $mainReturn['builderData'][$index]->selected = "true";
+        }
+        
+        // * Broker
+        if ($mainReturn['brokerData']->contains('value', $building->broker_id)) {
+            $index = $mainReturn['brokerData']->search(function($item) use ($building) {
+                return $item->value === $building->broker_id;
+            });
+
+            $mainReturn['brokerData'][$index]->selected = "true";
+        }
         
         // * Currency
         if ($mainReturn['currencyData']->contains('value', $building->currency_id)) {
@@ -625,14 +630,7 @@ class BuildingsController
             'smSf' => $building->sf_sm == 0 ? false : true,
             'buildingSizeSf' => $building->sf_sm == 0 ? $building->building_size_sf : $building->building_size_sf / 10.764,
             'expansionLand' => $building->expansion_land,
-            // 'typeId' => $building->type_id,
-            // 'ownerId' => $building->owner_id,
-            // 'developerId' => $building->developer_id,
-            'builderId' => $building->builder_id,
-            // 'dealId' => $building->deal_id,
-            // 'currencyId' => $building->currency_id,
             'salePriceUsd' => $building->sale_price_usd,
-            // 'tenancyId' => $building->tenancy_id,
             'latitud' => $building->latitud,
             'longitud' => $building->longitud,
             'yearBuilt' => $building->year_built,
@@ -700,6 +698,7 @@ class BuildingsController
             $buildingData['availableYear'] = $available->available_year;
             $buildingData['minLease'] = $available->min_lease;
             $buildingData['maxLease'] = $available->max_lease;
+
         } elseif ($building->builder_state_id == 2 && $building->buildingAbsorption) {
             // Datos de absorción
             $absorption = $building->buildingAbsorption;
@@ -796,53 +795,5 @@ class BuildingsController
             'text' => "The files has been uploaded.",
             'icon' => 'success'
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

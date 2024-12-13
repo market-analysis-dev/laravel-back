@@ -24,6 +24,7 @@ class Buildings extends Model
         'type_id',
         'owner_id',
         'developer_id',
+        'broker_id',
         'builder_id',
         'region_id',
         'market_id',
