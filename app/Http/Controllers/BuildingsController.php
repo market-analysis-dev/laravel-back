@@ -62,6 +62,7 @@ class BuildingsController
         }
     */
 
+    // * Obteniendo todos los edificios
     public function getBuildingsTable()
     {
         $buildings = Buildings::select(
@@ -83,6 +84,7 @@ class BuildingsController
         return response()->json($buildings);
     }
 
+    // * Obteniendo todos los edificios pendientes de aprobar
     public function getBuildingsTableVoBo()
     {
         $buildings = Buildings::select(
@@ -338,7 +340,7 @@ class BuildingsController
             'construction_state' => $data['constructionState'],
             'roof_system' => $data['roofSystem'],
             'fire_protection_system' => $data['fireProtectionSystem'],
-            'skylights_sf' => $data['skylightsSf'],
+            'skylights_sf' => $data['sfSm'] == 0 ? $data['skylightsSf'] : $data['skylightsSf'] * 10.764,
             'coverage' => $data['coverage'],
         ]);
     }
@@ -356,9 +358,9 @@ class BuildingsController
     {
         BuildingsAvailable::create([
             'building_id' => $buildingId,
-            'available_sf' => $data['availableSf'],
-            'minimum_space_sf' => $data['minimumSpaceSf'],
-            'expansion_up_to_sf' => $data['expansionUpToSf'],
+            'available_sf' => $data['sfSm'] == 0 ? $data['availableSf'] : $data['availableSf'] * 10.764,
+            'minimum_space_sf' => $data['sfSm'] == 0 ? $data['minimumSpaceSf'] : $data['minimumSpaceSf'] * 10.764,
+            'expansion_up_to_sf' => $data['sfSm'] == 0 ? $data['expansionUpToSf'] : $data['expansionUpToSf'] * 10.764,
             'dock_doors' => $data['dockDoors'],
             'drive_in_door' => $data['driveInDoor'],
             'floor_thickness' => $data['floorThickness'],
@@ -433,7 +435,7 @@ class BuildingsController
             'sf_sm' => $data['sfSm'],
             'building_name' => $data['buildingName'],
             'class_id' => $data['classId'],
-            'building_size_sf' => $data['buildingSizeSf'],
+            'building_size_sf' => $data['sfSm'] == 0 ? $data['buildingSizeSf'] : $data['buildingSizeSf'] * 10.764,
             'expansion_land' => $data['expansionLand'],
             'status_id' => $data['statusId'],
             'industrial_park_id' => $data['industrialParkId'],
@@ -576,165 +578,165 @@ class BuildingsController
             'copanyTypeId' => $buildingAbsorption->copany_type_id
         ];
     }
-    
+
     private function loadCatalogs()
-        {
-            $catalogs = [
-                'statesData' => ['buildings_cat_states', 'buildingStateName'],
-                'classData' => ['cat_class', 'className'],
-                'statusData' => ['cat_status', 'statusName'],
-                'regionData' => ['cat_region', 'regionName'],
-                'ownerData' => ['cat_owner', 'ownerName'],
-                'developerData' => ['cat_developer', 'developerName'],
-                'builderData' => ['cat_builder', 'builderName'],
-                'brokerData' => ['cat_broker', 'brokerName'],
-                'listingBrokerData' => ['cat_listingbroker', 'ListingBrokerName'],
-                'currencyData' => ['cat_currency', 'currencyName'],
-                'tenancyData' => ['cat_tenancy', 'tenancyName'],
-                'dealData' => ['cat_deal', 'dealName'],
-                'typeData' => ['cat_type', 'typeName'],
-                'loadingDoorData' => ['cat_loadingdoor', 'LoadingDoorName'],
-            ];
-    
-            $mainReturn = [];
-            foreach ($catalogs as $key => $value) {
-                $mainReturn[$key] = DB::table($value[0])
-                    ->select('id AS value', $value[1] . ' AS label')
-                    ->get();
-            }
-    
-            // Handle Market->SubMarket->IndustrialPark relationship separately
-            $mainReturn['marketData'] = $this->getMarketHierarchy();
-    
-            return $mainReturn;
+    {
+        $catalogs = [
+            'statesData' => ['buildings_cat_states', 'buildingStateName'],
+            'classData' => ['cat_class', 'className'],
+            'statusData' => ['cat_status', 'statusName'],
+            'regionData' => ['cat_region', 'regionName'],
+            'ownerData' => ['cat_owner', 'ownerName'],
+            'developerData' => ['cat_developer', 'developerName'],
+            'builderData' => ['cat_builder', 'builderName'],
+            'brokerData' => ['cat_broker', 'brokerName'],
+            'listingBrokerData' => ['cat_listingbroker', 'ListingBrokerName'],
+            'currencyData' => ['cat_currency', 'currencyName'],
+            'tenancyData' => ['cat_tenancy', 'tenancyName'],
+            'dealData' => ['cat_deal', 'dealName'],
+            'typeData' => ['cat_type', 'typeName'],
+            'loadingDoorData' => ['cat_loadingdoor', 'LoadingDoorName'],
+        ];
+
+        $mainReturn = [];
+        foreach ($catalogs as $key => $value) {
+            $mainReturn[$key] = DB::table($value[0])
+                ->select('id AS value', $value[1] . ' AS label')
+                ->get();
         }
+
+        // Handle Market->SubMarket->IndustrialPark relationship separately
+        $mainReturn['marketData'] = $this->getMarketHierarchy();
+
+        return $mainReturn;
+    }
     
-        private function getMarketHierarchy()
-        {
-            $marketData = Market::select('id AS value', 'marketName AS label')->get();
-            
-            foreach ($marketData as $market) {
-                $subMarkets = SubMarket::select('id AS value', 'subMarketName AS label')
+    private function getMarketHierarchy()
+    {
+        $marketData = Market::select('id AS value', 'marketName AS label')->get();
+        
+        foreach ($marketData as $market) {
+            $subMarkets = SubMarket::select('id AS value', 'subMarketName AS label')
+                ->where('marketId', $market->value)
+                ->get();
+
+            foreach ($subMarkets as $subMarket) {
+                $subMarket->industrialParks = IndustrialParks::select('id AS value', 'industrialParkName AS label')
                     ->where('marketId', $market->value)
+                    ->where('subMarketId', $subMarket->value)
                     ->get();
-    
-                foreach ($subMarkets as $subMarket) {
-                    $subMarket->industrialParks = IndustrialParks::select('id AS value', 'industrialParkName AS label')
-                        ->where('marketId', $market->value)
-                        ->where('subMarketId', $subMarket->value)
-                        ->get();
-                }
-    
-                $market->subMarkets = $subMarkets;
             }
-    
-            return $marketData;
+
+            $market->subMarkets = $subMarkets;
         }
+
+        return $marketData;
+    }
     
-        private function getBuildingWithRelations($buildingId)
-        {
-            return Buildings::with([
-                'buildingAvailable',
-                'buildingAbsorption',
-                'buildingContacts',
-                'buildingFeatures',
-                'buildingImages'
-            ])->find($buildingId);
+    private function getBuildingWithRelations($buildingId)
+    {
+        return Buildings::with([
+            'buildingAvailable',
+            'buildingAbsorption',
+            'buildingContacts',
+            'buildingFeatures',
+            'buildingImages'
+        ])->find($buildingId);
+    }
+    
+    private function setSelectedCatalogValues(&$mainReturn, $building)
+    {
+        $catalogMappings = [
+            'statesData' => 'builder_state_id',
+            'classData' => 'class_id',
+            'statusData' => 'status_id',
+            'regionData' => 'region_id',
+            'ownerData' => 'owner_id',
+            'developerData' => 'developer_id',
+            'builderData' => 'builder_id',
+            'brokerData' => 'broker_id',
+            'currencyData' => 'currency_id',
+            'tenancyData' => 'tenancy_id',
+            'dealData' => 'deal_id',
+            'typeData' => 'type_id'
+        ];
+
+        foreach ($catalogMappings as $catalog => $field) {
+            $this->markSelectedValue($mainReturn[$catalog], $building->$field);
         }
-    
-        private function setSelectedCatalogValues(&$mainReturn, $building)
-        {
-            $catalogMappings = [
-                'statesData' => 'builder_state_id',
-                'classData' => 'class_id',
-                'statusData' => 'status_id',
-                'regionData' => 'region_id',
-                'ownerData' => 'owner_id',
-                'developerData' => 'developer_id',
-                'builderData' => 'builder_id',
-                'brokerData' => 'broker_id',
-                'currencyData' => 'currency_id',
-                'tenancyData' => 'tenancy_id',
-                'dealData' => 'deal_id',
-                'typeData' => 'type_id'
-            ];
-    
-            foreach ($catalogMappings as $catalog => $field) {
-                $this->markSelectedValue($mainReturn[$catalog], $building->$field);
-            }
-    
-            $this->setMarketHierarchySelection($mainReturn['marketData'], $building);
+
+        $this->setMarketHierarchySelection($mainReturn['marketData'], $building);
+    }
+
+    private function markSelectedValue(&$catalog, $selectedId)
+    {
+        if ($catalog->contains('value', $selectedId)) {
+            $index = $catalog->search(function($item) use ($selectedId) {
+                return $item->value === $selectedId;
+            });
+            $catalog[$index]->selected = "true";
         }
+    }
     
-        private function markSelectedValue(&$catalog, $selectedId)
-        {
-            if ($catalog->contains('value', $selectedId)) {
-                $index = $catalog->search(function($item) use ($selectedId) {
-                    return $item->value === $selectedId;
-                });
-                $catalog[$index]->selected = "true";
-            }
-        }
-    
-        private function setMarketHierarchySelection(&$marketData, $building)
-        {
-            foreach ($marketData as $market) {
-                if ($market->value === $building->market_id) {
-                    $market->selected = "true";
-                    
-                    foreach ($market->subMarkets as $subMarket) {
-                        if ($subMarket->value === $building->sub_market_id) {
-                            $subMarket->selected = "true";
-                            
-                            foreach ($subMarket->industrialParks as $park) {
-                                if ($park->value === $building->industrial_park_id) {
-                                    $park->selected = "true";
-                                }
+    private function setMarketHierarchySelection(&$marketData, $building)
+    {
+        foreach ($marketData as $market) {
+            if ($market->value === $building->market_id) {
+                $market->selected = "true";
+                
+                foreach ($market->subMarkets as $subMarket) {
+                    if ($subMarket->value === $building->sub_market_id) {
+                        $subMarket->selected = "true";
+                        
+                        foreach ($subMarket->industrialParks as $park) {
+                            if ($park->value === $building->industrial_park_id) {
+                                $park->selected = "true";
                             }
                         }
                     }
                 }
             }
         }
-    
-        private function prepareBuildingResponseData($building)
-        {
-            $data = [
-                'buildingName' => $building->building_name,
-                'smSf' => $building->sf_sm == 0 ? false : true,
-                'buildingSizeSf' => $building->sf_sm == 0 ? 
-                    $building->building_size_sf : 
-                    $building->building_size_sf / 10.764,
-                // Add other basic building fields...
-            ];
-    
-            if ($building->buildingFeatures) {
-                $data = array_merge($data, [
-                    'loadingDoorId' => $building->buildingFeatures->loading_door_id,
-                    'lighting' => $building->buildingFeatures->lighting,
-                    // Add other feature fields...
-                ]);
-            }
-    
-            // Add state-specific data
-            if ($building->builder_state_id == 1 && $building->buildingAvailable) {
-                $data = array_merge($data, $this->prepareAvailableData($building->buildingAvailable));
-            } elseif ($building->builder_state_id == 2 && $building->buildingAbsorption) {
-                $data = array_merge($data, $this->prepareAbsorptionData($building->buildingAbsorption));
-            }
-    
-            return $data;
-        }
-    
-        private function prepareImagesData($images)
-        {
-            return $images->map(function($image) {
-                return [
-                    'id' => $image->id,
-                    'imageTypeId' => $image->imageTypeId,
-                    'image' => $image->Image
-                ];
-            });
-}
-
     }
+    
+    private function prepareBuildingResponseData($building)
+    {
+        $data = [
+            'buildingName' => $building->building_name,
+            'smSf' => $building->sf_sm == 0 ? false : true,
+            'buildingSizeSf' => $building->sf_sm == 0 ? 
+                $building->building_size_sf : 
+                $building->building_size_sf / 10.764,
+
+        ];
+
+        if ($building->buildingFeatures) {
+            $data = array_merge($data, [
+                'loadingDoorId' => $building->buildingFeatures->loading_door_id,
+                'lighting' => $building->buildingFeatures->lighting,
+                // Add other feature fields...
+            ]);
+        }
+
+        // Add state-specific data
+        if ($building->builder_state_id == 1 && $building->buildingAvailable) {
+            $data = array_merge($data, $this->prepareAvailableData($building->buildingAvailable));
+        } elseif ($building->builder_state_id == 2 && $building->buildingAbsorption) {
+            $data = array_merge($data, $this->prepareAbsorptionData($building->buildingAbsorption));
+        }
+
+        return $data;
+    }
+    
+    private function prepareImagesData($images)
+    {
+        return $images->map(function($image) {
+            return [
+                'id' => $image->id,
+                'imageTypeId' => $image->imageTypeId,
+                'image' => $image->Image
+            ];
+        });
+    }
+
+}
