@@ -110,11 +110,10 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
 Route::get('/buildings/data', [BuildingsController::class, 'index']);
 Route::get('/buildings/table', [BuildingsController::class, 'getBuildingsTable']);
 Route::get('/buildings/table/vo-bo', [BuildingsController::class, 'getBuildingsTableVoBo']);
-// // Route::get('/buildings/market/{marketId}', [BuildingsController::class, 'SubMarketByMarket']); // ! Quitar funcion
-// // Route::post('/buildings/parks', [BuildingsController::class, 'getIndustrialParks']); // ! Quitar funcion
 Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
 Route::post('/buildings/delete/{tableName}', [BuildingsController::class, 'deleteRegister']);
 Route::post('/buildings', [BuildingsController::class, 'insertBuilding']);
+Route::post('/buildings/update/{buildingId}', [BuildingsController::class, 'updateBuilding']);
 Route::get('/buildings/{buildingId}', [BuildingsController::class, 'getBuildingById']);
 Route::post('/buildings/docs/{buildingId}', [BuildingsController::class, 'uploadFiles']);
 
