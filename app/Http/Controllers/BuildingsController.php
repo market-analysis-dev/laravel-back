@@ -176,310 +176,243 @@ class BuildingsController
 
     public function insertBuilding(Request $request)
     {
-        
         try {
-            $buildingDataJSON = $request->input('buildingData');
-            $buildingData = json_decode($buildingDataJSON, true);
-            $contactDataJSON = $request->input('contactData');
-            $contactData = json_decode($contactDataJSON, true); 
+            $buildingData = $this->decodeJsonData($request->input('buildingData'));
+            $contactData = $this->decodeJsonData($request->input('contactData')); 
 
-            // Validar que los datos JSON se decodificaron correctamente
-            // ! Creo que se tendrá que quitar el if
-            if (!$buildingData || !$contactData) {
-                throw new \Exception('Error al decodificar los datos JSON');
-            }
-
-            // Crear el building principal
-            $building = Buildings::create([
-                'vo_bo' => 0,
-                'builder_state_id' => $buildingData['builderStateId'],
-                'sf_sm' => $buildingData['sfSm'],
-                'building_name' => $buildingData['buildingName'],
-                'class_id' => $buildingData['classId'],
-                'building_size_sf' => $buildingData['buildingSizeSf'],
-                'expansion_land' => $buildingData['expansionLand'],
-                'status_id' => $buildingData['statusId'],
-                'industrial_park_id' => $buildingData['industrialParkId'],
-                'type_id' => $buildingData['typeId'],
-                'owner_id' => $buildingData['ownerId'],
-                'developer_id' => $buildingData['developerId'],
-                'broker_id' => $buildingData['brokerId'],
-                'builder_id' => $buildingData['builderId'],
-                'region_id' => $buildingData['regionId'],
-                'market_id' => $buildingData['marketId'],
-                'sub_market_id' => $buildingData['subMarketId'],
-                'deal_id' => $buildingData['dealId'],
-                'currency_id' => $buildingData['currencyId'],
-                'sale_price_usd' => $buildingData['salePriceUsd'],
-                'tenancy_id' => $buildingData['tenancyId'],
-                'latitud' => $buildingData['latitud'],
-                'longitud' => $buildingData['longitud'],
-                'year_built' => $buildingData['yearBuilt'],
-                'clear_height' => $buildingData['clearHeight'],
-                'offices_space' => $buildingData['officesSpace'],
-                'crane' => $buildingData['crane'] ? 1 : 0,
-                'hvac' => $buildingData['hvac'] ? 1 : 0,
-                'rail_spur' => $buildingData['railSpur'] ? 1 : 0,
-                'sprinklers' => $buildingData['sprinklers'] ? 1 : 0,
-                'office' => $buildingData['office'] ? 1 : 0,
-                'leed' => $buildingData['leed'] ? 1 : 0,
-                'total_land' => $buildingData['totalLand'],
-                'hvac_production_area' => $buildingData['hvacProductionArea'],
-                'status' => 'Activo'
-            ]);
-
+            DB::beginTransaction();
+            
+            $building = Buildings::create($this->prepareBuildingData($buildingData));
+            
             if ($building) {
-
                 $buildingId = $building->id;
-
-                // ! quitar en insert de las imagenes
-                /*
-                    // Agregar las imágenes (de la pestaña de imagenes)
-                    if ($request->hasFile('photoTypes')) {
-                        foreach ($request->file('photoTypes') as $file) {
-                            // Inicializando el tipo de imagen a 0 (no definido aún)
-                            $typePhoto = 0;
-
-                            $originalName = $file->getClientOriginalName();
-                            $stringOriginalName = pathinfo($originalName, PATHINFO_FILENAME);
-
-                            // switch para definir el tipo de imagen a través del nombre
-                            switch (strtolower($stringOriginalName)) {
-                                case 'portada': // Portada
-                                    $typePhoto = 3;
-                                    break;
-                                default:
-                                    if (is_numeric($stringOriginalName)) { // Galería
-                                        $typePhoto = 2;
-                                    } else { // Aerea
-                                        $typePhoto = 1;
-                                    }
-                                    break;
-                            }
-
-                            $imageInsert = BuildingsImages::create([
-                                'buildingId' => $buildingId,
-                                'imageTypeId' => $typePhoto,
-                                'Image' => $originalName
-                            ]);
-
-                            // validando que se inserta en la BD...
-                            if ($imageInsert) {
-                                $imagePath = $file->store('buildingsImages', 'public');
-                            }
-                        }
-                    }
-
-                    // Agregar las imágenes (de la pestañas de extras [imagenes 360])
-                    if ($request->hasFile('aroundImages')) {
-                        foreach ($request->file('aroundImages') as $file) {
-                            $originalName = $file->getClientOriginalName();
-
-                            $imageInsert = BuildingsImages::create([
-                                'buildingId' => $buildingId,
-                                'imageTypeId' => 0,
-                                'Image' => $originalName
-                            ]);
-
-                            // validando que se inserta en la BD...
-                            if ($imageInsert) {
-                                $imagePath = $file->store('buildingsImages', 'public');
-                            }
-                        }
-                    }
-                */
-
-                // Crear el contacto
-                BuildingsContacts::create([
-                    'building_id' => $buildingId,
-                    'contact_name' => $contactData['contact'],
-                    'contact_phone' => $contactData['phone'],
-                    'contact_email' => $contactData['email'],
-                    'contact_comments' => $contactData['comments'],
-                ]);
-
-                // Crear features
-                BuildingsFeatures::create([
-                    'building_id' => $buildingId,
-                    'loading_door_id' => $buildingData['loadingDoorId'],
-                    'lighting' => $buildingData['lighting'],
-                    'ventilation' => $buildingData['ventilation'],
-                    'transformer_capacity' => $buildingData['transformerCapacity'],
-                    'construction_type' => $buildingData['constructionType'],
-                    'construction_state' => $buildingData['constructionState'],
-                    'roof_system' => $buildingData['roofSystem'],
-                    'fire_protection_system' => $buildingData['fireProtectionSystem'],
-                    'skylights_sf' => $buildingData['skylightsSf'],
-                    'coverage' => $buildingData['coverage'],
-                ]);
-
-                // Procesar según el builder state
-                if ($buildingData['builderStateId'] == 1) { // Availability
-                    BuildingsAvailable::create([
-                        'building_id' => $buildingId,
-                        'available_sf' => $buildingData['availableSf'],
-                        'minimum_space_sf' => $buildingData['minimumSpaceSf'],
-                        'expansion_up_to_sf' => $buildingData['expansionUpToSf'],
-                        'dock_doors' => $buildingData['dockDoors'],
-                        'drive_in_door' => $buildingData['driveInDoor'],
-                        'floor_thickness' => $buildingData['floorThickness'],
-                        'floor_resistance' => $buildingData['floorResistance'],
-                        'truck_court' => $buildingData['truckCourt'],
-                        'crossdock' => $buildingData['crossdock'] ? 1 : 0,
-                        'shared_truck' => $buildingData['sharedTruck'] ? 1 : 0,
-                        'building_dimensions_1' => $buildingData['buildingDimensions1'],
-                        'building_dimensions_2' => $buildingData['buildingDimensions2'],
-                        'bay_Size_1' => $buildingData['baySize1'],
-                        'bay_Size_2' => $buildingData['baySize2'],
-                        'columns_spacing_1' => $buildingData['columnsSpacing1'],
-                        'columns_spacing_2' => $buildingData['columnsSpacing2'],
-                        'knockouts_docks' => $buildingData['knockoutsDocks'],
-                        'parking_space' => $buildingData['parkingSpace'],
-                        'available_month' => explode("-", $buildingData['availableMonth'])[1],
-                        'available_year' => $buildingData['availableYear'],
-                        'min_lease' => $buildingData['minLease'],
-                        'max_lease' => $buildingData['maxLease']
-                    ]);
-                } elseif ($buildingData['builderStateId'] == 2) { // Absorption
-                    BuildingsAbsorption::create([
-                        'building_id' => $buildingId,
-                        'lease_term_month' => $buildingData['leaseTermMonth'],
-                        'asking_rate_shell' => $buildingData['askingRateShell'],
-                        'closing_rate' => $buildingData['closingRate'],
-                        'KVAS' => $buildingData['KVAS'],
-                        'closing_quarter' => $buildingData['closingQuarter'],
-                        'lease_up' => $buildingData['leaseUp'],
-                        'month' => $buildingData['month'],
-                        'new_construction' => $buildingData['newConstruction'],
-                        'starting_construction' => $buildingData['startingConstruction'],
-                        'tenant_id' => $buildingData['tenantId'],
-                        'industry_id' => $buildingData['industryId'],
-                        'final_use_id' => $buildingData['finalUseId'],
-                        'shelter_id' => $buildingData['shelterId'],
-                        'copany_type_id' => $buildingData['copanyTypeId'],
-                    ]);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Building created successfully',
-                    'building_id' => $buildingId
-                ], 201);
-
-            } else {
-                return response()->json([
-                    'title' => 'Error',
-                    'text' => "It was not possible to add this building",
-                    'icon' => 'error'
-                ]);
+                
+                $this->createBuildingFeatures($buildingId, $buildingData);
+                $this->createBuildingStateData($buildingId, $buildingData);
+                
+                DB::commit();
+                return $this->successResponse('Building created successfully', $buildingId);
             }
+
+            DB::rollBack();
+            return $this->errorResponse("It was not possible to add this building");
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el building',
-                'error' => $e->getMessage()
-            ], 500);
+            DB::rollBack();
+            return $this->errorResponse($e->getMessage());
         }
+    }
+
+    private function createBuildingFeatures($buildingId, $data)
+    {
+        BuildingsFeatures::create([
+            'building_id' => $buildingId,
+            'loading_door_id' => $data['loadingDoorId'],
+            'lighting' => $data['lighting'],
+            'ventilation' => $data['ventilation'],
+            'transformer_capacity' => $data['transformerCapacity'],
+            'construction_type' => $data['constructionType'],
+            'construction_state' => $data['constructionState'],
+            'roof_system' => $data['roofSystem'],
+            'fire_protection_system' => $data['fireProtectionSystem'],
+            'skylights_sf' => $data['skylightsSf'],
+            'coverage' => $data['coverage'],
+        ]);
+    }
+
+    private function createBuildingStateData($buildingId, $data)
+    {
+        if ($data['builderStateId'] == 1) {
+            $this->createBuildingAvailable($buildingId, $data);
+        } elseif ($data['builderStateId'] == 2) {
+            $this->createBuildingAbsorption($buildingId, $data);
+        }
+    }
+
+    private function createBuildingAvailable($buildingId, $data)
+    {
+        BuildingsAvailable::create([
+            'building_id' => $buildingId,
+            'available_sf' => $data['availableSf'],
+            'minimum_space_sf' => $data['minimumSpaceSf'],
+            'expansion_up_to_sf' => $data['expansionUpToSf'],
+            'dock_doors' => $data['dockDoors'],
+            'drive_in_door' => $data['driveInDoor'],
+            'floor_thickness' => $data['floorThickness'],
+            'floor_resistance' => $data['floorResistance'],
+            'truck_court' => $data['truckCourt'],
+            'crossdock' => $data['crossdock'] ? 1 : 0,
+            'shared_truck' => $data['sharedTruck'] ? 1 : 0,
+            'building_dimensions_1' => $data['buildingDimensions1'],
+            'building_dimensions_2' => $data['buildingDimensions2'],
+            'bay_Size_1' => $data['baySize1'],
+            'bay_Size_2' => $data['baySize2'],
+            'columns_spacing_1' => $data['columnsSpacing1'],
+            'columns_spacing_2' => $data['columnsSpacing2'],
+            'knockouts_docks' => $data['knockoutsDocks'],
+            'parking_space' => $data['parkingSpace'],
+            'available_month' => explode("-", $data['availableMonth'])[1],
+            'available_year' => $data['availableYear'],
+            'min_lease' => $data['minLease'],
+            'max_lease' => $data['maxLease']
+        ]);
+    }
+
+    private function createBuildingAbsorption($buildingId, $data)
+    {
+        BuildingsAbsorption::create([
+            'building_id' => $buildingId,
+            'lease_term_month' => $data['leaseTermMonth'],
+            'asking_rate_shell' => $data['askingRateShell'],
+            'closing_rate' => $data['closingRate'],
+            'KVAS' => $data['KVAS'],
+            'closing_quarter' => $data['closingQuarter'],
+            'lease_up' => $data['leaseUp'],
+            'month' => $data['month'],
+            'new_construction' => $data['newConstruction'],
+            'starting_construction' => $data['startingConstruction'],
+            'tenant_id' => $data['tenantId'],
+            'industry_id' => $data['industryId'],
+            'final_use_id' => $data['finalUseId'],
+            'shelter_id' => $data['shelterId'],
+            'copany_type_id' => $data['copanyTypeId'],
+        ]);
     }
 
     public function updateBuilding(Request $request, $buildingId)
     {
-
-        $buildingDataJSON = $request->input('buildingData');
-        $buildingData = json_decode($buildingDataJSON, true);
-        $contactDataJSON = $request->input('contactData');
-        $contactData = json_decode($contactDataJSON, true);
-
-        if ($request->input('buildingData')) {
-            try {
-
-                if (!$buildingData) {
-                    throw new \Exception('Error al decodificar los datos JSON');
-                }
-
-                $building = Buildings::find($buildingId);
-
-                $building->update([
-                    'vo_bo' => $buildingData['voBo'],
-                    'builder_state_id' => $buildingData['builderStateId'],
-                    'sf_sm' => $buildingData['sfSm'],
-                    'building_name' => $buildingData['buildingName'],
-                    'class_id' => $buildingData['classId'],
-                    'building_size_sf' => $buildingData['buildingSizeSf'],
-                    'expansion_land' => $buildingData['expansionLand'],
-                    'status_id' => $buildingData['statusId'],
-                    'industrial_park_id' => $buildingData['industrialParkId'],
-                    'type_id' => $buildingData['typeId'],
-                    'owner_id' => $buildingData['ownerId'],
-                    'developer_id' => $buildingData['developerId'],
-                    'broker_id' => $buildingData['brokerId'],
-                    'builder_id' => $buildingData['builderId'],
-                    'region_id' => $buildingData['regionId'],
-                    'market_id' => $buildingData['marketId'],
-                    'sub_market_id' => $buildingData['subMarketId'],
-                    'deal_id' => $buildingData['dealId'],
-                    'currency_id' => $buildingData['currencyId'],
-                    'sale_price_usd' => $buildingData['salePriceUsd'],
-                    'tenancy_id' => $buildingData['tenancyId'],
-                    'latitud' => $buildingData['latitud'],
-                    'longitud' => $buildingData['longitud'],
-                    'year_built' => $buildingData['yearBuilt'],
-                    'clear_height' => $buildingData['clearHeight'],
-                    'offices_space' => $buildingData['officesSpace'],
-                    'crane' => $buildingData['crane'],
-                    'hvac' => $buildingData['hvac'],
-                    'rail_spur' => $buildingData['railSpur'],
-                    'sprinklers' => $buildingData['sprinklers'],
-                    'office' => $buildingData['office'],
-                    'leed' => $buildingData['leed'],
-                    'total_land' => $buildingData['totalLand'],
-                    'hvac_production_area' => $buildingData['hvacProductionArea'],
-                    'status' => $buildingData['statusId'],
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Building updated successfully',
-                    'building_id' => $buildingId
-                ], 200);
-                
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error al decodificar los datos JSON',
-                    'error' => $e->getMessage()
-                ], 500);
+        try {
+            if ($request->input('buildingData')) {
+                return $this->updateBuildingData($request, $buildingId);
             }
-        }
 
-        if ($request->input('contactData')) {
-
-            try {
-                
-                $buildingContact = BuildingsContacts::where('building_id', $buildingId)->first();
-    
-                $buildingContact->update([
-                    'contact_name' => $contactData['contact'],
-                    'contact_phone' => $contactData['phone'],
-                    'contact_email' => $contactData['email'],
-                    'contact_comments' => $contactData['comments'],
-                ]);
-    
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Building contact updated successfully',
-                    'building_id' => $buildingId
-                ], 200);
-
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error al decodificar los datos JSON',
-                    'error' => $th->getMessage()
-                ], 500);
+            if ($request->input('contactData')) {
+                return $this->updateBuildingContact($request, $buildingId);
             }
+
+            return $this->errorResponse('No data provided for update', 400);
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage());
         }
+    }
+
+    private function updateBuildingData(Request $request, $buildingId)
+    {
+        $buildingData = $this->decodeJsonData($request->input('buildingData'));
+        $building = Buildings::findOrFail($buildingId);
+        
+        $building->update($this->prepareBuildingData($buildingData));
+        $this->updateBuildingFeatures($buildingId, $buildingData);
+        
+        return $this->successResponse('Building updated successfully', $buildingId);
+    }
+
+    private function updateBuildingContact(Request $request, $buildingId)
+    {
+        $contactData = $this->decodeJsonData($request->input('contactData'));
+        
+        BuildingsContacts::updateOrCreate(
+            ['building_id' => $buildingId],
+            $this->prepareContactData($contactData)
+        );
+
+        return $this->successResponse('Contact updated successfully', $buildingId);
+    }
+
+    private function prepareBuildingData($data)
+    {
+        return [
+            'vo_bo' => 0,
+            'builder_state_id' => $data['builderStateId'],
+            'sf_sm' => $data['sfSm'],
+            'building_name' => $data['buildingName'],
+            'class_id' => $data['classId'],
+            'building_size_sf' => $data['buildingSizeSf'],
+            'expansion_land' => $data['expansionLand'],
+            'status_id' => $data['statusId'],
+            'industrial_park_id' => $data['industrialParkId'],
+            'type_id' => $data['typeId'],
+            'owner_id' => $data['ownerId'],
+            'developer_id' => $data['developerId'],
+            'broker_id' => $data['brokerId'],
+            'builder_id' => $data['builderId'],
+            'region_id' => $data['regionId'],
+            'market_id' => $data['marketId'],
+            'sub_market_id' => $data['subMarketId'],
+            'deal_id' => $data['dealId'],
+            'currency_id' => $data['currencyId'],
+            'sale_price_usd' => $data['salePriceUsd'],
+            'tenancy_id' => $data['tenancyId'],
+            'latitud' => $data['latitud'],
+            'longitud' => $data['longitud'],
+            'year_built' => $data['yearBuilt'],
+            'clear_height' => $data['clearHeight'],
+            'offices_space' => $data['officesSpace'],
+            'crane' => $data['crane'] ? 1 : 0,
+            'hvac' => $data['hvac'] ? 1 : 0,
+            'rail_spur' => $data['railSpur'] ? 1 : 0,
+            'sprinklers' => $data['sprinklers'] ? 1 : 0,
+            'office' => $data['office'] ? 1 : 0,
+            'leed' => $data['leed'] ? 1 : 0,
+            'total_land' => $data['totalLand'],
+            'hvac_production_area' => $data['hvacProductionArea'],
+            'status' => 'Activo'
+        ];
+    }
+
+    private function prepareContactData($data)
+    {
+        return [
+            'contact_name' => $data['contact'],
+            'contact_phone' => $data['phone'],
+            'contact_email' => $data['email'],
+            'contact_comments' => $data['comments']
+        ];
+    }
+
+    private function updateBuildingFeatures($buildingId, $data)
+    {
+        BuildingsFeatures::updateOrCreate(
+            ['building_id' => $buildingId],
+            [
+                'loading_door_id' => $data['loadingDoorId'],
+                'lighting' => $data['lighting'],
+                'ventilation' => $data['ventilation'],
+                'transformer_capacity' => $data['transformerCapacity'],
+                'construction_type' => $data['constructionType'],
+                'construction_state' => $data['constructionState'],
+                'roof_system' => $data['roofSystem'],
+                'fire_protection_system' => $data['fireProtectionSystem'],
+                'skylights_sf' => $data['skylightsSf'],
+                'coverage' => $data['coverage'],
+            ]
+        );
+    }
+
+    private function decodeJsonData($jsonData)
+    {
+        $decoded = json_decode($jsonData, true);
+        if (!$decoded) {
+            throw new \Exception('Invalid JSON data');
+        }
+        return $decoded;
+    }
+
+    private function successResponse($message, $buildingId)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'building_id' => $buildingId
+        ], 200);
+    }
+
+    private function errorResponse($message, $code = 500)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message
+        ], $code);
     }
 
     public function getBuildingById($buildingId)
