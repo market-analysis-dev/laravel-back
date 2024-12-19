@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('total_screens')->default(0);
             $table->string('password');
             $table->rememberToken();
-            $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
             $table->timestamps();
         });
     }

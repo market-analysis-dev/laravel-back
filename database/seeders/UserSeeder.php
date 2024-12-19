@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                 'company_id' => 1,
                 'user_type_id' => 1,
                 'total_screens' => 1,
-                'status' => 'Activo'
+                'status' => 'Active'
             ],
         ]);
     }

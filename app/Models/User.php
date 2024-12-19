@@ -2,41 +2,30 @@
 
 namespace App\Models;
 
-// use Illuminate\Support\Facades\Hash;
-// use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-# use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    protected $table = 'list_users';
+    protected $table = 'users';
 
     protected $fillable = [
         'name',
-        'lastName',
-        'middleName',
-        'userName',
+        'middle_name',
+        'last_name',
+        'user_name',
+        'company_id',
+        'user_type_id',
+        'total_screens',
         'password',
-        'companyId',
-        'userTypeId',
-        'totalScreens',
+        'remember_token',
         'status',
     ];
 
     protected $hidden = [
         'password',
     ];
-
-    // * Definir columnas de marca de tiempo personalizadas
-    const CREATED_AT = 'createdAt';
-    const UPDATED_AT = 'modifiedAt';
-
-    public function usertypes()
-    {
-        return $this->belongsTo(Usertype::class, 'userTypeId');
-    }
 }
