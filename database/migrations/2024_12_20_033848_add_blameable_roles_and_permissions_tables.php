@@ -34,6 +34,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        $tableNames = config('permission.table_names');
+
+        Schema::table($tableNames['permissions'], function (Blueprint $table) {
+            $table->dropIndex('created_by');
+            $table->dropIndex('updated_by');
+            $table->dropColumn('created_by');
+            $table->dropColumn('updated_by');
+        });
+        Schema::table($tableNames['roles'], function (Blueprint $table) {
+            $table->dropIndex('created_by');
+            $table->dropIndex('updated_by');
+            $table->dropColumn('created_by');
+            $table->dropColumn('updated_by');
+        });
     }
 };
