@@ -1,32 +1,30 @@
 <?php
 namespace App\Http\Controllers;
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class RoleController extends Controller //  implements HasMiddleware
+class RoleController // extends Controller implements HasMiddleware
 {
     // public static function middleware()
     // {
     //     return [
     //         new Middleware('permission:roles.index', only: ['index', 'show']),
     //         new Middleware('permission:roles.create', only: ['store']),
-    //         new Middleware('permission:roles.edit', only: ['update']),
+    //         new Middleware('permission:roles.update', only: ['update']),
     //         new Middleware('permission:roles.destroy', only: ['destroy'])
     //     ];
     // }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Role::orderBy('name')->get();
+        $roles = Role::orderBy('name')->get();
+        return response()->json($roles);
     }
 
     /**
@@ -35,9 +33,13 @@ class RoleController extends Controller //  implements HasMiddleware
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required'
+            'name' => 'required',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'integer'
         ]);
-        return Role::create($validated);
+        $role = Role::create($validated);
+        $role->syncPermissions($validated['permissions']);
+        return response()->json($role);
     }
 
     /**
@@ -45,8 +47,8 @@ class RoleController extends Controller //  implements HasMiddleware
      */
     public function show($roleId)
     {
-        $role = Role::firstOrFail($roleId);
-        return $role;
+        $role = Role::with(['permissions'])->findOrFail($roleId);
+        return response()->json($role);
     }
 
     /**
@@ -54,12 +56,16 @@ class RoleController extends Controller //  implements HasMiddleware
      */
     public function update(Request $request, $roleId)
     {
-        $role = Role::firstOrFail($roleId);
+        $role = Role::findOrFail($roleId);
 
         $validated = $request->validate([
-            'name' => 'required'
+            'name' => 'required',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'integer'
         ]);
-        return $role::update($validated);
+        $role->update($validated);
+        $role->syncPermissions($validated['permissions']);
+        return response()->json($role);
     }
 
     /**
@@ -67,7 +73,8 @@ class RoleController extends Controller //  implements HasMiddleware
      */
     public function destroy($roleId)
     {
-        $role = Role::firstOrFail($roleId);
-        return $role->destroy();
+        $role = Role::findOrFail($roleId);
+        $role->delete();
+        return response()->json($role);
     }
 }

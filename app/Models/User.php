@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasRoles, SoftDeletes, BlameableTrait, HasFactory;
+    use HasApiTokens, Notifiable, HasRoles, BlameableTrait, HasFactory;
 
     protected $fillable = [];
 

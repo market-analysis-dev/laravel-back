@@ -1,7 +1,7 @@
 <?php
 namespace Database\Seeders;
 
-use App\Models\Permissions;
+use App\Models\Permission;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -26,7 +26,9 @@ class PermissionSeeder extends Seeder
             ['name' => 'buildings.update'],
             ['name' => 'buildings.destroy'],
         ];
-        Permissions::create($permissions);
+        foreach ($permissions as $permission) {
+            Permission::create($permission);
+        }
     }
 }
 
