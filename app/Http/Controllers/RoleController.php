@@ -6,17 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class RoleController // extends Controller implements HasMiddleware
+class RoleController extends Controller implements HasMiddleware
 {
-    // public static function middleware()
-    // {
-    //     return [
-    //         new Middleware('permission:roles.index', only: ['index', 'show']),
-    //         new Middleware('permission:roles.create', only: ['store']),
-    //         new Middleware('permission:roles.update', only: ['update']),
-    //         new Middleware('permission:roles.destroy', only: ['destroy'])
-    //     ];
-    // }
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:roles.index', only: ['index', 'show']),
+            new Middleware('permission:roles.create', only: ['store']),
+            new Middleware('permission:roles.update', only: ['update']),
+            new Middleware('permission:roles.destroy', only: ['destroy'])
+        ];
+    }
 
     /**
      * Display a listing of the resource.
