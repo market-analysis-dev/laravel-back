@@ -11,7 +11,8 @@ class RoleController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware('permission:roles.index', only: ['index', 'show']),
+            new Middleware('permission:roles.index', only: ['index']),
+            new Middleware('permission:roles.show', only: ['show']),
             new Middleware('permission:roles.create', only: ['store']),
             new Middleware('permission:roles.update', only: ['update']),
             new Middleware('permission:roles.destroy', only: ['destroy'])

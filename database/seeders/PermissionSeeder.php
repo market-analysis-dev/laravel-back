@@ -12,16 +12,19 @@ class PermissionSeeder extends Seeder
 
         $permissions = [
             ['name' => 'users.index'],
+            ['name' => 'users.show'],
             ['name' => 'users.create'],
             ['name' => 'users.update'],
             ['name' => 'users.destroy'],
 
             ['name' => 'roles.index'],
+            ['name' => 'roles.show'],
             ['name' => 'roles.create'],
             ['name' => 'roles.update'],
             ['name' => 'roles.destroy'],
 
             ['name' => 'buildings.index'],
+            ['name' => 'buildings.show'],
             ['name' => 'buildings.create'],
             ['name' => 'buildings.update'],
             ['name' => 'buildings.destroy'],
