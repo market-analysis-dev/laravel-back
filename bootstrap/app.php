@@ -19,5 +19,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
+            if ($request->expectsJson()) {
+                return \App\Responses\ApiResponse::errorFailedValidation($e);
+            }
+            return null;
+        });
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->expectsJson()) {
+                return \App\Responses\ApiResponse::errorUnauthorized($e);
+            }
+            return null;
+        });
     })->create();
