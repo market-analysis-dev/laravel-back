@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BuildingClass;
+use App\Enums\BuildingLoadingDoor;
 use App\Responses\ApiResponse;
 
 class BuildingController extends ApiController
@@ -19,5 +20,10 @@ class BuildingController extends ApiController
     {
 
         return $this->success(data: BuildingClass::array());
+    }
+
+    public function listLoadingDoor(): ApiResponse
+    {
+        return $this->success(data: BuildingLoadingDoor::array());
     }
 }

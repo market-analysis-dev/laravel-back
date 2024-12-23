@@ -9,5 +9,6 @@ Route::group([
 //    'middleware' => 'auth:sanctum',
 ], function () {
     Route::get('/classes', [BuildingController::class, 'listClasses'])->name('listClasses');
+    Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoor'])->name('listLoadingDoor');
 });
 
