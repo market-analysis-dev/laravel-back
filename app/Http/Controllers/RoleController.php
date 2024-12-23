@@ -5,8 +5,9 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Log;
 
-class RoleController extends Controller implements HasMiddleware
+class RoleController extends ApiController implements HasMiddleware
 {
     public static function middleware()
     {
@@ -24,7 +25,7 @@ class RoleController extends Controller implements HasMiddleware
     public function index()
     {
         $roles = Role::orderBy('name')->get();
-        return response()->json($roles);
+        return $this->response('roles obtenidos', $roles);
     }
 
     /**
@@ -37,9 +38,11 @@ class RoleController extends Controller implements HasMiddleware
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer'
         ]);
-        $role = Role::create($validated);
-        $role->syncPermissions($validated['permissions']);
-        return response()->json($role);
+        $role = Role::create(['name' => $validated['name'], 'guard_name' => 'web']);
+        if (!empty($validated['permissions'])) {
+            $role->syncPermissions($validated['permissions']);
+        }
+        return $this->response('rol creado', $role);
     }
 
     /**
@@ -48,7 +51,7 @@ class RoleController extends Controller implements HasMiddleware
     public function show($roleId)
     {
         $role = Role::with(['permissions'])->findOrFail($roleId);
-        return response()->json($role);
+        return $this->response('rol recuperado', $role);
     }
 
     /**
@@ -63,9 +66,11 @@ class RoleController extends Controller implements HasMiddleware
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer'
         ]);
-        $role->update($validated);
-        $role->syncPermissions($validated['permissions']);
-        return response()->json($role);
+        $role->update(['name' => $validated['name'], 'guard_name' => 'web']);
+        if (!empty($validated['permissions'])) {
+            $role->syncPermissions($validated['permissions']);
+        }
+        return $this->response('rol actualizado', $role);
     }
 
     /**
@@ -75,6 +80,6 @@ class RoleController extends Controller implements HasMiddleware
     {
         $role = Role::findOrFail($roleId);
         $role->delete();
-        return response()->json($role);
+        return $this->response('rol eliminado', $role);
     }
 }
