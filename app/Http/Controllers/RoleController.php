@@ -38,6 +38,12 @@ class RoleController extends ApiController implements HasMiddleware
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer'
         ]);
+
+        if (Role::where('name', $validated['name'])->count()) {
+            return $this->error('The role name already exists in the system');
+        }
+
+
         $role = Role::create(['name' => $validated['name'], 'guard_name' => 'web']);
         if (!empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
@@ -66,6 +72,11 @@ class RoleController extends ApiController implements HasMiddleware
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer'
         ]);
+
+        if (Role::where('name', $validated['name'])->where('id', '!=', $role->id)->count()) {
+            return $this->error('The role name already exists in the system');
+        }
+
         $role->update(['name' => $validated['name'], 'guard_name' => 'web']);
         if (!empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
