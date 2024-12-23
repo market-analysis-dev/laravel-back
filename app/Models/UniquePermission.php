@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @property-read \App\Models\Module|null $module
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UniquePermission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UniquePermission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UniquePermission query()
+ * @mixin \Eloquent
+ */
 class UniquePermission extends Model
 {
     use HasFactory;

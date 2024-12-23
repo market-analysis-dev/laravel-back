@@ -18,7 +18,7 @@ use App\Models\BuildingsContacts;
 
 use App\Http\Controllers\MarketAuthController;
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login']);
 
 // * COMPANIES (COMPLETADO)
 Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza
@@ -104,18 +104,6 @@ Route::post('/permissions/update/{userId}', [PermissionController::class, 'updat
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
-/*
- * API's Buildings
- */
-Route::get('/buildings/table', [BuildingsController::class, 'getBuildingsTable']);
-Route::get('/buildings/table/vo-bo', [BuildingsController::class, 'getBuildingsTableVoBo']);
-Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
-Route::post('/buildings/delete/{tableName}', [BuildingsController::class, 'deleteRegister']);
-Route::post('/buildings', [BuildingsController::class, 'insertBuilding']);
-Route::post('/buildings/update/{buildingId}', [BuildingsController::class, 'updateBuilding']);
-Route::get('/buildings/{buildingId}', [BuildingsController::class, 'getBuildingById']);
-Route::post('/buildings/docs/{buildingId}', [BuildingsController::class, 'uploadFiles']);
-
 
 /*
  * API's Employees
@@ -126,12 +114,16 @@ Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
 Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
 
 /*
- * 
+ *
  * PLATAFORMA MARKETANALYSIS.MX
  *
  */
 
 Route::post('/market/login', [MarketAuthController::class, 'login']);
+
+require_once '_buildings.php';
+require_once '_regions.php';
+
 
 require __DIR__ . '/_roles.php';
 require __DIR__ . '/_permissions.php';

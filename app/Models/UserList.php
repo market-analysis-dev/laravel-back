@@ -9,6 +9,19 @@ use Laravel\Sanctum\HasApiTokens;
 
 # use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @property-read int|null $tokens_count
+ * @property-read \App\Models\UserType|null $usertypes
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserList newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserList newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserList query()
+ * @mixin \Eloquent
+ */
 class UserList extends Authenticatable
 {
     use HasApiTokens, Notifiable;

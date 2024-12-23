@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminBuildingsPermissions newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminBuildingsPermissions newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminBuildingsPermissions query()
+ * @mixin \Eloquent
+ */
 class AdminBuildingsPermissions extends Model
 {
     use HasFactory;
