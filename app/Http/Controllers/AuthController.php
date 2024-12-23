@@ -15,11 +15,11 @@ class AuthController extends Controller
     {
         // * Validar los datos de entrada
         $request->validate([
-            'email' => 'required|email',
+            'user_name' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('user_name', 'password');
 
         // * Intentar autenticar el usuario
         if (!Auth::attempt($credentials)) {
@@ -29,13 +29,6 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-
-        // * Verificar si el usuario tiene el email verificado
-        if ($user->email_verified_at === null) {
-            return response()->json([
-                'message' => 'User not verified',
-            ], 401);
-        }
 
         // * Generar el token de acceso
         $token = $user->createToken('API Token')->plainTextToken;
