@@ -107,14 +107,8 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
 /*
  * API's Buildings
  */
-Route::get('/buildings/table', [BuildingsController::class, 'getBuildingsTable']);
-Route::get('/buildings/table/vo-bo', [BuildingsController::class, 'getBuildingsTableVoBo']);
-Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
-Route::post('/buildings/delete/{tableName}', [BuildingsController::class, 'deleteRegister']);
-Route::post('/buildings', [BuildingsController::class, 'insertBuilding']);
-Route::post('/buildings/update/{buildingId}', [BuildingsController::class, 'updateBuilding']);
-Route::get('/buildings/{buildingId}', [BuildingsController::class, 'getBuildingById']);
-Route::post('/buildings/docs/{buildingId}', [BuildingsController::class, 'uploadFiles']);
+require_once '_buildings.php';
+
 
 
 /*
@@ -126,7 +120,7 @@ Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
 Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
 
 /*
- * 
+ *
  * PLATAFORMA MARKETANALYSIS.MX
  *
  */
