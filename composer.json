@@ -15,7 +15,6 @@
         "league/csv": "^9.16",
         "maatwebsite/excel": "^1.1",
         "phpoffice/phpspreadsheet": "^2.1",
-        "spatie/flysystem-dropbox": "*",
         "spatie/laravel-backup": "^8.8"
     },
     "require-dev": {
