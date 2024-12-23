@@ -25,7 +25,7 @@ class RoleController extends ApiController implements HasMiddleware
     public function index()
     {
         $roles = Role::orderBy('name')->get();
-        return $this->response('roles obtenidos', $roles);
+        return $this->response('Roles obtained successfully', $roles);
     }
 
     /**
@@ -42,7 +42,7 @@ class RoleController extends ApiController implements HasMiddleware
         if (!empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
         }
-        return $this->response('rol creado', $role);
+        return $this->response('Role created successfully', $role);
     }
 
     /**
@@ -51,7 +51,7 @@ class RoleController extends ApiController implements HasMiddleware
     public function show($roleId)
     {
         $role = Role::with(['permissions'])->findOrFail($roleId);
-        return $this->response('rol recuperado', $role);
+        return $this->response('Role successfully obtained', $role);
     }
 
     /**
@@ -70,7 +70,7 @@ class RoleController extends ApiController implements HasMiddleware
         if (!empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
         }
-        return $this->response('rol actualizado', $role);
+        return $this->response('Role updated successfully', $role);
     }
 
     /**
@@ -80,6 +80,6 @@ class RoleController extends ApiController implements HasMiddleware
     {
         $role = Role::findOrFail($roleId);
         $role->delete();
-        return $this->response('rol eliminado', $role);
+        return $this->response('Role deleted successfully', $role);
     }
 }
