@@ -5,7 +5,6 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Log;
 
 class RoleController extends ApiController implements HasMiddleware
 {

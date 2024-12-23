@@ -8,17 +8,25 @@ use App\Models\SubMarket;
 use App\Models\PermissionsUnique;
 use App\Models\PermissionsSubModules;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 
-class PermissionController
+class PermissionController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:roles.index', only: ['index']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $permissions = Permission::all();
-        return response()->json($permissions);
+        $permissions = Permission::orderBy('name')->get();
+        return $this->response('Permissions obtained successfully', $permissions);
     }
 
     /*
