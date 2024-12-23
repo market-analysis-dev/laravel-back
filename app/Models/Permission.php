@@ -5,6 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @property-read \App\Models\Market|null $market
+ * @property-read \App\Models\Module|null $module
+ * @property-read \App\Models\SubMarket|null $subMarket
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Permission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Permission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Permission query()
+ * @mixin \Eloquent
+ */
 class Permission extends Model
 {
     use HasFactory;

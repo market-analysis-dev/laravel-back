@@ -104,12 +104,6 @@ Route::post('/permissions/update/{userId}', [PermissionController::class, 'updat
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
-/*
- * API's Buildings
- */
-require_once '_buildings.php';
-
-
 
 /*
  * API's Employees
@@ -119,10 +113,8 @@ Route::get('/employees', [UserController::class, 'getEmployees']);
 Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
 Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
 
-/*
- *
- * PLATAFORMA MARKETANALYSIS.MX
- *
- */
 
 Route::post('/market/login', [MarketAuthController::class, 'login']);
+
+require_once '_buildings.php';
+require_once '_regions.php';
