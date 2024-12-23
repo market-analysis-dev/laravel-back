@@ -31,7 +31,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         // * Generar el token de acceso
-        $token = $user->createToken('API Token')->plainTextToken;
+        $token = $user->createToken('market-analysis')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',
