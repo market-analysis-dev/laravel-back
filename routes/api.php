@@ -133,7 +133,4 @@ Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmp
 
 Route::post('/market/login', [MarketAuthController::class, 'login']);
 
-
-Route::middleware('auth:sanctum')->group(function () {
-    require __DIR__ . '/_roles.php';
-});
+require __DIR__ . '/_roles.php';
