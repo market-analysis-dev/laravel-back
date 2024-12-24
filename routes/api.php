@@ -109,6 +109,11 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
  */
 require_once '_buildings.php';
 
+/*
+ * API's Industrial Parks
+ */
+require_once '_industrial_parks.php';
+
 
 
 /*
