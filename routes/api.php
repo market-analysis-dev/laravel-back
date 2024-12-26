@@ -125,7 +125,5 @@ require_once '_buildings.php';
 require_once '_regions.php';
 require_once '_currency.php';
 require_once '_markets.php';
-
-
-require __DIR__ . '/_roles.php';
-require __DIR__ . '/_permissions.php';
+require_once  '_roles.php';
+require_once  '_permissions.php';

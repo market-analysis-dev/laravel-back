@@ -4,12 +4,10 @@ namespace App\Enums;
 
 use App\Traits\EnumHelper;
 
-enum Currency: string
+enum BuildingDeal: string
 {
     use EnumHelper;
 
-    case USD = 'USD';
-    case MXP = 'MXP';
-
+    case SALE = 'Sale';
+    case LEAS = 'Leas';
 }
-
