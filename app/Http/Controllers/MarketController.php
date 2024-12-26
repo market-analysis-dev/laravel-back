@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Market;
 use Illuminate\Http\Request;
+use App\Responses\ApiResponse;
 
-class MarketController
+class MarketController extends ApiController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $market = Market::where('status', 'Activo')->get();
-        return response()->json($market);
+        /*$market = Market::where('status', 'Activo')->get();
+        return response()->json($market);*/
     }
 
     /**
@@ -21,12 +22,12 @@ class MarketController
      */
     public function store(Request $request)
     {
-        $request->validate([
+        /*$request->validate([
             'marketName' => 'required|string|max:255',
             'status' => 'required|in:Activo,Inactivo',
         ]);
 
-        return Market::create($request->all());
+        return Market::create($request->all());*/
     }
 
     /**
@@ -34,13 +35,13 @@ class MarketController
      */
     public function show($id)
     {
-        $market = Market::find($id);
+        /*$market = Market::find($id);
 
         if (!$market) {
             return response()->json(['message' => 'Market not found'], 404);
         }
 
-        return response()->json($market);
+        return response()->json($market);*/
     }
 
     /**
@@ -48,7 +49,7 @@ class MarketController
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        /*$request->validate([
             'marketName' => 'required|string|max:255',
             'status' => 'required|in:Activo,Inactivo',
         ]);
@@ -56,7 +57,7 @@ class MarketController
         $market = Market::findOrFail($id);
         $market->update($request->all());
 
-        return response()->json($market);
+        return response()->json($market);*/
     }
 
     /**
@@ -64,11 +65,17 @@ class MarketController
      */
     public function destroy($id)
     {
-        $market = Market::findOrFail($id);
+        /*$market = Market::findOrFail($id);
 
         $market->status = 'Inactivo';
         $market->save();
 
-        return response()->json(['message' => 'Mercado eliminado correctamente']);
+        return response()->json(['message' => 'Mercado eliminado correctamente']);*/
+    }
+
+    public function listMarkets(): ApiResponse
+    {
+        $markets = Market::where('status', '=', 'active')->get();
+        return $this->success(data: $markets);
     }
 }
