@@ -8,5 +8,5 @@ Route::group([
     'as' => 'api.currencies.',
     'middleware' => 'auth:sanctum',
 ], function () {
-    Route::get('/', [CurrencyController::class, 'listCurrencies'])->name('listCurrencies');
+    Route::get('/', [CurrencyController::class, 'index'])->name('listCurrencies');
 });
