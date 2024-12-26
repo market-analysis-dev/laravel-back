@@ -18,17 +18,9 @@ class DeveloperController extends ApiController
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDeveloperRequest $request)
+    public function store(StoreDeveloperRequest $request): \App\Responses\ApiResponse
     {
         $developer = Developer::create($request->validated());
 
@@ -38,9 +30,9 @@ class DeveloperController extends ApiController
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Developer $developer): \App\Responses\ApiResponse
     {
-        //
+        return $this->success(data: new DeveloperResource($developer));
     }
 
     /**
