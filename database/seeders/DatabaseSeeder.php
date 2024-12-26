@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             RegionSeeder::class,
             MarketSeeder::class,
+            DeveloperSeeder::class,
         ]);
     }
 }
