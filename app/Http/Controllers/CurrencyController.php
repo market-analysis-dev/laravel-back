@@ -8,12 +8,7 @@ use App\Enums\Currency;
 
 class CurrencyController extends ApiController
 {
-    public function index()
-    {
-
-    }
-
-    public function listCurrencies() :ApiResponse
+    public function index() :ApiResponse
     {
         return $this->success(data: Currency::array());
     }
