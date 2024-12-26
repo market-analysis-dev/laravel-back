@@ -126,3 +126,4 @@ require_once '_regions.php';
 require_once '_currency.php';
 require_once  '_roles.php';
 require_once  '_permissions.php';
+require_once  '_developers.php';
