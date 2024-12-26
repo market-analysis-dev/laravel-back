@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\BuildingClass;
 use App\Enums\BuildingLoadingDoor;
 use App\Enums\BuildingPhase;
-use App\Enums\BuildingTypeGeneration;
 use App\Enums\BuildingTenancy;
+use App\Enums\BuildingTypeGeneration;
 use App\Responses\ApiResponse;
 
 class BuildingController extends ApiController

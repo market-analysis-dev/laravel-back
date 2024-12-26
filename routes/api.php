@@ -124,7 +124,5 @@ Route::post('/market/login', [MarketAuthController::class, 'login']);
 require_once '_buildings.php';
 require_once '_regions.php';
 require_once '_currency.php';
-
-
-require __DIR__ . '/_roles.php';
-require __DIR__ . '/_permissions.php';
+require_once  '_roles.php';
+require_once  '_permissions.php';
