@@ -12,6 +12,7 @@ Route::group([
     Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoor'])->name('listLoadingDoor');
     Route::get('/phases', [BuildingController::class, 'listPhases'])->name('listPhases');
     Route::get('/tenancies', [BuildingController::class, 'listTenancies'])->name('listTenancies');
+    Route::get('/lightning', [BuildingController::class, 'listLightning'])->name('listLightning');
     Route::get('/types-generation', [BuildingController::class, 'listTypeGenerations'])->name('listTypeGenerations');
     Route::get('/types-construction', [BuildingController::class, 'listTypeConstruction'])->name('listTypeConstruction');
 });

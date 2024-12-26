@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BuildingClass;
+use App\Enums\BuildingLightning;
 use App\Enums\BuildingLoadingDoor;
 use App\Enums\BuildingPhase;
 use App\Enums\BuildingTenancy;
@@ -34,6 +35,11 @@ class BuildingController extends ApiController
     public function listPhases(): ApiResponse
     {
         return $this->success(data: BuildingPhase::array());
+    }
+
+    public function listLightning(): ApiResponse
+    {
+        return $this->success(data: BuildingLightning::array());
     }
 
     public function listTypeGenerations(): ApiResponse
