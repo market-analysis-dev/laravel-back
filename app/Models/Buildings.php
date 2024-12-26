@@ -5,6 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @property-read \App\Models\BuildingsAbsorption|null $buildingAbsorption
+ * @property-read \App\Models\BuildingsAvailable|null $buildingAvailable
+ * @property-read \App\Models\BuildingsContacts|null $buildingContacts
+ * @property-read \App\Models\BuildingsFeatures|null $buildingFeatures
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingsImages> $buildingImages
+ * @property-read int|null $building_images_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings query()
+ * @mixin \Eloquent
+ */
 class Buildings extends Model
 {
     use HasFactory;

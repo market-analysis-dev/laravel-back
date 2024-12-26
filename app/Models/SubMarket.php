@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket query()
+ * @mixin \Eloquent
+ */
 class SubMarket extends Model
 {
     use HasFactory;
