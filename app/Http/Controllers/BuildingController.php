@@ -6,6 +6,7 @@ use App\Enums\BuildingClass;
 use App\Enums\BuildingLoadingDoor;
 use App\Enums\BuildingPhase;
 use App\Enums\BuildingTenancy;
+use App\Enums\BuildingTypeConstruction;
 use App\Enums\BuildingTypeGeneration;
 use App\Responses\ApiResponse;
 
@@ -43,5 +44,10 @@ class BuildingController extends ApiController
     public function listTenancies(): ApiResponse
     {
         return $this->success(data: BuildingTenancy::array());
+    }
+
+    public function listTypeConstruction(): ApiResponse
+    {
+        return $this->success(data: BuildingTypeConstruction::array());
     }
 }
