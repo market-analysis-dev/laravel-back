@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newQuery()
@@ -15,17 +16,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SubMarket extends Model
 {
-    use HasFactory;
+    use HasFactory, BlameableTrait;
 
     protected $table = 'cat_submarkets';
 
     protected $fillable = [
-        'subMarketName',
-        'marketId',
+        'name',
+        'market_id',
         'status',
     ];
 
-    // * Definir columnas de marca de tiempo personalizadas
-    const CREATED_AT = 'createdAt';
-    const UPDATED_AT = 'modifiedAt';
 }
