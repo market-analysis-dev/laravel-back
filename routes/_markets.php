@@ -8,5 +8,5 @@ Route::group([
     'as' => 'api.markets.',
     'middleware' => 'auth:sanctum',
 ], function () {
-    Route::get('/', [MarketController::class, 'listMarkets'])->name('listMarkets');
+    Route::get('/', [MarketController::class, 'index'])->name('listMarkets');
 });

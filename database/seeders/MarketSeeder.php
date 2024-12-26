@@ -35,8 +35,8 @@ class MarketSeeder extends Seeder
             ['id' => 19, 'name' => 'Hermosillo', 'status' => 'active'],
             ['id' => 20, 'name' => 'Merida', 'status' => 'active'],
         ];
-        foreach ($data as $item) {
-            Market::create($item);
-        }
+
+            Market::insert($data);
+
     }
 }
