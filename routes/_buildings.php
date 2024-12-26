@@ -9,12 +9,13 @@ Route::group([
     'middleware' => 'auth:sanctum',
 ], function () {
     Route::get('/classes', [BuildingController::class, 'listClasses'])->name('listClasses');
-    Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoor'])->name('listLoadingDoor');
+    Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoors'])->name('listLoadingDoors');
     Route::get('/phases', [BuildingController::class, 'listPhases'])->name('listPhases');
     Route::get('/tenancies', [BuildingController::class, 'listTenancies'])->name('listTenancies');
-    Route::get('/lightning', [BuildingController::class, 'listLightning'])->name('listLightning');
+    Route::get('/lightnings', [BuildingController::class, 'listLightnings'])->name('listLightnings');
     Route::get('/types-generation', [BuildingController::class, 'listTypeGenerations'])->name('listTypeGenerations');
-    Route::get('/types-construction', [BuildingController::class, 'listTypeConstruction'])->name('listTypeConstruction');
-    Route::get('/fire-protection-systems', [BuildingController::class, 'listFireProtectionSystem'])->name('listFireProtectionSystem');
+    Route::get('/types-construction', [BuildingController::class, 'listTypeConstructions'])->name('listTypeConstructions');
+    Route::get('/fire-protection-systems', [BuildingController::class, 'listFireProtectionSystems'])->name('listFireProtectionSystems');
+    Route::get('/deals', [BuildingController::class, 'listDeals'])->name('listDeals');
 });
 

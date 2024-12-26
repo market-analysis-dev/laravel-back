@@ -28,7 +28,7 @@ class BuildingController extends ApiController
         return $this->success(data: BuildingClass::array());
     }
 
-    public function listLoadingDoor(): ApiResponse
+    public function listLoadingDoors(): ApiResponse
     {
         return $this->success(data: BuildingLoadingDoor::array());
     }
@@ -38,13 +38,13 @@ class BuildingController extends ApiController
         return $this->success(data: BuildingPhase::array());
     }
 
-    public function listLightning(): ApiResponse
+    public function listLightnings(): ApiResponse
     {
         return $this->success(data: BuildingLightning::array());
     }
 
 
-    public function listFireProtectionSystem(): ApiResponse
+    public function listFireProtectionSystems(): ApiResponse
     {
         return $this->success(data: BuildingFireProtectionSystem::array());
     }
@@ -54,7 +54,12 @@ class BuildingController extends ApiController
         return $this->success(data: BuildingTenancy::array());
     }
 
-    public function listTypeConstruction(): ApiResponse
+    public function listTypeConstructions(): ApiResponse
+    {
+        return $this->success(data: BuildingTypeConstruction::array());
+    }
+
+    public function listDeals(): ApiResponse
     {
         return $this->success(data: BuildingTypeConstruction::array());
     }
