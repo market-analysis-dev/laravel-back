@@ -31,7 +31,7 @@ class OwnerController extends ApiController
 
     /**
      * @param UpdateOwnerRequest $request
-     * @param $owner
+     * @param Owner $owner
      * @return ApiResponse
      */
     public function update(UpdateOwnerRequest $request, Owner $owner): ApiResponse
