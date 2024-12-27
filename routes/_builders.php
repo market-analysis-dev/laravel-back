@@ -10,6 +10,6 @@ Route::group([
 ], function () {
     Route::get('/', [BuilderController::class, 'index'])->name('listBuilders');
     Route::post('/', [BuilderController::class, 'store'])->name('createBuilder');
-    Route::put('/{id}', [BuilderController::class, 'update'])->name('updateBuilder');
-    Route::delete('/{id}', [BuilderController::class, 'destroy'])->name('deleteBuilder');
+    Route::put('/{builder}', [BuilderController::class, 'update'])->name('updateBuilder');
+    Route::delete('/{builder}', [BuilderController::class, 'destroy'])->name('deleteBuilder');
 });

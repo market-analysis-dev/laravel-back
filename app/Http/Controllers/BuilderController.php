@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBuilderRequest;
+use App\Http\Requests\UpdateBuilderRequest;
 use App\Models\Builder;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Validation\ValidationException;
 
 class BuilderController extends ApiController
 {
@@ -18,84 +22,46 @@ class BuilderController extends ApiController
     }
 
     /**
-     * @param Request $request
+     * @param StoreBuilderRequest $request
      * @return ApiResponse
      */
-    public function store(Request $request): ApiResponse
+    public function store(StoreBuilderRequest $request): ApiResponse
     {
-        $errors = [];
-
-        $name = $request->get('name');
-        if(empty($name)) {
-            $errors[] = 'Campo name es obligatorio';
-        }
-
-        if(empty($errors)) {
-            try {
-                $builder = Builder::create([
-                    'name' => $name
-                ]);
-                return $this->success(data: $builder);
-            } catch (\Exception $e) {
-                return $this->error('No se pudo crear el registro: ' . $e->getMessage(), [], 500);
-            }
-        }
-        return $this->error('Errors', $errors, 422);
+        $builder = Builder::create($request->validated());
+        return $this->success('Builder created successfully', $builder);
     }
 
     /**
-     * @param Request $request
-     * @param $id
+     * @param UpdateBuilderRequest $request
+     * @param Builder $builder
      * @return ApiResponse
      */
-    public function update(Request $request, $id): ApiResponse
+    public function update(UpdateBuilderRequest $request, Builder $builder): ApiResponse
     {
-        $errors = [];
-        $builder = Builder::find($id);
-
-        if(!$builder) {
-            $errors[] = 'Builder con id: ' . $id . ' no existe';
-        }
-
-        $name = $request->get('name');
-        if(empty($name)) {
-            $errors[] = 'Campo name es obligatorio';
-        }
-
-        if(empty($errors)) {
-            try {
-                $builder->update([
-                    'name' => $name,
-                ]);
-                return $this->success(data: $builder);
-            } catch (\Exception $e) {
-                return $this->error('No se pudo actualizar el registro: ' . $e->getMessage(), [], 500);
+        try {
+            if ($builder->update($request->validated())) {
+                return $this->success('Builder updated successfully', $builder);
             }
+
+            return $this->error('Builder update failed', 423);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
         }
-        return $this->error('Errors', $errors, 422);
     }
 
     /**
-     * @param $id
+     * @param Builder $builder
      * @return ApiResponse
      */
-    public function destroy($id): ApiResponse
+    public function destroy(Builder $builder): ApiResponse
     {
-        $errors = [];
-        $builder = Builder::find($id);
-
-        if(!$builder) {
-            $errors[] = 'Builder con id: ' . $id . ' no existe';
-        }
-
-        if(empty($errors)) {
-            try {
-                $builder->delete();
-                return $this->success('Builder con id: ' . $id . ' fue eliminado exitosamente');
-            } catch (\Exception $e) {
-                return $this->error('No se pudo eliminar el registro: ' . $e->getMessage(), [], 500);
+        try {
+            if ($builder->delete()) {
+                return $this->success('Builder deleted successfully', $builder);
             }
+            return $this->error('Builder delete failed', 423);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
         }
-        return $this->error('Errors', $errors, 422);
     }
 }
