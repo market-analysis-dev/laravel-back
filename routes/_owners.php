@@ -10,6 +10,6 @@ Route::group([
 ], function () {
     Route::get('/', [OwnerController::class, 'index'])->name('listOwners');
     Route::post('/', [OwnerController::class, 'store'])->name('createOwner');
-    Route::put('/{id}', [OwnerController::class, 'update'])->name('updateOwner');
-    Route::delete('/{id}', [OwnerController::class, 'destroy'])->name('deleteOwner');
+    Route::put('/{owner}', [OwnerController::class, 'update'])->name('updateOwner');
+    Route::delete('/{owner}', [OwnerController::class, 'destroy'])->name('deleteOwner');
 });
