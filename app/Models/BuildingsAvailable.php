@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable query()
+ * @mixin \Eloquent
+ */
 class BuildingsAvailable extends Model
 {
     use HasFactory;

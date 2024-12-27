@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Roles;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,5 +31,8 @@ class UserSeeder extends Seeder
                 'status' => 'Active'
             ],
         ]);
+
+        $user = User::where('user_name', 'admin.dev')->first();
+        $user->assignRole(Roles::ADMIN);
     }
 }

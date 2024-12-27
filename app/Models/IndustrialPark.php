@@ -17,23 +17,23 @@ class IndustrialPark extends Model
         'updated_by',
     ];
 
-    public function creator()
+    public function market()
+    {
+        return $this->belongsTo(Market::class, 'market_id');
+    }
+
+    public function subMarket()
+    {
+        return $this->belongsTo(SubMarket::class, 'sub_market_id');
+    }
+
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function updater()
+    public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-
-    // public function market()
-    // {
-    //     return $this->belongsTo(Market::class, 'market_id');
-    // }
-
-    // public function subMarket()
-    // {
-    //     return $this->belongsTo(SubMarket::class, 'sub_market_id');
-    // }
 }

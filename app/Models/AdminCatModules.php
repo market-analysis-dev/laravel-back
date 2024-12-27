@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminCatModules newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminCatModules newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminCatModules query()
+ * @mixin \Eloquent
+ */
 class AdminCatModules extends Model
 {
     use HasFactory;

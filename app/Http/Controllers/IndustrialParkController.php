@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\IndustrialPark;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class IndustrialParkController
+class IndustrialParkController extends Controller
 {
     public function index()
     {
@@ -14,17 +15,20 @@ class IndustrialParkController
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            // 'market_id' => 'nullable|integer|exist:markets,id',
-            // 'sub_market_id' => 'nullable|integer|exist:sub_markets,id',
-            'market_id' => 'nullable|integer',
-            'sub_market_id' => 'nullable|integer',
+            'market_id' => 'nullable|exists:cat_markets,id',
+            'sub_market_id' => 'nullable|exists:cat_sub_markets,id',
         ]);
 
-        // $data['created_by'] = auth()->id();
-        $data['created_by'] = 1;
-        $industrialPark = IndustrialPark::create($data);
+        // * Create
+        $industrialPark = IndustrialPark::create([
+            'name' => $request->name,
+            'market_id' => $request->market_id,
+            'sub_market_id' => $request->sub_market_id,
+            'created_by' => Auth::id(), // Asignar el ID del usuario logueado
+            'updated_by' => Auth::id(), // Asignar el ID del usuario logueado
+        ]);
 
         return response()->json($industrialPark, 201);
     }
@@ -33,20 +37,20 @@ class IndustrialParkController
     {
         $industrialPark = IndustrialPark::findOrFail($id);
 
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            // 'market_id' => 'nullable|integer|exist:markets,id',
-            // 'sub_market_id' => 'nullable|integer|exist:sub_markets,id',
-            'market_id' => 'nullable|integer',
-            'sub_market_id' => 'nullable|integer',
+            'market_id' => 'nullable|exists:cat_markets,id',
+            'sub_market_id' => 'nullable|exists:cat_sub_markets,id',
         ]);
 
-        // $data['updated_by'] = auth()->id();
-        $data['updated_by'] = 1;
-        $industrialPark->update($data);
+        $industrialPark->update([
+            'name' => $request->name,
+            'market_id' => $request->market_id,
+            'sub_market_id' => $request->sub_market_id,
+            'updated_by' => Auth::id(),
+        ]);
 
         return response()->json($industrialPark);
-
     }
 
     public function destroy($id)
