@@ -10,6 +10,6 @@ Route::group([
 ], function(){
     Route::get('/', [IndustrialParkController::class, 'index'])->name('index');
     Route::post('/', [IndustrialParkController::class, 'store'])->name('store');
-    Route::put('/{id}', [IndustrialParkController::class, 'update'])->name('update');
-    Route::delete('/{id}', [IndustrialParkController::class, 'destroy'])->name('destroy');
+    Route::put('/{industrialPark}', [IndustrialParkController::class, 'update'])->name('update');
+    Route::delete('/{industrialPark}', [IndustrialParkController::class, 'destroy'])->name('destroy');
 });
