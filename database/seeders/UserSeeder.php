@@ -26,8 +26,8 @@ class UserSeeder extends Seeder
                 'user_name' => 'admin.dev',
                 'password' => Hash::make('password'),
                 'company_id' => 1,
-                'user_type_id' => 1,
-                'total_screens' => 1,
+                'role_id' => 1,
+                'total_devices' => 1,
                 'status' => 'Active'
             ],
         ]);
