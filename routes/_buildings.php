@@ -17,5 +17,6 @@ Route::group([
     Route::get('/types-construction', [BuildingController::class, 'listTypeConstructions'])->name('listTypeConstructions');
     Route::get('/fire-protection-systems', [BuildingController::class, 'listFireProtectionSystems'])->name('listFireProtectionSystems');
     Route::get('/deals', [BuildingController::class, 'listDeals'])->name('listDeals');
+    Route::get('/technical-improvements', [BuildingController::class, 'listTechnicalImprovements'])->name('listTechnicalImprovements');
 });
 
