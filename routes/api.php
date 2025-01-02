@@ -18,7 +18,7 @@ use App\Models\BuildingsContacts;
 
 use App\Http\Controllers\MarketAuthController;
 
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 
 // * COMPANIES (COMPLETADO)
 Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza

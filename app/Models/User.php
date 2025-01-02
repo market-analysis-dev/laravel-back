@@ -94,4 +94,23 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            // Asignar el ID del usuario autenticado al campo 'created_by' si está autenticado
+            if (auth()->check()) {
+                $user->created_by = auth()->user()->id;
+            }
+        });
+
+        static::updating(function ($user) {
+            // Asignar el ID del usuario autenticado al campo 'updated_by' si está autenticado
+            if (auth()->check()) {
+                $user->updated_by = auth()->user()->id;
+            }
+        });
+    }
 }
