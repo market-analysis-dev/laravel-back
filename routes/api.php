@@ -104,6 +104,17 @@ Route::post('/permissions/update/{userId}', [PermissionController::class, 'updat
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
+/*
+ * API's Buildings
+ */
+require_once '_buildings.php';
+
+/*
+ * API's Industrial Parks
+ */
+require_once '_industrial_parks.php';
+
+
 
 /*
  * API's Employees
