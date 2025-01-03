@@ -11,7 +11,7 @@ class StoreIndustrialParkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class StoreIndustrialParkRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'market_id' => 'nullable|exists:cat_markets,id',
-            'sub_market_id' => 'nullable|exists:cat_sub_markets,id',
+            'sub_market_id' => 'nullable|exists:cat_submarkets,id',
         ];
     }
 }

@@ -6,28 +6,42 @@ use App\Models\IndustrialPark;
 use App\Http\Requests\StoreIndustrialParkRequest;
 use App\Http\Requests\UpdateIndustrialParkRequest;
 
-class IndustrialParkController extends Controller
+class IndustrialParkController extends ApiController
 {
     public function index()
     {
         return IndustrialPark::all();
     }
 
-    public function store(StoreIndustrialParkRequest $request)
+    public function store(StoreIndustrialParkRequest $request): \App\Responses\ApiResponse
     {
-        $industrialPark = IndustrialPark::create($request->validated());
-        return response()->json($industrialPark, 201);
+        try {
+            $industrialPark = IndustrialPark::create($request->validated());
+            return $this->success('Industrial Park created successfully', $industrialPark);
+            
+        } catch (\Exception $e) {
+            return $this->error('Error creating industrial park: ' . $e->getMessage(), 500);
+        }
     }
 
-    public function update(UpdateIndustrialParkRequest $request, IndustrialPark $industrialPark)
+    public function update(UpdateIndustrialParkRequest $request, IndustrialPark $industrialPark): \Illuminate\Http\JsonResponse
     {
         $industrialPark->update($request->validated());
         return response()->json($industrialPark);
     }
 
-    public function destroy(IndustrialPark $industrialPark)
+    public function destroy(IndustrialPark $industrialPark): \App\Responses\ApiResponse
     {
-        $industrialPark->delete();
-        return response()->json(null, 204);
+        try {
+            
+            if ($industrialPark->delete()) {
+                return $this->success('Industrial Park deleted successfully');
+            }
+
+            return response()->json(null, 204);
+
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }        
     }
 }

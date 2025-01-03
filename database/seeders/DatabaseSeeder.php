@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\IndustrialPark;
 use App\Models\Role;
 use App\Models\User;
 // use App\Models\User;
@@ -24,6 +25,8 @@ class DatabaseSeeder extends Seeder
             RegionSeeder::class,
             MarketSeeder::class,
             DeveloperSeeder::class,
+            SubMarketSeeder::class,
+            IndustrialParkSeeder::class,
         ]);
     }
 }

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('industrial_parks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->bigInteger('market_id')->unsigned()->nullable();
-            $table->bigInteger('sub_market_id')->unsigned()->nullable();
+            $table->bigInteger('market_id')->nullable()->unsigned();
+            $table->bigInteger('sub_market_id')->nullable()->unsigned();
             $table->timestamps();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

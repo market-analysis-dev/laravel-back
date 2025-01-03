@@ -136,6 +136,7 @@ require_once '_buildings.php';
 require_once '_regions.php';
 require_once '_currency.php';
 require_once '_markets.php';
+require_once '_submarkets.php';
 require_once  '_roles.php';
 require_once  '_permissions.php';
 require_once  '_developers.php';
