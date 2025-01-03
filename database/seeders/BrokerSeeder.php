@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Broker;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BrokerSeeder extends Seeder
 {
@@ -13,11 +14,24 @@ class BrokerSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            ['name' => 'broker 1'],
-            ['name' => 'broker 2'],
-        ];
+        $path = storage_path('app/brokers.csv');
+        $file = fopen($path, 'r');
 
-        Broker::insert($data);
+        fgetcsv($file);
+
+        $data = [];
+        $id = 1;
+        while (($row = fgetcsv($file)) !== false) {
+            $data[] = [
+                'id' => $id++,
+                'name' => $row[1],
+            ];
+        }
+
+        fclose($file);
+
+        foreach (array_chunk($data, 500) as $chunk) {
+            DB::table('cat_brokers')->insert($chunk);
+        }
     }
 }
