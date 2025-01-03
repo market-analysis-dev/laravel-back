@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             MarketSeeder::class,
             DeveloperSeeder::class,
             SubMarketSeeder::class,
+            OwnerSeeder::class,
         ]);
     }
 }
