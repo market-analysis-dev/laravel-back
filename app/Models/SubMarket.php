@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newQuery()
@@ -28,6 +28,10 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereUpdatedBy($value)
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket createdBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket updatedBy($userId)
  * @mixin \Eloquent
  */
 class SubMarket extends Model
