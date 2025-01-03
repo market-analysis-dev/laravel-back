@@ -23,7 +23,7 @@ class UserController extends ApiController
     {
         try {
             $user = User::create($request->validated());
-            return $this->success('User created successfully');
+            return $this->success('User created successfully', $user);
         } catch (\Exception $e) {
             return $this->error('Error creating user: ' . $e->getMessage(), 500);
         }
@@ -32,7 +32,7 @@ class UserController extends ApiController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\JsonResponse
     {
         $user->update($request->validated());
         return response()->json($user);
