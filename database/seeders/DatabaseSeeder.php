@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             UserSeeder::class,
             RegionSeeder::class,
-            MarketSeeder::class,
             DeveloperSeeder::class,
+            MarketSeeder::class,
             SubMarketSeeder::class,
             IndustrialParkSeeder::class,
         ]);

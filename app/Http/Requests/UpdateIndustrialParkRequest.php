@@ -23,8 +23,8 @@ class UpdateIndustrialParkRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255',
-            'market_id' => 'nullable|exists:cat_markets,id',
-            'sub_market_id' => 'nullable|exists:cat_submarkets,id',
+            'market_id' => 'required|exists:cat_markets,id',
+            'sub_market_id' => 'required|exists:cat_submarkets,id',
         ];
     }
 }

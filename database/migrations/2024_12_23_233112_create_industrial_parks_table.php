@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('industrial_parks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('market_id')->constrained('cat_markets');
+            $table->foreignId('submarket_id')->constrained('cat_submarkets');
             $table->string('name');
-            $table->bigInteger('market_id')->nullable()->unsigned();
-            $table->bigInteger('sub_market_id')->nullable()->unsigned();
             $table->timestamps();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('created_by')->nullable();
+            $table->foreignId('updated_by')->nullable();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -16,14 +16,14 @@ class IndustrialParkSeeder extends Seeder
         IndustrialPark::create([
             'name' => 'Example Park',
             'market_id' => 1,
-            'sub_market_id' => 2,
+            'submarket_id' => 2,
             'created_by' => 1,
         ]);
 
         IndustrialPark::create([
             'name' => 'Example Park Two',
             'market_id' => 2,
-            'sub_market_id' => null,
+            'submarket_id' => 2,
             'created_by' => 1,
         ]);
     }

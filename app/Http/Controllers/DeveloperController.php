@@ -45,7 +45,7 @@ class DeveloperController extends ApiController
                 return $this->success('Developer updated successfully', new DeveloperResource($developer));
             }
 
-            return $this->error('Developer update failed', 423);
+            return $this->error('Developer update failed', 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
@@ -61,7 +61,7 @@ class DeveloperController extends ApiController
             if ($developer->delete()) {
                 return $this->success('Developer deleted successfully', new DeveloperResource($developer));
             }
-            return $this->error('Developer delete failed', 423);
+            return $this->error('Developer delete failed', 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
