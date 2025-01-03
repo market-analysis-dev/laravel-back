@@ -22,7 +22,7 @@ class StoreBuilderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:50|unique:cat_builders,name',
+            'name' => 'required|string|max:100|unique:cat_builders,name',
         ];
     }
 }

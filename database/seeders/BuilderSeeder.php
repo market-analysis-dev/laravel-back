@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Builder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BuilderSeeder extends Seeder
 {
@@ -13,15 +14,24 @@ class BuilderSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            ['id' => 1, 'name' => 'builder 1'],
-            ['id' => 2, 'name' => 'builder 2'],
-            ['id' => 3, 'name' => 'builder 3'],
-            ['id' => 4, 'name' => 'builder 4'],
-            ['id' => 5, 'name' => 'builder 5'],
-            ['id' => 6, 'name' => 'builder 6'],
-        ];
+        $path = storage_path('app/builders.csv');
+        $file = fopen($path, 'r');
 
-        Builder::insert($data);
+        fgetcsv($file);
+
+        $data = [];
+        $id = 1;
+        while (($row = fgetcsv($file)) !== false) {
+            $data[] = [
+                'id' => $id++,
+                'name' => $row[1],
+            ];
+        }
+
+        fclose($file);
+
+        foreach (array_chunk($data, 500) as $chunk) {
+            DB::table('cat_builders')->insert($chunk);
+        }
     }
 }
