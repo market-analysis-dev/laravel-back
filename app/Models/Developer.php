@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
