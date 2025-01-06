@@ -87,8 +87,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'user_name',
         'company_id',
-        'user_type_id',
-        'total_screens',
+        'role_id',
+        'total_devices',
         'password',
         'remember_token',
         'status',
@@ -102,4 +102,5 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
 }

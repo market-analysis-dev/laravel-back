@@ -40,6 +40,8 @@ class Market extends Model
 
     protected $fillable = [
         'name',
-        'status'
+        'status',
+        'created_by',
+        'updated_by',
     ];
 }

@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newQuery()
@@ -27,21 +28,22 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereUpdatedBy($value)
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket createdBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket updatedBy($userId)
  * @mixin \Eloquent
  */
 class SubMarket extends Model
 {
-    use HasFactory;
+    use HasFactory, BlameableTrait;
 
     protected $table = 'cat_submarkets';
 
     protected $fillable = [
-        'subMarketName',
-        'marketId',
+        'name',
+        'market_id',
         'status',
     ];
 
-    // * Definir columnas de marca de tiempo personalizadas
-    const CREATED_AT = 'createdAt';
-    const UPDATED_AT = 'modifiedAt';
 }
