@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
+ * 
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker createdBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker newModelQuery()
@@ -25,6 +26,8 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker whereUpdatedBy($value)
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\User|null $updater
  * @mixin \Eloquent
  */
 class Broker extends Model

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
  * 
@@ -32,13 +31,11 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  */
 class Country extends Model
 {
-    use HasFactory, BlameableTrait;
+    use HasFactory;
 
     protected $table = 'countries';
 
     protected $fillable = [
       'name',
-      'created_by',
-      'updated_by',
     ];
 }
