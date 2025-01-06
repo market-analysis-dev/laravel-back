@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -129,11 +130,14 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @property-read \App\Models\Region $region
  * @property-read \App\Models\SubMarket $subMarket
  * @property-read \App\Models\BuildingContact $userOwner
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withoutTrashed()
  * @mixin \Eloquent
  */
 class Building extends Model
 {
-    use HasFactory, BlameableTrait;
+    use HasFactory, BlameableTrait, SoftDeletes;
 
     protected $table = 'buildings';
 

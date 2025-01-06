@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -105,11 +106,14 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @property-read \App\Models\Country $country
  * @property-read \App\Models\Industry $industry
  * @property-read \App\Models\Tenant $tenant
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
 {
-    use HasFactory, BlameableTrait;
+    use HasFactory, BlameableTrait, SoftDeletes;
 
     protected $table = 'buildings_available';
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -34,11 +35,14 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact withoutTrashed()
  * @mixin \Eloquent
  */
 class BuildingContact extends Model
 {
-    use HasFactory, BlameableTrait;
+    use HasFactory, BlameableTrait, SoftDeletes;
 
     protected $table = 'building_contacts';
 

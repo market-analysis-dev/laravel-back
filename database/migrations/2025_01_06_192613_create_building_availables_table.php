@@ -13,21 +13,13 @@ return new class extends Migration
     {
         Schema::create('buildings_available', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('building_id');
-            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
-            $table->unsignedBigInteger('abs_tenant_id');
-            $table->foreign('abs_tenant_id')->references('id')->on('cat_tenants')->onDelete('cascade');
-            $table->unsignedBigInteger('abs_industry_id');
-            $table->foreign('abs_industry_id')->references('id')->on('cat_industries')->onDelete('cascade');
-            $table->unsignedBigInteger('abs_country_id');
-            $table->foreign('abs_country_id')->references('id')->on('countries')->onDelete('cascade');
-            $table->unsignedBigInteger('broker_id');
-            $table->foreign('broker_id')->references('id')->on('building_contacts')->onDelete('cascade');
-            $table->enum('building_state', ['Availability', 'Absorption']);
+            $table->foreignId('building_id')->constrained('buildings');
+            $table->foreignId('abs_tenant_id')->constrained('cat_tenants');
+            $table->foreignId('abs_industry_id')->constrained('cat_industries');
+            $table->foreignId('abs_country_id')->constrained('countries');
+            $table->foreignId('broker_id')->constrained('building_contacts');
             $table->integer('avl_size_sf');
             $table->string('avl_building_dimensions', 45);
-            $table->enum('avl_building_phase', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory']);
-            $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory']);
             $table->integer('avl_minimum_space_sf')->nullable();
             $table->integer('avl_expansion_up_to_sf')->nullable();
             $table->integer('dock_doors')->nullable();
@@ -52,12 +44,16 @@ return new class extends Migration
             $table->date('abs_closing_date')->nullable();
             $table->date('abs_lease_up')->nullable();
             $table->date('abs_month')->nullable();
-            $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
-            $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
             $table->decimal('abs_sale_price', 18, 2)->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
+            $table->enum('building_state', ['Availability', 'Absorption']);
+            $table->enum('avl_building_phase', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory']);
+            $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory']);
+            $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
+            $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
