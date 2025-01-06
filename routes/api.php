@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ModulesColumnController;
-// use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\PermissionController;
@@ -18,7 +18,7 @@ use App\Models\BuildingsContacts;
 
 use App\Http\Controllers\MarketAuthController;
 
-Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
+Route::post('/auth/login', [AuthController::class, 'login']);
 
 // * COMPANIES (COMPLETADO)
 Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza
@@ -104,17 +104,6 @@ Route::post('/permissions/update/{userId}', [PermissionController::class, 'updat
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
-/*
- * API's Buildings
- */
-require_once '_buildings.php';
-
-/*
- * API's Industrial Parks
- */
-require_once '_industrial_parks.php';
-
-
 
 /*
  * API's Employees
@@ -134,6 +123,7 @@ Route::post('/market/login', [MarketAuthController::class, 'login']);
 
 require_once '_users.php';
 require_once '_buildings.php';
+require_once '_industrial_parks.php';
 require_once '_regions.php';
 require_once '_currency.php';
 require_once '_markets.php';
@@ -142,3 +132,5 @@ require_once  '_roles.php';
 require_once  '_permissions.php';
 require_once  '_tenants.php';
 require_once '_owners.php';
+require_once  '_developers.php';
+require_once  '_shelters.php';
