@@ -1,22 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\MarketAuthController;
+use App\Http\Controllers\MarketController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ModulesColumnController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserTypeController;
-use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\BuildingsController;
-use App\Http\Controllers\UniquePermissionController;
-use App\Http\Controllers\MarketController;
 use App\Http\Controllers\SubMarketController;
-use App\Http\Controllers\ExcelController;
-use App\Models\BuildingsContacts;
-
-use App\Http\Controllers\MarketAuthController;
+use App\Http\Controllers\UniquePermissionController;
+use App\Http\Controllers\UserDetailsController;
+use App\Http\Controllers\UserTypeController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 
@@ -128,10 +124,11 @@ require_once '_regions.php';
 require_once '_currency.php';
 require_once '_markets.php';
 require_once '_submarkets.php';
-require_once  '_roles.php';
-require_once  '_permissions.php';
-require_once  '_tenants.php';
+require_once '_roles.php';
+require_once '_permissions.php';
+require_once '_tenants.php';
 require_once '_owners.php';
-require_once  '_developers.php';
-require_once  '_shelters.php';
-require_once  '_builders.php';
+require_once '_developers.php';
+require_once '_shelters.php';
+require_once '_builders.php';
+require_once '_brokers.php';
