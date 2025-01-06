@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -100,6 +100,11 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTruckCourt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedBy($value)
+ * @property-read \App\Models\BuildingContact $broker
+ * @property-read \App\Models\Building $building
+ * @property-read \App\Models\Country $country
+ * @property-read \App\Models\Industry $industry
+ * @property-read \App\Models\Tenant $tenant
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model

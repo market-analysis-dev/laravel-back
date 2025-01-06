@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -118,6 +118,17 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUserOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereYearBuilt($value)
+ * @property-read \App\Models\BuildingContact $builder
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingsAvailable
+ * @property-read int|null $buildings_available_count
+ * @property-read \App\Models\BuildingContact|null $contact
+ * @property-read \App\Models\BuildingContact $developer
+ * @property-read \App\Models\IndustrialPark $industrialPark
+ * @property-read \App\Models\Market $market
+ * @property-read \App\Models\BuildingContact $owner
+ * @property-read \App\Models\Region $region
+ * @property-read \App\Models\SubMarket $subMarket
+ * @property-read \App\Models\BuildingContact $userOwner
  * @mixin \Eloquent
  */
 class Building extends Model
