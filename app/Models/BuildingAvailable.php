@@ -6,6 +6,102 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
+/**
+ *
+ *
+ * @property int $id
+ * @property int $building_id
+ * @property int $abs_tenant_id
+ * @property int $abs_industry_id
+ * @property int $abs_country_id
+ * @property int $broker_id
+ * @property string $building_state
+ * @property int $avl_size_sf
+ * @property string $avl_building_dimensions
+ * @property string $avl_building_phase
+ * @property string $abs_building_phase
+ * @property int|null $avl_minimum_space_sf
+ * @property int|null $avl_expansion_up_to_sf
+ * @property int|null $dock_doors
+ * @property int|null $drive_in_door
+ * @property int|null $floor_thickness
+ * @property string|null $floor_resistance
+ * @property int|null $truck_court
+ * @property int|null $has_crossdock
+ * @property int|null $shared_truck
+ * @property int|null $new_construction
+ * @property int|null $is_starting_construction
+ * @property string|null $bay_size
+ * @property string|null $columns_spacing
+ * @property string|null $avl_date
+ * @property int|null $abs_lease_term_month
+ * @property int|null $knockouts_docks
+ * @property int|null $parking_space
+ * @property string $avl_min_lease
+ * @property string $avl_max_lease
+ * @property string $abs_asking_rate_shell
+ * @property string $abs_closing_rate
+ * @property string|null $abs_closing_date
+ * @property string|null $abs_lease_up
+ * @property string|null $abs_month
+ * @property string|null $abs_final_use
+ * @property string|null $abs_company_type
+ * @property string|null $abs_sale_price
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable createdBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable updatedBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsAskingRateShell($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsBuildingPhase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsClosingDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsClosingRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsCompanyType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsCountryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsFinalUse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsIndustryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsLeaseTermMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsLeaseUp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsSalePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlBuildingDimensions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlBuildingPhase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlExpansionUpToSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlMaxLease($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlMinLease($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlMinimumSpaceSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlSizeSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBaySize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereColumnsSpacing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDockDoors($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDriveInDoor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereFloorResistance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereFloorThickness($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasCrossdock($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereIsStartingConstruction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereKnockoutsDocks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereNewConstruction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereParkingSpace($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSharedTruck($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTruckCourt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedBy($value)
+ * @mixin \Eloquent
+ */
 class BuildingAvailable extends Model
 {
     use HasFactory, BlameableTrait;
@@ -52,4 +148,29 @@ class BuildingAvailable extends Model
         'abs_company_type',
         'abs_sale_price'
     ];
+
+    public function building(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Building::class, 'building_id');
+    }
+
+    public function tenant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'abs_tenant_id');
+    }
+
+    public function industry(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'abs_industry_id');
+    }
+
+    public function country(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'abs_country_id');
+    }
+
+    public function broker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(BuildingContact::class, 'broker_id');
+    }
 }
