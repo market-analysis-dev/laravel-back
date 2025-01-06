@@ -23,6 +23,10 @@ class StoreDeveloperRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:100|unique:cat_developers,name',
+            'is_developer' => 'required|boolean',
+            'is_builder' => 'required|boolean',
+            'is_owner' => 'required|boolean',
+            'is_user_owner' => 'required|boolean',
         ];
     }
 }

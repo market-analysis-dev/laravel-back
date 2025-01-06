@@ -17,6 +17,26 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer updatedBy($userId)
+ * @property int $id
+ * @property string $name
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereUpdatedBy($value)
+ * @property int $is_developer
+ * @property int $is_builder
+ * @property int $is_owner
+ * @property int $is_user_owner
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsBuilder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsDeveloper($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsOwner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsUserOwner($value)
  * @mixin \Eloquent
  */
 class Developer extends Model
