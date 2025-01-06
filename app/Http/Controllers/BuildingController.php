@@ -10,6 +10,7 @@ use App\Enums\BuildingPhase;
 use App\Enums\BuildingTenancy;
 use App\Enums\BuildingTypeConstruction;
 use App\Enums\BuildingTypeGeneration;
+use App\Enums\TechnicalImprovements;
 use App\Responses\ApiResponse;
 
 class BuildingController extends ApiController
@@ -62,5 +63,10 @@ class BuildingController extends ApiController
     public function listDeals(): ApiResponse
     {
         return $this->success(data: BuildingTypeConstruction::array());
+    }
+
+    public function listTechnicalImprovements(): ApiResponse
+    {
+        return $this->success(data: TechnicalImprovements::array());
     }
 }
