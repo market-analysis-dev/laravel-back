@@ -63,6 +63,14 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User updatedBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
+ * @property int|null $role_id
+ * @property int $total_devices
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTotalDevices($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedBy($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
