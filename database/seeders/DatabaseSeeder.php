@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
             MarketSeeder::class,
             DeveloperSeeder::class,
             TenantSeeder::class,
+            SubMarketSeeder::class,
+            IndustrialParkSeeder::class,
+            OwnerSeeder::class,
         ]);
     }
 }

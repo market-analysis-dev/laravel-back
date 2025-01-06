@@ -29,6 +29,14 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereUpdatedBy($value)
+ * @property int $is_developer
+ * @property int $is_builder
+ * @property int $is_owner
+ * @property int $is_user_owner
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsBuilder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsDeveloper($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsOwner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsUserOwner($value)
  * @mixin \Eloquent
  */
 class Developer extends Model
@@ -37,7 +45,15 @@ class Developer extends Model
 
     protected $table = 'cat_developers';
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'is_developer',
+        'is_builder',
+        'is_owner',
+        'is_user_owner',
+        'created_by',
+        'updated_by',
+    ];
 
     protected $dates = ['created_at', 'updated_at'];
 }
