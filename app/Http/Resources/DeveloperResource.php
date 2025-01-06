@@ -17,6 +17,10 @@ class DeveloperResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'is_developer' => $this->is_developer,
+            'is_builder' => $this->is_builder,
+            'is_owner' => $this->is_owner,
+            'is_user_owner' => $this->is_user_owner,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
