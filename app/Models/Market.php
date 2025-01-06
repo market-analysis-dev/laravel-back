@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market newQuery()
@@ -26,6 +26,10 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereUpdatedBy($value)
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market createdBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market updatedBy($userId)
  * @mixin \Eloquent
  */
 class Market extends Model
@@ -36,6 +40,8 @@ class Market extends Model
 
     protected $fillable = [
         'name',
-        'status'
+        'status',
+        'created_by',
+        'updated_by',
     ];
 }

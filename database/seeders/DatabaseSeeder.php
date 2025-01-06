@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
             MarketSeeder::class,
             DeveloperSeeder::class,
             ShelterSeeder::class,
+            TenantSeeder::class,
+            SubMarketSeeder::class,
+            IndustrialParkSeeder::class,
+            OwnerSeeder::class,
         ]);
     }
 }
