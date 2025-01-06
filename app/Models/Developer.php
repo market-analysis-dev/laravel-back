@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
@@ -45,15 +45,7 @@ class Developer extends Model
 
     protected $table = 'cat_developers';
 
-    protected $fillable = [
-        'name',
-        'is_developer',
-        'is_builder',
-        'is_owner',
-        'is_user_owner',
-        'created_by',
-        'updated_by',
-    ];
+    protected $fillable = ['name'];
 
     protected $dates = ['created_at', 'updated_at'];
 }
