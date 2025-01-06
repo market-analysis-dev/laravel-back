@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cat_developers', function (Blueprint $table) {
+        Schema::create('cat_submarkets', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->boolean('is_developer')->default(0);
-            $table->boolean('is_builder')->default(0);
-            $table->boolean('is_owner')->default(0);
-            $table->boolean('is_user_owner')->default(0);
+            $table->unsignedBigInteger('market_id');
+            $table->foreign('market_id')->references('id')->on('cat_markets')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('status', ['active', 'inactive']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cat_developers');
+        Schema::dropIfExists('cat_submarkets');
     }
 };
