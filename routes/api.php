@@ -23,14 +23,6 @@ Route::put('/companies/{id}', [CompanyController::class, 'update']); // * Este s
 Route::put('/companies/{id}/delete', [CompanyController::class, 'destroy']); // * Este si se utiliza
 Route::post('/companies', [CompanyController::class, 'store']);
 
-// // * USERS (COMPLETADO)
-// Route::get('/user', [UserController::class, 'index']); // * Este si se utiliza
-// Route::get('/user/device', [UserController::class, 'getUserDevice']); // * Este si se utiliza
-// Route::post('/user/combo', [UserController::class, 'getUsersFilterCombo']); // * Combo de usuarios para heredar permisos
-// Route::get('/user/{id}', [UserController::class, 'show']); // * Este si se utiliza
-// Route::put('/user/{id}', [UserController::class, 'update']); // * Este si se utiliza
-// Route::put('/user/{id}/delete', [UserController::class, 'destroy']); // * Este si se utiliza
-// Route::post('/user', [UserController::class, 'store']); // * Este si se utiliza
 
 // * USER DETAILS (COMPLETADO)
 Route::get('/user-details', [UserDetailsController::class, 'index']); // ! Este NO se utiliza
@@ -74,19 +66,6 @@ Route::put('/unique/{id}', [UniquePermissionController::class, 'update']);
 Route::put('/unique/{id}/delete', [UniquePermissionController::class, 'destroy']);
 // Route::post('/unique', [UniquePermissionController::class, 'store']);
 
-// * MARKETS (COMPLETADO)
-Route::get('/market', [MarketController::class, 'index']);
-Route::get('/market/{id}', [MarketController::class, 'show']);
-Route::put('/market/{id}', [MarketController::class, 'update']);
-Route::put('/market/{id}/delete', [MarketController::class, 'destroy']);
-Route::post('/market', [MarketController::class, 'store']);
-
-// * SUB MARKETS (COMPLETADO)
-Route::get('/submarket', [SubMarketController::class, 'index']);
-Route::get('/submarket/{id}', [SubMarketController::class, 'show']);
-Route::put('/submarket/{id}', [SubMarketController::class, 'update']);
-Route::put('/submarket/{id}/delete', [SubMarketController::class, 'destroy']);
-Route::post('/submarket', [SubMarketController::class, 'store']);
 
 // * AVAILABILITY
 Route::get('/excel-data', [ExcelController::class, 'getData']); // ! Este NO se utiliza
@@ -101,19 +80,6 @@ Route::post('/permissions/clone/{userId}', [PermissionController::class, 'cloneP
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
 
-/*
- * API's Employees
- */
-// Route::post('/employees', [UserController::class, 'newAdminUser']);
-// Route::get('/employees', [UserController::class, 'getEmployees']);
-// Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
-// Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
-
-/*
- *
- * PLATAFORMA MARKETANALYSIS.MX
- *
- */
 
 Route::post('/market/login', [MarketAuthController::class, 'login']);
 

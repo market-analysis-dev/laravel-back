@@ -16,6 +16,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry updatedBy($userId)
+ * @property int $id
+ * @property string $name
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereUpdatedBy($value)
  * @mixin \Eloquent
  */
 class Industry extends Model
