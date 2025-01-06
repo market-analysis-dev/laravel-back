@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             SubMarketSeeder::class,
             IndustrialParkSeeder::class,
             OwnerSeeder::class,
+            CountrySeeder::class,
             IndustrySeeder::class,
         ]);
     }
