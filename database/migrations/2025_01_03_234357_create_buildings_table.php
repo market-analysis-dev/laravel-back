@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignId('region_id')->constrained('cat_regions');
             $table->foreignId('market_id')->constrained('cat_markets');
             $table->foreignId('sub_market_id')->constrained('cat_submarkets');
-            $table->foreignId('builder_id')->constrained('building_contacts');
+            $table->foreignId('builder_id')->constrained('cat_developers');
             $table->foreignId('industrial_park_id')->constrained('industrial_parks');
-            $table->foreignId('developer_id')->constrained('building_contacts');
-            $table->foreignId('owner_id')->constrained('building_contacts');
-            $table->foreignId('user_owner_id')->constrained('building_contacts');
-            $table->foreignId('contact_id')->constrained('building_contacts');
+            $table->foreignId('developer_id')->constrained('cat_developers');
+            $table->foreignId('owner_id')->constrained('cat_developers');
+            $table->foreignId('user_owner_id')->constrained('cat_developers');
+            $table->foreignId('contact_id')->nullable()->constrained('building_contacts');
             $table->string('building_name', 255);
             $table->integer('building_size_sf');
             $table->string('latitud', 45);
