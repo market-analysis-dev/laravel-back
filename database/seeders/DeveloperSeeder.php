@@ -22,5 +22,6 @@ class DeveloperSeeder extends Seeder
         ];
 
         Developer::insert($data);
+        /*Developer::factory()->count(50)->create();*/
     }
 }

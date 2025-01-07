@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignId('region_id')->constrained('cat_regions');
             $table->foreignId('market_id')->constrained('cat_markets');
             $table->foreignId('sub_market_id')->constrained('cat_submarkets');
-            $table->foreignId('builder_id')->constrained('building_contacts');
+            $table->foreignId('builder_id')->constrained('cat_developers');
             $table->foreignId('industrial_park_id')->constrained('industrial_parks');
-            $table->foreignId('developer_id')->constrained('building_contacts');
-            $table->foreignId('owner_id')->constrained('building_contacts');
-            $table->foreignId('user_owner_id')->constrained('building_contacts');
-            $table->foreignId('contact_id')->constrained('building_contacts');
+            $table->foreignId('developer_id')->constrained('cat_developers');
+            $table->foreignId('owner_id')->constrained('cat_developers');
+            $table->foreignId('user_owner_id')->constrained('cat_developers');
+            $table->foreignId('contact_id')->nullable()->constrained('building_contacts');
             $table->string('building_name', 255);
             $table->integer('building_size_sf');
             $table->string('latitud', 45);
@@ -47,8 +47,6 @@ return new class extends Migration
             $table->string('skylights_sf', 45)->nullable();
             $table->string('coverage', 45)->nullable();
             $table->string('kvas', 45)->nullable();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
             $table->enum('class', ['A', 'B', 'C']);
             $table->enum('building_phase', ['BTS', 'Expansion', 'Inventory', 'Construction', 'Planned', 'Sublease', 'Expiration']);
             $table->enum('type_generation', ['1st Generation', '2nd Generation']);
@@ -61,6 +59,9 @@ return new class extends Migration
             $table->enum('loading_door', ['Crossdock', 'Back Loading', 'Front Loading'])->nullable();
             $table->enum('above_market_tis', ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'])->nullable();
             $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

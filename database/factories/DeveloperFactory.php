@@ -17,7 +17,15 @@ class DeveloperFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->company,
+            'is_developer' => $this->faker->boolean(50),
+            'is_builder' => $this->faker->boolean(50),
+            'is_owner' => $this->faker->boolean(50),
+            'is_user_owner' => $this->faker->boolean(50),
+            'created_by' => 1,
+            'updated_by' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
