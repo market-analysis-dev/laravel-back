@@ -23,7 +23,7 @@ class StoreBuildingsAvailableRequest extends FormRequest
     {
         return [
             'building_id' => 'required|integer|exists:buildings,id',
-            'broker_id' => 'required|integer|exists:building_contacts,id',
+            'broker_id' => 'required|integer|exists:cat_developers,id',
             'avl_size_sf' => 'required|integer|min:0',
             'avl_building_dimensions' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
@@ -46,7 +46,7 @@ class StoreBuildingsAvailableRequest extends FormRequest
             'avl_max_lease' => 'required|numeric|min:0',
             'created_by' => 'nullable|integer|exists:users,id',
             'updated_by' => 'nullable|integer|exists:users,id',
-            'building_state' => 'required|in:Availability,Absorption',
+            'building_state' => 'required|in:Availability',
             'avl_building_phase' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
         ];
     }
