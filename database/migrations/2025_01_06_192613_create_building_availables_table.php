@@ -45,13 +45,14 @@ return new class extends Migration
             $table->date('abs_lease_up')->nullable();
             $table->date('abs_month')->nullable();
             $table->decimal('abs_sale_price', 18, 2)->nullable();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
             $table->enum('building_state', ['Availability', 'Absorption']);
             $table->enum('avl_building_phase', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory']);
             $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory']);
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

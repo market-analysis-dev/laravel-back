@@ -18,5 +18,11 @@ Route::group([
     Route::get('/fire-protection-systems', [BuildingController::class, 'listFireProtectionSystems'])->name('listFireProtectionSystems');
     Route::get('/deals', [BuildingController::class, 'listDeals'])->name('listDeals');
     Route::get('/technical-improvements', [BuildingController::class, 'listTechnicalImprovements'])->name('listTechnicalImprovements');
+
+    Route::get('/', [BuildingController::class, 'index'])->name('index');
+    Route::post('/', [BuildingController::class, 'store'])->name('store');
+    Route::get('/{building}', [BuildingController::class, 'show'])->name('show');
+    Route::put('/{building}', [BuildingController::class, 'update'])->name('update');
+    Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');
 });
 

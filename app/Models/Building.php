@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -190,6 +190,7 @@ class Building extends Model
         'status',
         'created_by',
         'updated_by',
+        'deleted_by',
     ];
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo

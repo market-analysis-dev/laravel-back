@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $contact_name
@@ -53,5 +53,6 @@ class BuildingContact extends Model
       'contact_comments',
       'created_by',
       'updated_by',
+      'deleted_by',
     ];
 }
