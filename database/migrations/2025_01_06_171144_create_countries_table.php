@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
+            $table->integer('deleted_by')->nullable();
+            $table->softDeletes();
         });
     }
 

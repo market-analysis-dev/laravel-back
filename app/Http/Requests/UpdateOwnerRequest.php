@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateOwnerRequest extends FormRequest
 {
@@ -22,7 +23,12 @@ class UpdateOwnerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_owners,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('cat_owners', 'name')->ignore($this->route('owner'))->whereNull('deleted_at')
+            ],
         ];
     }
 }

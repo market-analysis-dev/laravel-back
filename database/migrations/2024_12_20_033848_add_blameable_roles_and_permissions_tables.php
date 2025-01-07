@@ -26,6 +26,9 @@ return new class extends Migration
 
             $table->index('created_by');
             $table->index('updated_by');
+            
+            $table->integer('deleted_by')->nullable();
+            $table->softDeletes();
         });
     }
 
@@ -41,12 +44,14 @@ return new class extends Migration
             $table->dropIndex('updated_by');
             $table->dropColumn('created_by');
             $table->dropColumn('updated_by');
+            $table->dropColumn('deleted_by');
         });
         Schema::table($tableNames['roles'], function (Blueprint $table) {
             $table->dropIndex('created_by');
             $table->dropIndex('updated_by');
             $table->dropColumn('created_by');
             $table->dropColumn('updated_by');
+            $table->dropColumn('deleted_by');
         });
     }
 };

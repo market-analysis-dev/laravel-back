@@ -22,7 +22,12 @@ class StoreTenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_tenants,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'unique:cat_tenants,name,NULL,id,deleted_at,NULL',
+            ],
         ];
     }
 }

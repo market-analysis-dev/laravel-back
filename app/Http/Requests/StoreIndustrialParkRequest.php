@@ -22,9 +22,20 @@ class StoreIndustrialParkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'market_id' => 'required|exists:cat_markets,id',
-            'submarket_id' => 'required|exists:cat_submarkets,id',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:cat_industrial_parks,name,NULL,id,deleted_at,NULL'
+            ],
+            'market_id' => [
+                'required',
+                'exists:cat_markets,id,deleted_at,NULL',
+            ],
+            'submarket_id' => [
+                'required',
+                'exists:cat_submarkets,id,deleted_at,NULL',
+            ],
         ];
     }
 }

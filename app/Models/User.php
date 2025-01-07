@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -75,7 +76,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, Notifiable, HasRoles, BlameableTrait, HasFactory;
+    use HasApiTokens, Notifiable, HasRoles, BlameableTrait, HasFactory, SoftDeletes;
 
     protected $table = 'users';
 

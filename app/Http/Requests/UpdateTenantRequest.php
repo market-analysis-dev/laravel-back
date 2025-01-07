@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTenantRequest extends FormRequest
 {
@@ -22,7 +23,12 @@ class UpdateTenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_tenants,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('cat_tenants', 'name')->ignore($this->route('tenant'))->whereNull('deleted_at')
+            ],
         ];
     }
 }

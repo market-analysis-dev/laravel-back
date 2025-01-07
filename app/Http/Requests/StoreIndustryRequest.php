@@ -22,7 +22,12 @@ class StoreIndustryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_industries,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'unique:cat_industries,name,NULL,id,deleted_at,NULL',
+            ],
         ];
     }
 }

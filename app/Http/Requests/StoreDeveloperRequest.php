@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDeveloperRequest extends FormRequest
 {
@@ -22,7 +23,12 @@ class StoreDeveloperRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_developers,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('cat_developers', 'name')->whereNull('deleted_at'),
+            ],
             'is_developer' => 'required|boolean',
             'is_builder' => 'required|boolean',
             'is_owner' => 'required|boolean',

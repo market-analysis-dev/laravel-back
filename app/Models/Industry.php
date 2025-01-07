@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -32,7 +33,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Industry extends Model
 {
-    use HasFactory, BlameableTrait;
+    use HasFactory, BlameableTrait, SoftDeletes;
 
     protected $table = 'cat_industries';
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateIndustrialParkRequest extends FormRequest
 {
@@ -22,7 +23,13 @@ class UpdateIndustrialParkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('industrial_parks', 'name')->ignore($this->route('industrial_park'))->whereNull('deleted_at')
+            ],
             'market_id' => 'required|exists:cat_markets,id',
             'sub_market_id' => 'required|exists:cat_submarkets,id',
         ];

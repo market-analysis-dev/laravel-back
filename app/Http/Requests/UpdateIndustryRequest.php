@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateIndustryRequest extends FormRequest
 {
@@ -22,7 +23,12 @@ class UpdateIndustryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_industries,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('cat_industries', 'name')->ignore($this->route('industry'))->whereNull('deleted_at')
+            ],
         ];
     }
 }

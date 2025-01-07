@@ -20,6 +20,8 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('created_by')->nullable();
             $table->foreignId('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
+            $table->softDeletes();
         });
         Schema::enableForeignKeyConstraints();
     }

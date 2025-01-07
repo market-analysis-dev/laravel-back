@@ -22,7 +22,12 @@ class StoreOwnerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_owners,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'unique:cat_owners,name,NULL,id,deleted_at,NULL',
+            ],
         ];
     }
 }

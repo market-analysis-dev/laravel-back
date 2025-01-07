@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateBrokerRequest extends FormRequest
 {
@@ -22,7 +23,12 @@ class UpdateBrokerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:cat_brokers,name',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('cat_brokers', 'name')->ignore($this->route('broker'))->whereNull('deleted_at')
+            ],
         ];
     }
 }
