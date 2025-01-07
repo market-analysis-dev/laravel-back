@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('contact_comments', 255);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

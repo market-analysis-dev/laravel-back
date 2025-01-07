@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -155,7 +155,10 @@ class BuildingAvailable extends Model
         'abs_month',
         'abs_final_use',
         'abs_company_type',
-        'abs_sale_price'
+        'abs_sale_price',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     public function building(): \Illuminate\Database\Eloquent\Relations\BelongsTo

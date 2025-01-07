@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('abs_tenant_id')->constrained('cat_tenants');
             $table->foreignId('abs_industry_id')->constrained('cat_industries');
             $table->foreignId('abs_country_id')->constrained('countries');
-            $table->foreignId('broker_id')->constrained('building_contacts');
+            $table->foreignId('broker_id')->constrained('cat_developers');
             $table->integer('avl_size_sf');
             $table->string('avl_building_dimensions', 45);
             $table->integer('avl_minimum_space_sf')->nullable();
@@ -45,13 +45,14 @@ return new class extends Migration
             $table->date('abs_lease_up')->nullable();
             $table->date('abs_month')->nullable();
             $table->decimal('abs_sale_price', 18, 2)->nullable();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
             $table->enum('building_state', ['Availability', 'Absorption']);
             $table->enum('avl_building_phase', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory']);
             $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory']);
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
