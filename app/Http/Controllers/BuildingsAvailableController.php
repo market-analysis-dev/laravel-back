@@ -12,71 +12,98 @@ use App\Responses\ApiResponse;
 class BuildingsAvailableController extends ApiController
 {
     /**
+     * @param Request $request
+     * @param Building $building
      * @return ApiResponse
      */
-    public function index(): ApiResponse
+    public function index(Request $request, Building $building): ApiResponse
     {
-        $availabilities = BuildingAvailable::where('building_state', '=', 'Availability')->paginate(10);
+        $availabilities = BuildingAvailable::where('building_id', $building->id)
+            ->where('building_state', '=', 'Availability')
+            ->paginate(10);
+
         return $this->success(data: $availabilities);
     }
 
 
     /**
      * @param StoreBuildingsAvailableRequest $request
+     * @param Building $building
      * @return ApiResponse
      */
-    public function store(StoreBuildingsAvailableRequest $request): ApiResponse
+    public function store(StoreBuildingsAvailableRequest $request, Building $building): ApiResponse
     {
-        $availability = BuildingAvailable::create($request->validated());
+        $data = $request->validated();
+        $data['building_id'] = $building->id;
+
+        $availability = BuildingAvailable::create($data);
+
         return $this->success('Building Available created successfully', $availability);
     }
 
     /**
-     * @param BuildingAvailable $availability
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
      */
-    public function show(BuildingAvailable $availability): ApiResponse
+    public function show(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
-        if ($availability->trashed()) {
-            return $this->error('Building not found', ['error_code' => 404]);
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
         }
 
-        return $this->success(data: $availability);
+        if ($buildingAvailable->building_state !== 'Availability') {
+            return $this->error('Invalid building state', ['error_code' => 403]);
+        }
+
+        return $this->success(data: $buildingAvailable);
     }
 
 
     /**
      * @param UpdateBuildingsAvailableRequest $request
-     * @param BuildingAvailable $availability
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
      */
-    public function update(UpdateBuildingsAvailableRequest $request, BuildingAvailable $availability): ApiResponse
+    public function update(UpdateBuildingsAvailableRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
-        try {
-            if ($availability->update($request->validated())) {
-                return $this->success('Building Available updated successfully', $availability);
-            }
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
 
-            return $this->error('Building Available update failed', 423);
+        try {
+            $buildingAvailable->update($request->validated());
+            return $this->success('Building Available updated successfully', $buildingAvailable);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
     }
 
     /**
-     * @param BuildingAvailable $availability
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
      */
-    public function destroy(BuildingAvailable $availability): ApiResponse
+    public function destroy(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
+
+        if ($buildingAvailable->building_state !== 'Availability') {
+            return $this->error('Invalid building state', ['error_code' => 403]);
+        }
+
         try {
-            if ($availability->delete()) {
-                return $this->success('Building Available deleted successfully', $availability);
+            if ($buildingAvailable->delete()) {
+                return $this->success('Building Available deleted successfully', $buildingAvailable);
             }
             return $this->error('Building Available delete failed', 423);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
     }
+
 
 }
