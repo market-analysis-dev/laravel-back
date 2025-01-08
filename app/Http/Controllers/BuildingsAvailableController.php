@@ -71,6 +71,9 @@ class BuildingsAvailableController extends ApiController
         if ($buildingAvailable->building_id !== $building->id) {
             return $this->error('Building Available not found for this Building', ['error_code' => 404]);
         }
+        if ($buildingAvailable->building_state !== 'Availability') {
+            return $this->error('Invalid building state', ['error_code' => 403]);
+        }
 
         try {
             $buildingAvailable->update($request->validated());
