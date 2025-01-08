@@ -26,7 +26,7 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
-            'broker_id' => 'required|integer|exists:building_contacts,id',
+            'broker_id' => 'required|integer|exists:cat_developers,id',
             'dock_doors' => 'nullable|integer|min:0',
             'drive_in_door' => 'nullable|integer|min:0',
             'floor_thickness' => 'nullable|integer|min:0',
