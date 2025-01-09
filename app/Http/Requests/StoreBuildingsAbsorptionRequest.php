@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreBuildingsAbsorptionRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'building_id' => 'required|integer|exists:buildings,id',
+            'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
+            'abs_industry_id' => 'required|integer|exists:cat_industries,id',
+            'abs_country_id' => 'required|integer|exists:countries,id',
+            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'dock_doors' => 'nullable|integer|min:0',
+            'drive_in_door' => 'nullable|integer|min:0',
+            'floor_thickness' => 'nullable|integer|min:0',
+            'floor_resistance' => 'nullable|string|max:255',
+            'truck_court' => 'nullable|integer|min:0',
+            'has_crossdock' => 'nullable|boolean',
+            'shared_truck' => 'nullable|boolean',
+            'new_construction' => 'nullable|boolean',
+            'is_starting_construction' => 'nullable|boolean',
+            'bay_size' => 'nullable|string|max:45',
+            'columns_spacing' => 'nullable|string|max:45',
+            'abs_lease_term_month' => 'nullable|integer|min:0',
+            'knockouts_docks' => 'nullable|integer|min:0',
+            'parking_space' => 'nullable|integer|min:0',
+            'abs_asking_rate_shell' => 'required|numeric|min:0',
+            'abs_closing_rate' => 'required|numeric|min:0',
+            'abs_closing_date' => 'nullable|date',
+            'abs_lease_up' => 'nullable|date',
+            'abs_month' => 'nullable|date',
+            'abs_sale_price' => 'nullable|numeric|min:0',
+            'created_by' => 'nullable|integer|exists:users,id',
+            'updated_by' => 'nullable|integer|exists:users,id',
+            'building_state' => 'required|in:Absorption',
+            'abs_building_phase' => 'required|in:BTS,Expansion,Inventory',
+            'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
+            'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
+        ];
+    }
+}

@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('abs_industry_id')->nullable()->constrained('cat_industries');
             $table->foreignId('abs_country_id')->nullable()->constrained('countries');
             $table->foreignId('broker_id')->constrained('cat_developers');
-            $table->integer('avl_size_sf');
-            $table->string('avl_building_dimensions', 45);
+            $table->integer('avl_size_sf')->nullable();
+            $table->string('avl_building_dimensions', 45)->nullable();
             $table->integer('avl_minimum_space_sf')->nullable();
             $table->integer('avl_expansion_up_to_sf')->nullable();
             $table->integer('dock_doors')->nullable();
@@ -37,8 +37,8 @@ return new class extends Migration
             $table->integer('abs_lease_term_month')->nullable();
             $table->integer('knockouts_docks')->nullable();
             $table->integer('parking_space')->nullable();
-            $table->decimal('avl_min_lease', 18, 2);
-            $table->decimal('avl_max_lease', 18, 2);
+            $table->decimal('avl_min_lease', 18, 2)->nullable();
+            $table->decimal('avl_max_lease', 18, 2)->nullable();
             $table->decimal('abs_asking_rate_shell', 18, 2)->nullable();
             $table->decimal('abs_closing_rate', 18, 2)->nullable();
             $table->date('abs_closing_date')->nullable();
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->date('abs_month')->nullable();
             $table->decimal('abs_sale_price', 18, 2)->nullable();
             $table->enum('building_state', ['Availability', 'Absorption']);
-            $table->enum('avl_building_phase', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory']);
+            $table->enum('avl_building_phase', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory'])->nullable();
             $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory'])->nullable();
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
