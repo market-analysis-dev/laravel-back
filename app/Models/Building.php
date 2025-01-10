@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $building_name
  * @property string $class
  * @property int $building_size_sf
- * @property string $building_phase
  * @property string $type_generation
  * @property string $currency
  * @property string $tenancy
@@ -40,8 +39,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $has_sprinklers
  * @property int $has_office
  * @property int $has_leed
- * @property int $new_construction
- * @property int $starting_construction
  * @property string|null $hvac_production_area
  * @property string|null $construction_type
  * @property string|null $lightning
@@ -133,6 +130,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withoutTrashed()
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeletedBy($value)
+ * @property int $new_construction
+ * @property int $starting_construction
+ * @property string $building_phase
  * @mixin \Eloquent
  */
 class Building extends Model
@@ -154,7 +158,6 @@ class Building extends Model
         'building_name',
         'class',
         'building_size_sf',
-        'building_phase',
         'type_generation',
         'currency',
         'tenancy',
@@ -171,8 +174,6 @@ class Building extends Model
         'has_sprinklers',
         'has_office',
         'has_leed',
-        'new_construction',
-        'starting_construction',
         'hvac_production_area',
         'construction_type',
         'lightning',
@@ -188,6 +189,7 @@ class Building extends Model
         'loading_door',
         'above_market_tis',
         'status',
+        'expansion_land',
         'created_by',
         'updated_by',
         'deleted_by',

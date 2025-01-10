@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string $contact_name
@@ -38,6 +38,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact withoutTrashed()
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingContact whereDeletedBy($value)
  * @mixin \Eloquent
  */
 class BuildingContact extends Model

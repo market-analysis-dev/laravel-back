@@ -119,6 +119,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereUserOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereYearBuilt($value)
+ * @property int|null $deleted_by
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedBy($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model

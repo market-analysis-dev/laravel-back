@@ -29,6 +29,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsContacts whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsContacts whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsContacts whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsContacts whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsContacts whereDeletedBy($value)
  * @mixin \Eloquent
  */
 class BuildingsContacts extends Model

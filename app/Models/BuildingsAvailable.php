@@ -95,6 +95,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereTruckCourt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereDeletedBy($value)
  * @mixin \Eloquent
  */
 class BuildingsAvailable extends Model

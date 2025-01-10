@@ -37,8 +37,6 @@ return new class extends Migration
             $table->boolean('has_sprinklers');
             $table->boolean('has_office');
             $table->boolean('has_leed');
-            $table->boolean('new_construction');
-            $table->boolean('starting_construction');
             $table->string('hvac_production_area', 45)->nullable();
             $table->string('ventilation', 45)->nullable();
             $table->string('transformer_capacity', 45)->nullable();
@@ -47,8 +45,8 @@ return new class extends Migration
             $table->string('skylights_sf', 45)->nullable();
             $table->string('coverage', 45)->nullable();
             $table->string('kvas', 45)->nullable();
+            $table->integer('expansion_land');
             $table->enum('class', ['A', 'B', 'C']);
-            $table->enum('building_phase', ['BTS', 'Expansion', 'Inventory', 'Construction', 'Planned', 'Sublease', 'Expiration']);
             $table->enum('type_generation', ['1st Generation', '2nd Generation']);
             $table->enum('currency', ['USD', 'MXP']);
             $table->enum('tenancy', ['Single', 'Multitenant']);

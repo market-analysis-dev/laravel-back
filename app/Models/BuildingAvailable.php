@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -109,6 +109,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedBy($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
