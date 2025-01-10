@@ -6,15 +6,31 @@ use App\Http\Requests\StoreDeveloperRequest;
 use App\Http\Requests\UpdateDeveloperRequest;
 use App\Http\Resources\DeveloperResource;
 use App\Models\Developer;
+use Illuminate\Http\Request;
 
 class DeveloperController extends ApiController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): \App\Responses\ApiResponse
+    /*public function index(): \App\Responses\ApiResponse
     {
         return $this->success(data: DeveloperResource::collection(Developer::all()));
+    }*/
+
+    public function index(Request $request): \App\Responses\ApiResponse
+    {
+        $filters = $request->only(['is_owner', 'is_builder', 'is_developer']);
+
+        $query = Developer::query();
+
+        foreach ($filters as $key => $value) {
+            $query->where($key, '=', filter_var($value, FILTER_VALIDATE_BOOLEAN));
+        }
+
+        $developers = $query->get();
+
+        return $this->success(data: DeveloperResource::collection($developers));
     }
 
     /**
