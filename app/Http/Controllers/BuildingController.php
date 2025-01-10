@@ -11,6 +11,7 @@ use App\Enums\BuildingTenancy;
 use App\Enums\BuildingTypeConstruction;
 use App\Enums\BuildingTypeGeneration;
 use App\Enums\TechnicalImprovements;
+use App\Enums\BuildingStatus;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
@@ -159,6 +160,14 @@ class BuildingController extends ApiController
     public function listTechnicalImprovements(): ApiResponse
     {
         return $this->success(data: TechnicalImprovements::array());
+    }
+
+    /**
+     * @return ApiResponse
+     */
+    public function listBuildingsStatus(): ApiResponse
+    {
+        return $this->success(data: BuildingStatus::array());
     }
 
 
