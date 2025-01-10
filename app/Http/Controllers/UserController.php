@@ -30,6 +30,15 @@ class UserController extends ApiController
     }
 
     /**
+     * @param User $user
+     * @return \App\Responses\ApiResponse
+     */
+    public function show(User $user): \App\Responses\ApiResponse
+    {
+        return $this->success(data: $user);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\JsonResponse
