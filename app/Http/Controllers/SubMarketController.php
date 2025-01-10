@@ -8,9 +8,22 @@ use App\Responses\ApiResponse;
 
 class SubMarketController extends ApiController
 {
-    public function index(): ApiResponse
+    /**
+     * @param Request $request
+     * @return ApiResponse
+     */
+    public function index(Request $request): ApiResponse
     {
-        $sub_markets = SubMarket::where('status', '=', 'active')->get();
-        return $this->success(data: $sub_markets);
+        $marketId = $request->query('market_id');
+
+        $query = SubMarket::where('status', '=', 'active');
+
+        if ($marketId) {
+            $query->where('market_id', '=', $marketId);
+        }
+
+        $subMarkets = $query->get();
+
+        return $this->success(data: $subMarkets);
     }
 }
