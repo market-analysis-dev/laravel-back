@@ -20,3 +20,4 @@ yarn-error.log
 /.vscode
 /market-back.zip
 !/storage/app/tenants.csv
+acert

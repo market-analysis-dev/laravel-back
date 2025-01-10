@@ -43,6 +43,7 @@ class IndustrialPark extends Model
         'submarket_id',
         'created_by',
         'updated_by',
+        'deleted_by',
     ];
 
     public function market(): \Illuminate\Database\Eloquent\Relations\BelongsTo
