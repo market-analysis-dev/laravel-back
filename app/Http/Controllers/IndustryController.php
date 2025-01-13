@@ -41,9 +41,9 @@ class IndustryController extends ApiController
                 return $this->success('Industry updated successfully', $industry);
             }
 
-            return $this->error('Industry update failed', 423);
+            return $this->error('Industry update failed', status:423);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status:500);
         }
     }
 
@@ -57,9 +57,9 @@ class IndustryController extends ApiController
             if ($industry->delete()) {
                 return $this->success('Industry deleted successfully', $industry);
             }
-            return $this->error('Industry delete failed', 423);
+            return $this->error('Industry delete failed', status:423);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status:500);
         }
     }
 

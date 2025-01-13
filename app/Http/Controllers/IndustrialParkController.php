@@ -38,10 +38,10 @@ class IndustrialParkController extends ApiController
                 return $this->success('Industrial Park deleted successfully', $industrialPark);
             }
 
-            return $this->error('Industrial Park delete failed', 422);
+            return $this->error('Industrial Park delete failed', status:422);
 
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error('Error deleting industrial park: ' . $e->getMessage(), status: 500);
         }
     }
 }

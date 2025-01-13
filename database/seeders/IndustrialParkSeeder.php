@@ -24,7 +24,6 @@ class IndustrialParkSeeder extends Seeder
 
         while (($row = fgetcsv($file)) !== false) {
             $data[] = [
-                // 'id' => $id++,
                 'name' => $row[0],
                 'market_id' => $row[1],
                 'submarket_id' => $row[2]
@@ -36,19 +35,5 @@ class IndustrialParkSeeder extends Seeder
         foreach (array_chunk($data, 500) as $chunk) {
             DB::table('cat_industrial_parks')->insert($chunk);
         }
-
-        // IndustrialPark::create([
-        //     'name' => 'Example Park',
-        //     'market_id' => 1,
-        //     'submarket_id' => 2,
-        //     'created_by' => 1,
-        // ]);
-
-        // IndustrialPark::create([
-        //     'name' => 'Example Park Two',
-        //     'market_id' => 2,
-        //     'submarket_id' => 2,
-        //     'created_by' => 1,
-        // ]);
     }
 }

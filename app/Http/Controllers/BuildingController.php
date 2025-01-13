@@ -47,7 +47,8 @@ class BuildingController extends ApiController
     public function show(Building $building): ApiResponse
     {
         if ($building->trashed()) {
-            return $this->error('Building not found', ['error_code' => 404]);
+            // return $this->error('Building not found', ['error_code' => 404]);
+            return $this->error('Building not found', status:404);
         }
 
         return $this->success(data: $building);
@@ -66,9 +67,9 @@ class BuildingController extends ApiController
                 return $this->success('Building updated successfully', $building);
             }
 
-            return $this->error('Building update failed', 423);
+            return $this->error('Building update failed', status:423);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status:500);
         }
     }
 
@@ -82,9 +83,11 @@ class BuildingController extends ApiController
             if ($building->delete()) {
                 return $this->success('Building deleted successfully', $building);
             }
-            return $this->error('Building delete failed', ['error_code' => 423]);
+            // return $this->error('Building delete failed', ['error_code' => 423]);
+            return $this->error('Building delete failed', status:423);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), ['error_code' => 500]);
+            // return $this->error($e->getMessage(), ['error_code' => 500]);
+            return $this->error($e->getMessage(), status:500);
         }
     }
 
@@ -169,6 +172,4 @@ class BuildingController extends ApiController
     {
         return $this->success(data: BuildingStatus::array());
     }
-
-
 }

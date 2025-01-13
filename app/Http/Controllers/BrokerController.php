@@ -41,9 +41,9 @@ class BrokerController extends ApiController
                 return $this->success('Broker updated successfully', $broker);
             }
 
-            return $this->error('Broker update failed', 423);
+            return $this->error('Broker update failed', status:423);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status:500);
         }
     }
 
@@ -57,9 +57,9 @@ class BrokerController extends ApiController
             if ($broker->delete()) {
                 return $this->success('Broker deleted successfully', $broker);
             }
-            return $this->error('Broker delete failed', 423);
+            return $this->error('Broker delete failed', status:423);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status:500);
         }
     }
 
