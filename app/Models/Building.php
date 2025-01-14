@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $region_id
  * @property int $market_id
- * @property int $sub_market_id
+ * @property int $submarket_id
  * @property int $builder_id
  * @property int $industrial_park_id
  * @property int $developer_id
@@ -148,7 +148,7 @@ class Building extends Model
     protected $fillable = [
         'region_id',
         'market_id',
-        'sub_market_id',
+        'submarket_id',
         'builder_id',
         'industrial_park_id',
         'developer_id',
@@ -156,11 +156,7 @@ class Building extends Model
         'user_owner_id',
         'contact_id',
         'building_name',
-        'class',
         'building_size_sf',
-        'type_generation',
-        'currency',
-        'tenancy',
         'latitud',
         'longitud',
         'year_built',
@@ -175,24 +171,31 @@ class Building extends Model
         'has_office',
         'has_leed',
         'hvac_production_area',
-        'construction_type',
-        'lightning',
         'ventilation',
         'transformer_capacity',
         'construction_state',
         'roof_system',
-        'fire_protection_system',
         'skylights_sf',
         'coverage',
         'kvas',
+        'expansion_land',
+        'class',
+        'type_generation',
+        'currency',
+        'tenancy',
+        'construction_type',
+        'lightning',
+        'fire_protection_system',
         'deal',
         'loading_door',
         'above_market_tis',
         'status',
-        'expansion_land',
         'created_by',
         'updated_by',
         'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -207,7 +210,7 @@ class Building extends Model
 
     public function subMarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(SubMarket::class, 'sub_market_id');
+        return $this->belongsTo(SubMarket::class, 'submarket_id');
     }
 
     public function builder(): \Illuminate\Database\Eloquent\Relations\BelongsTo

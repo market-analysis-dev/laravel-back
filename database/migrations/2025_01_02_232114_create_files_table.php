@@ -19,9 +19,11 @@ return new class extends Migration
             $table->bigInteger('size');
             $table->string('mime_type', 20);
             $table->string('path', 100);
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

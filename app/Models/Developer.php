@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -41,11 +42,27 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  */
 class Developer extends Model
 {
-    use HasFactory, BlameableTrait;
+    use HasFactory, BlameableTrait, SoftDeletes;
 
     protected $table = 'cat_developers';
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'is_developer',
+        'is_builder',
+        'is_owner',
+        'is_user_owner',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 
-    protected $dates = ['created_at', 'updated_at'];
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 }
