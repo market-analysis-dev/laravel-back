@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BuildingClass;
+use App\Enums\BuildingDeal;
 use App\Enums\BuildingFireProtectionSystem;
 use App\Enums\BuildingLightning;
 use App\Enums\BuildingLoadingDoor;
@@ -16,15 +17,66 @@ use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
 use App\Responses\ApiResponse;
+use Illuminate\Http\Request;
 
 class BuildingController extends ApiController
 {
     /**
      * @return ApiResponse
      */
-    public function index(): ApiResponse
+    public function index(Request $request): ApiResponse
     {
-        $buildings = Building::paginate(10);
+        $validated = $request->validate([
+            'page' => 'nullable|integer',
+            'size' => 'nullable|integer',
+            'search' => 'nullable',
+            'status' => 'nullable',
+            'building_name' => 'nullable',
+            'marketName' => 'nullable',
+            'submarketName' => 'nullable',
+            'industrialParkName' => 'nullable',
+            'column' => 'nullable|in:status,building_name,marketName,submarketName,industrialPark',
+            'state' => 'nullable|in:asc,desc',
+        ]);
+
+        $size = $validated['size'] ?? 10;
+        $order = $validated['column'] ?? 'id';
+        $direction = $validated['state'] ?? 'desc';
+
+        $buildings = Building::with([
+            'market',
+            'subMarket',
+            'industrialPark',
+        ])
+        ->when($validated['search'] ?? false, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('status', 'like', "%{$search}%")
+                    ->orWhere('building_name', 'like', "%{$search}%");
+            });
+        })
+        ->when($validated['status'] ?? false, function ($query, $status) {
+            $query->where('status', $status);
+        })
+        ->when($validated['building_name'] ?? false, function ($query, $building_name) {
+            $query->where('building_name', 'like', "%{$building_name}%");
+        })
+        ->when($validated['marketName'] ?? false, function ($query, $marketName) {
+            $query->whereHas('market', function ($query) use ($marketName) {
+                $query->where('name', 'like', "%{$marketName}%");
+            });
+        })
+        ->when($validated['submarketName'] ?? false, function ($query, $submarketName) {
+            $query->whereHas('subMarket', function ($query) use ($submarketName) {
+                $query->where('name', 'like', "%{$submarketName}%");
+            });
+        })
+        ->when($validated['industrialParkName'] ?? false, function ($query, $industrialParkName) {
+            $query->whereHas('industrialPark', function ($query) use ($industrialParkName) {
+                $query->where('name', 'like', "%{$industrialParkName}%");
+            });
+        })
+        ->orderBy($order, $direction)
+        ->paginate($size);
         return $this->success(data: $buildings);
     }
 
@@ -49,6 +101,18 @@ class BuildingController extends ApiController
         if ($building->trashed()) {
             return $this->error('Building not found', ['error_code' => 404]);
         }
+        $building->load([
+            'region',
+            'market',
+            'subMarket',
+            'builder',
+            'industrialPark',
+            'developer',
+            'owner',
+            'userOwner',
+            'contact',
+            'buildingsAvailable',
+        ]);
 
         return $this->success(data: $building);
     }
@@ -149,9 +213,17 @@ class BuildingController extends ApiController
     /**
      * @return ApiResponse
      */
+    public function listTypeGenerations(): ApiResponse
+    {
+        return $this->success(data: BuildingTypeGeneration::array());
+    }
+
+    /**
+     * @return ApiResponse
+     */
     public function listDeals(): ApiResponse
     {
-        return $this->success(data: BuildingTypeConstruction::array());
+        return $this->success(data: BuildingDeal::array());
     }
 
     /**
