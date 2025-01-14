@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 // use App\Models\User;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Validator;
-use Illuminate\Routing\Controller;
 
-class AuthController extends Controller
+// use Illuminate\Support\Facades\Hash;
+
+// use Illuminate\Support\Facades\Validator;
+
+class AuthController extends ApiController
 {
-    public function login(Request $request)
+    public function login(Request $request): \App\Responses\ApiResponse
     {
         // * Validar los datos de entrada
         $request->validate([
@@ -23,9 +24,7 @@ class AuthController extends Controller
 
         // * Intentar autenticar el usuario
         if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Invalid credentials',
-            ], 401);
+            return $this->error('Invalid credentials', status: 401);
         }
 
         $user = Auth::user();
@@ -33,10 +32,6 @@ class AuthController extends Controller
         // * Generar el token de acceso
         $token = $user->createToken('market-analysis')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Login successful',
-            'user' => $user,
-            'access_token' => $token,
-        ]);
+        return $this->success('Login successful', $user, ['access_token' => $token]);
     }
 }

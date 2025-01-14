@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends ApiController
@@ -14,7 +14,7 @@ class UserController extends ApiController
      */
     public function index()
     {
-        return User::all();
+        return $this->success(data: User::all());
     }
 
     /**
@@ -27,11 +27,11 @@ class UserController extends ApiController
             $validatedData = $request->validated();
             $validatedData['password'] = Hash::make($validatedData['password']);
             $user = User::create($validatedData);
-            
+
             return $this->success('User created successfully', $user);
 
         } catch (\Exception $e) {
-            return $this->error('Error creating user: ' . $e->getMessage(), status:500);
+            return $this->error('Error creating user: ' . $e->getMessage(), status: 500);
         }
     }
 
@@ -73,10 +73,10 @@ class UserController extends ApiController
             if ($user->delete()) {
                 return $this->success('User deleted successfully');
             }
-            return $this->error('User delete failed', status:423);
+            return $this->error('User delete failed', status: 423);
 
         } catch (\Exception $e) {
-            return $this->error('Error deleting user: ' . $e->getMessage(), status:500);
+            return $this->error('Error deleting user: ' . $e->getMessage(), status: 500);
         }
     }
 }
