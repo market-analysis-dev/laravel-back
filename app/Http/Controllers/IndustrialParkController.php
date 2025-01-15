@@ -5,12 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreIndustrialParkRequest;
 use App\Http\Requests\UpdateIndustrialParkRequest;
 use App\Models\IndustrialPark;
+use Illuminate\Http\Request;
 
 class IndustrialParkController extends ApiController
 {
-    public function index(): \App\Responses\ApiResponse
+    public function index(Request $request): \App\Responses\ApiResponse
     {
-        return $this->success(data: IndustrialPark::all());
+        $query = IndustrialPark::query();
+
+        if ($request->has('market_id')) {
+            $query->where('market_id', $request->input('market_id'));
+        }
+
+        if ($request->has('submarket_id')) {
+            $query->where('submarket_id', $request->input('submarket_id'));
+        }
+
+        $industrialParks = $query->get();
+
+        return $this->success(data: $industrialParks);
     }
 
     public function store(StoreIndustrialParkRequest $request): \App\Responses\ApiResponse
