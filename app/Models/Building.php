@@ -137,6 +137,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $new_construction
  * @property int $starting_construction
  * @property string $building_phase
+ * @property int $expansion_land
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionLand($value)
  * @mixin \Eloquent
  */
 class Building extends Model

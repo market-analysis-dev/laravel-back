@@ -123,6 +123,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedBy($value)
+ * @property int $expansion_land
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionLand($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model
