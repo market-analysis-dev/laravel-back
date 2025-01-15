@@ -9,7 +9,7 @@ class CompanyContact extends Model
 {
     use HasFactory;
 
-    protected $table = '';
+    protected $table = 'company_contacts';
 
     protected $fillable = [
         'company_id',
