@@ -103,3 +103,4 @@ require_once  '_permissions.php';
 require_once  '_developers.php';
 require_once  '_industries.php';
 require_once  '_countries.php';
+require_once '_companies.php';
