@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\File;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int|null $logo_id

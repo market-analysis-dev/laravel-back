@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -31,6 +32,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\User|null $updater
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market createdBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market updatedBy($userId)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Region|null $region
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market withoutTrashed()
  * @mixin \Eloquent
  */
 class Market extends Model
@@ -42,6 +51,7 @@ class Market extends Model
     protected $fillable = [
         'name',
         'status',
+        'region_id',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -49,4 +59,9 @@ class Market extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function region():BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
 }

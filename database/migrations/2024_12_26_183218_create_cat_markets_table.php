@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->enum('status', ['active', 'inactive']);
+            $table->foreignId('region_id')->constrained('cat_regions');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();

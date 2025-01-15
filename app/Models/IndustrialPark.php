@@ -32,6 +32,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereSubmarketId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark withoutTrashed()
  * @mixin \Eloquent
  */
 class IndustrialPark extends Model
