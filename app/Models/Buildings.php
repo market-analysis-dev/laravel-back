@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $region_id
  * @property int $market_id
- * @property int $sub_market_id
+ * @property int $submarket_id
  * @property int $builder_id
  * @property int $industrial_park_id
  * @property int $developer_id
@@ -150,7 +150,7 @@ class Buildings extends Model
         'builder_id',
         'region_id',
         'market_id',
-        'sub_market_id',
+        'submarket_id',
         'deal_id',
         'currency_id',
         'sale_price_usd',
