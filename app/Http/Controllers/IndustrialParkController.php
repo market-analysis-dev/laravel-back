@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class IndustrialParkController extends ApiController
 {
+    /**
+     * @param Request $request
+     * @return \App\Responses\ApiResponse
+     */
     public function index(Request $request): \App\Responses\ApiResponse
     {
         $query = IndustrialPark::query();
@@ -26,6 +30,10 @@ class IndustrialParkController extends ApiController
         return $this->success(data: $industrialParks);
     }
 
+    /**
+     * @param StoreIndustrialParkRequest $request
+     * @return \App\Responses\ApiResponse
+     */
     public function store(StoreIndustrialParkRequest $request): \App\Responses\ApiResponse
     {
         try {
@@ -37,12 +45,21 @@ class IndustrialParkController extends ApiController
         }
     }
 
+    /**
+     * @param UpdateIndustrialParkRequest $request
+     * @param IndustrialPark $industrialPark
+     * @return \App\Responses\ApiResponse
+     */
     public function update(UpdateIndustrialParkRequest $request, IndustrialPark $industrialPark): \App\Responses\ApiResponse
     {
         $industrialPark->update($request->validated());
         return $this->success(data: $industrialPark);
     }
 
+    /**
+     * @param IndustrialPark $industrialPark
+     * @return \App\Responses\ApiResponse
+     */
     public function destroy(IndustrialPark $industrialPark): \App\Responses\ApiResponse
     {
         try {
