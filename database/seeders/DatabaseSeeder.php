@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             IndustrySeeder::class,
             CompanySeeder::class,
+            CompanyContactSeeder::class,
         ]);
     }
 }

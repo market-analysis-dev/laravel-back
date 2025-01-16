@@ -33,6 +33,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\User|null $updater
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket createdBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket updatedBy($userId)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket withoutTrashed()
  * @mixin \Eloquent
  */
 class SubMarket extends Model

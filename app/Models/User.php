@@ -72,6 +72,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTotalDevices($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedBy($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $deleted_by
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutTrashed()
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail

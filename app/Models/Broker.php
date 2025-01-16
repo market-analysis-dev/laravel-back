@@ -29,6 +29,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker whereUpdatedBy($value)
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Broker withoutTrashed()
  * @mixin \Eloquent
  */
 class Broker extends Model
