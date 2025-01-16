@@ -10,8 +10,6 @@ class MarketController extends ApiController
 {
     public function index(Request $request): ApiResponse
     {
-        /*$markets = Market::where('status', '=', 'active')->get();
-        return $this->success(data: $markets);*/
         $query = Market::query();
 
         if ($request->has('region_id')) {
