@@ -38,6 +38,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsDeveloper($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsOwner($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsUserOwner($value)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
  * @mixin \Eloquent
  */
 class Developer extends Model

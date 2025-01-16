@@ -29,6 +29,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant withoutTrashed()
  * @mixin \Eloquent
  */
 class Tenant extends Model

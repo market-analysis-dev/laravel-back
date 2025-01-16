@@ -125,6 +125,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedBy($value)
  * @property int $expansion_land
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionLand($value)
+ * @property int $submarket_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereSubmarketId($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model

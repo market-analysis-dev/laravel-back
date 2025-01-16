@@ -20,6 +20,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereUpdatedAt($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property int|null $deleted_by
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Region withoutTrashed()
  * @mixin \Eloquent
  */
 class Region extends Model

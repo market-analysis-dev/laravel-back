@@ -34,6 +34,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereSize($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File withoutTrashed()
  * @mixin \Eloquent
  */
 class File extends Model

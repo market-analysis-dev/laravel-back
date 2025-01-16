@@ -29,6 +29,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Industry withoutTrashed()
  * @mixin \Eloquent
  */
 class Industry extends Model

@@ -29,6 +29,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Shelter whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Shelter whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Shelter whereUpdatedBy($value)
+ * @property int|null $deleted_by
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Shelter whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Shelter whereDeletedBy($value)
  * @mixin \Eloquent
  */
 class Shelter extends Model
