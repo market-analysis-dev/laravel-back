@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('building_contacts', function (Blueprint $table) {
+        Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('contact_name', 100);
-            $table->string('contact_phone', 50);
-            $table->string('contact_email', 100);
-            $table->string('contact_comments', 255);
+            $table->string('name', 100);
+            $table->string('phone', 20);
+            $table->string('email', 100);
+            $table->string('comments', 255)->nullable();
+            $table->boolean('has_building')->default(false);
+            $table->boolean('has_land')->default(false);
+            $table->boolean('has_broker')->default(false);
+            $table->boolean('has_company')->default(false);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('building_contacts');
+        Schema::dropIfExists('contacts');
     }
 };
