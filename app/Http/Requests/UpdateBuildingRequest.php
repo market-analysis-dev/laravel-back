@@ -24,9 +24,9 @@ class UpdateBuildingRequest extends FormRequest
         return [
             'region_id' => 'required|integer|exists:cat_regions,id',
             'market_id' => 'required|integer|exists:cat_markets,id',
-            'sub_market_id' => 'required|integer|exists:cat_submarkets,id',
+            'submarket_id' => 'required|integer|exists:cat_submarkets,id',
             'builder_id' => 'required|integer|exists:cat_developers,id',
-            'industrial_park_id' => 'required|integer|exists:industrial_parks,id',
+            'industrial_park_id' => 'required|integer|exists:cat_industrial_parks,id',
             'developer_id' => 'required|integer|exists:cat_developers,id',
             'owner_id' => 'required|integer|exists:cat_developers,id',
             'user_owner_id' => 'required|integer|exists:cat_developers,id',
