@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('cat_markets', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('region_id')->constrained('cat_regions');
             $table->string('name', 100);
             $table->enum('status', ['active', 'inactive']);
             $table->integer('created_by')->nullable();

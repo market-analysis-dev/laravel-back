@@ -13,111 +13,40 @@ use App\Enums\BuildingTypeConstruction;
 use App\Enums\BuildingTypeGeneration;
 use App\Enums\TechnicalImprovements;
 use App\Enums\BuildingStatus;
+use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
+use App\Services\BuildingService;
 use App\Responses\ApiResponse;
 use Illuminate\Http\Request;
 
 class BuildingController extends ApiController
 {
-    /**
-     * @return ApiResponse
-     */
-    public function index(Request $request): ApiResponse
+    private BuildingService $buildingService;
+
+    public function __construct(BuildingService $buildingService)
     {
-        $validated = $request->validate([
-            'page' => 'nullable|integer',
-            'size' => 'nullable|integer',
-            'search' => 'nullable',
-            'status' => 'nullable',
-            'building_name' => 'nullable',
-            'marketName' => 'nullable',
-            'submarketName' => 'nullable',
-            'industrialParkName' => 'nullable',
-            'column' => 'nullable|in:status,building_name,marketName,submarketName,industrialPark',
-            'state' => 'nullable|in:asc,desc',
-        ]);
+        $this->buildingService = $buildingService;
+    }
 
-        $size = $validated['size'] ?? 10;
-        $order = $validated['column'] ?? 'id';
-        $direction = $validated['state'] ?? 'desc';
-
-        $buildings = Building::with([
-            'market',
-            'subMarket',
-            'industrialPark',
-        ])
-        ->when($validated['search'] ?? false, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('status', 'like', "%{$search}%")
-                    ->orWhere('building_name', 'like', "%{$search}%");
-            });
-        })
-        ->when($validated['status'] ?? false, function ($query, $status) {
-            $query->where('status', $status);
-        })
-        ->when($validated['building_name'] ?? false, function ($query, $building_name) {
-            $query->where('building_name', 'like', "%{$building_name}%");
-        })
-        ->when($validated['marketName'] ?? false, function ($query, $marketName) {
-            $query->whereHas('market', function ($query) use ($marketName) {
-                $query->where('name', 'like', "%{$marketName}%");
-            });
-        })
-        ->when($validated['submarketName'] ?? false, function ($query, $submarketName) {
-            $query->whereHas('subMarket', function ($query) use ($submarketName) {
-                $query->where('name', 'like', "%{$submarketName}%");
-            });
-        })
-        ->when($validated['industrialParkName'] ?? false, function ($query, $industrialParkName) {
-            $query->whereHas('industrialPark', function ($query) use ($industrialParkName) {
-                $query->where('name', 'like', "%{$industrialParkName}%");
-            });
-        })
-        ->orderBy($order, $direction)
-        ->paginate($size);
+    public function index(IndexBuildingRequest $request): ApiResponse
+    {
+        $buildings = $this->buildingService->filter($request->validated());
         return $this->success(data: $buildings);
     }
 
-
-    /**
-     * @param StoreBuildingRequest $request
-     * @return ApiResponse
-     */
     public function store(StoreBuildingRequest $request): ApiResponse
     {
         $building = Building::create($request->validated());
         return $this->success('Building created successfully', $building);
     }
-
-
-    /**
-     * @param Building $building
-     * @return ApiResponse
-     */
+    
     public function show(Building $building): ApiResponse
     {
-        if ($building->trashed()) {
-            // return $this->error('Building not found', ['error_code' => 404]);
-            return $this->error('Building not found', status:404);
-        }
-        $building->load([
-            'region',
-            'market',
-            'subMarket',
-            'builder',
-            'industrialPark',
-            'developer',
-            'owner',
-            'userOwner',
-            'contact',
-            'buildingsAvailable',
-        ]);
-
+        $building = $this->buildingService->show($building);
         return $this->success(data: $building);
     }
-
 
     /**
      * @param UpdateBuildingRequest $request
