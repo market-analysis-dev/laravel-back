@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexBuildingsAvailableRequest;
 use App\Http\Requests\StoreBuildingsAvailableRequest;
 use App\Http\Requests\UpdateBuildingsAvailableRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
+use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 
@@ -16,54 +18,18 @@ class BuildingsAvailableController extends ApiController
      * @param Building $building
      * @return ApiResponse
      */
-    public function index(Request $request, Building $building): ApiResponse
+
+    private BuildingsAvailableService $buildingAvailableService;
+
+    public function __construct(BuildingsAvailableService $buildingAvailableService)
     {
-        $validated = $request->validate([
-            'page' => 'nullable|integer',
-            'size' => 'nullable|integer',
-            'search' => 'nullable',
+        $this->buildingAvailableService = $buildingAvailableService;
+    }
 
-            'building_state' => 'nullable',
-            'avl_size_sf' => 'nullable',
-            'avl_building_dimensions' => 'nullable',
-            'avl_minimum_space_sf' => 'nullable',
-            'avl_expansion_up_to_sf' => 'nullable',
-            'dock_doors' => 'nullable',
-
-            'column' => 'nullable|in:building_state,avl_size_sf,avl_building_dimensions,avl_minimum_space_sf,avl_expansion_up_to_sf,dock_doors',
-            'state' => 'nullable|in:asc,desc',
-        ]);
-
-        $size = $validated['size'] ?? 10;
-        $order = $validated['column'] ?? 'id';
-        $direction = $validated['state'] ?? 'desc';
-
-        $availabilities = BuildingAvailable::where('building_id', $building->id)
-        ->where('building_state', '=', 'Availability')
-        ->when($validated['search'] ?? false, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('building_state', 'like', "%{$search}%")
-                    ->orWhere('avl_size_sf', 'like', "%{$search}%")
-                    ->orWhere('dock_doors', 'like', "%{$search}%");
-            });
-        })
-        ->when($validated['avl_size_sf'] ?? false, function ($query, $avl_size_sf) {
-            $query->where('avl_size_sf', 'like', "%{$avl_size_sf}%");
-        })
-        ->when($validated['avl_building_dimensions'] ?? false, function ($query, $avl_building_dimensions) {
-            $query->where('avl_building_dimensions', 'like', "%{$avl_building_dimensions}%");
-        })
-        ->when($validated['avl_minimum_space_sf'] ?? false, function ($query, $avl_minimum_space_sf) {
-            $query->where('avl_minimum_space_sf', 'like', "%{$avl_minimum_space_sf}%");
-        })
-        ->when($validated['avl_expansion_up_to_sf'] ?? false, function ($query, $avl_expansion_up_to_sf) {
-            $query->where('avl_expansion_up_to_sf', 'like', "%{$avl_expansion_up_to_sf}%");
-        })
-        ->when($validated['dock_doors'] ?? false, function ($query, $dock_doors) {
-            $query->where('dock_doors', 'like', "%{$dock_doors}%");
-        })
-        ->orderBy($order, $direction)
-        ->paginate($size);
+    public function index(IndexBuildingsAvailableRequest $request, Building $building): ApiResponse
+    {
+        $validated = $request->validated();
+        $availabilities = $this->buildingAvailableService->filterAvailable($validated, $building->id);
 
         return $this->success(data: $availabilities);
     }
