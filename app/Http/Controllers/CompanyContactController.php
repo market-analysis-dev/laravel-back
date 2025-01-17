@@ -50,7 +50,10 @@ class CompanyContactController extends ApiController
     public function store(StoreContactRequest $request, Company $company): ApiResponse
     {
         try {
-            $contact = Contact::create($request->validated());
+            $contact = Contact::create(array_merge(
+                $request->validated(),
+                ['has_company' => true]
+            ));
             $newContactId = $contact->id;
 
             CompanyContact::create([
@@ -77,7 +80,10 @@ class CompanyContactController extends ApiController
                 ->first();
             if($companyContact) {
 
-                $contact->update($request->validated());
+                $contact->update(array_merge(
+                    $request->validated(),
+                    ['has_company' => true]
+                ));
                 return $this->success('Contact updated successfully', $contact);
 
             } else {
