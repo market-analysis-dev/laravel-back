@@ -52,7 +52,7 @@ class CompanyContactController extends ApiController
         try {
             $contact = Contact::create(array_merge(
                 $request->validated(),
-                ['has_company' => true]
+                ['is_company_contact' => true]
             ));
             $newContactId = $contact->id;
 
@@ -82,7 +82,7 @@ class CompanyContactController extends ApiController
 
                 $contact->update(array_merge(
                     $request->validated(),
-                    ['has_company' => true]
+                    ['is_company_contact' => true]
                 ));
                 return $this->success('Contact updated successfully', $contact);
 

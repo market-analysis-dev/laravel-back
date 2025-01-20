@@ -24,7 +24,7 @@ class CompanyContactSeeder extends Seeder
         $id = 1;
         while (($row = fgetcsv($file)) !== false) {
             $company = Company::where('name', $row[0])->first();
-            $contact = Contact::where('name', $row[1])->where('email', $row[2])->where('phone', $row[3])->first();
+            $contact = Contact::where('contact_name', $row[1])->where('contact_email', $row[2])->where('contact_phone', $row[3])->first();
             if($company && $contact) {
                 $data[] = [
                     'id' => $id++,
