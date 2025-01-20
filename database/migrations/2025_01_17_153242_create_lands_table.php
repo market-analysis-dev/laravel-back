@@ -17,9 +17,19 @@ return new class extends Migration
             $table->foreignId('market_id')->constrained('cat_markets', 'id');
             $table->foreignId('sub_market_id')->constrained('cat_submarkets', 'id');
             $table->foreignId('industrial_park_id')->constrained('cat_industrial_parks', 'id');
-            $table->foreignId('developer_id')->constrained('cat_developers');
-            $table->foreignId('owner_id')->constrained('cat_developers');
+            $table->foreignId('developer_id')->constrained('cat_developers', 'id');
+            $table->foreignId('owner_id')->constrained('cat_developers', 'id');
+            $table->foreignId('contact_id')->nullable()->constrained('contacts', 'id');
+            $table->string('land_name', 255);
+            $table->enum('currency', ['USD', 'MXP']);
+            $table->string('latitud', 45);
+            $table->string('longitud', 45);
+            $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

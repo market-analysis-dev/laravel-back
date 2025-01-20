@@ -218,7 +218,7 @@ class Building extends Model
 
     public function builder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(BuildingContact::class, 'builder_id');
+        return $this->belongsTo(Developer::class, 'builder_id');
     }
 
     public function industrialPark(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -228,22 +228,22 @@ class Building extends Model
 
     public function developer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(BuildingContact::class, 'developer_id');
+        return $this->belongsTo(Developer::class, 'developer_id');
     }
 
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(BuildingContact::class, 'owner_id');
+        return $this->belongsTo(Developer::class, 'owner_id');
     }
 
     public function userOwner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(BuildingContact::class, 'user_owner_id');
+        return $this->belongsTo(Developer::class, 'user_owner_id');
     }
 
     public function contact(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(BuildingContact::class, 'contact_id');
+        return $this->belongsTo(Contact::class, 'contact_id');
     }
 
     public function buildingsAvailable(): \Illuminate\Database\Eloquent\Relations\HasMany

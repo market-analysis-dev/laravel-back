@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market withoutTrashed()
+ * @property int $region_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereRegionId($value)
  * @mixin \Eloquent
  */
 class Market extends Model

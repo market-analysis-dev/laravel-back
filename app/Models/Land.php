@@ -7,6 +7,66 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $region_id
+ * @property int $market_id
+ * @property int $sub_market_id
+ * @property int $industrial_park_id
+ * @property int $developer_id
+ * @property int $owner_id
+ * @property int|null $contact_id
+ * @property string $land_name
+ * @property string $currency
+ * @property string $latitud
+ * @property string $longitud
+ * @property string $status
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Contact|null $contact
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\Developer $developer
+ * @property-read \App\Models\IndustrialPark $industrialPark
+ * @property-read \App\Models\Market $market
+ * @property-read \App\Models\Developer $owner
+ * @property-read \App\Models\Region $region
+ * @property-read \App\Models\SubMarket $subMarket
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land createdBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land updatedBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereContactId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereDeveloperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereIndustrialParkId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereLandName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereLatitud($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereLongitud($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereRegionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereSubMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Land extends Model
 {
     use HasFactory, BlameableTrait, SoftDeletes;
@@ -59,10 +119,10 @@ class Land extends Model
         return $this->belongsTo(Developer::class, 'owner_id');
     }
 
-    /*public function contact(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function contact(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Contact, 'contact_id');
-    }*/
+        return $this->belongsTo(Contact::class, 'contact_id');
+    }
 
     public function industrialPark(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
