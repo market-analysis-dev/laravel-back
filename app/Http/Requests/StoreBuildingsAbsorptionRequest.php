@@ -22,7 +22,6 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'building_id' => 'required|integer|exists:buildings,id',
             'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
@@ -49,7 +48,6 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_sale_price' => 'nullable|numeric|min:0',
             'created_by' => 'nullable|integer|exists:users,id',
             'updated_by' => 'nullable|integer|exists:users,id',
-            'building_state' => 'required|in:Absorption',
             'abs_building_phase' => 'required|in:BTS,Expansion,Inventory',
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',

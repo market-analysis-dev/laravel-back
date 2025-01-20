@@ -86,6 +86,12 @@ class BuildingsAbsorptionController extends ApiController
     {
         $data = $request->validated();
         $data['building_id'] = $building->id;
+        $data['building_state'] = 'Absorption';
+
+        $buildingExists = Building::where('id', $building->id)->exists();
+        if (!$buildingExists) {
+            return $this->error('Invalid building_id: The land does not exist.', 422);
+        }
 
         $absorption = BuildingAvailable::create($data);
 
@@ -126,8 +132,11 @@ class BuildingsAbsorptionController extends ApiController
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
+        $data = $request->validated();
+        $data['building_id'] = $building->id;
+        $data['building_state'] = 'Absorption';
         try {
-            $buildingAbsorption->update($request->validated());
+            $buildingAbsorption->update($data);
             return $this->success('Building Absorption updated successfully', $buildingAbsorption);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
