@@ -105,3 +105,6 @@ require_once  '_industries.php';
 require_once  '_countries.php';
 require_once '_companies.php';
 require_once '_company_contacts.php';
+require_once '_land_absorption.php';
+require_once '_land_available.php';
+require_once '_lands.php';
