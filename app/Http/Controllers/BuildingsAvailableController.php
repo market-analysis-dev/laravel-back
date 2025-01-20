@@ -44,6 +44,12 @@ class BuildingsAvailableController extends ApiController
     {
         $data = $request->validated();
         $data['building_id'] = $building->id;
+        $data['building_state'] = 'Availability';
+
+        $buildingExists = Building::where('id', $building->id)->exists();
+        if (!$buildingExists) {
+            return $this->error('Invalid building_id: The land does not exist.', 422);
+        }
 
         $availability = BuildingAvailable::create($data);
 
@@ -84,6 +90,9 @@ class BuildingsAvailableController extends ApiController
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
+        $data = $request->validated();
+        $data['building_id'] = $building->id;
+        $data['building_state'] = 'Availability';
         try {
             $buildingAvailable->update($request->validated());
             return $this->success('Building Available updated successfully', $buildingAvailable);
