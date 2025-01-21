@@ -44,49 +44,42 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => true,
                 'is_owner' => false,
                 'is_builder' => false,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'Parks',
                 'is_developer' => true,
                 'is_owner' => true,
                 'is_builder' => true,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'MEOR',
                 'is_developer' => true,
                 'is_owner' => false,
                 'is_builder' => false,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'Grupo Favier',
                 'is_developer' => true,
                 'is_owner' => false,
                 'is_builder' => true,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'MPA Group',
                 'is_developer' => true,
                 'is_owner' => false,
                 'is_builder' => true,
-                'is_user_owner' => true,
                 ],
             [
                 'name' => 'Construye Industrial',
                 'is_developer' => true,
                 'is_owner' => true,
                 'is_builder' => true,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'CPA',
                 'is_developer' => false,
                 'is_owner' => false,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
 
             [
@@ -94,7 +87,6 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
 
             [
@@ -102,14 +94,12 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
             [
                 'name' => 'Zayat',
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
         ];
 

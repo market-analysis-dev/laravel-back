@@ -26,7 +26,6 @@ class StoreDeveloperRequest extends FormRequest
             'is_developer' => 'required|boolean',
             'is_builder' => 'required|boolean',
             'is_owner' => 'required|boolean',
-            'is_user_owner' => 'required|boolean',
         ];
     }
 }
