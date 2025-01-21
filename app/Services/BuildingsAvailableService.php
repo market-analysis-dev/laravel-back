@@ -42,4 +42,33 @@ class BuildingsAvailableService
             ->orderBy($order, $direction)
             ->paginate($size);
     }
+
+    /**
+     * @param array $validatedData
+     * @param int $buildingId
+     * @param int $buildingAvailableId
+     * @return array|\Illuminate\Database\Eloquent\TModel
+     */
+    public function convertToAbsorption(array $validatedData, int $buildingId, int $buildingAvailableId) {
+        $buildingAvailable = BuildingAvailable::where('building_id', $buildingId)
+            ->where('id', $buildingAvailableId)
+            ->firstOrFail();
+
+        if ($buildingAvailable->building_state !== 'Availability') {
+            return [
+                'success' => false,
+                'message' => 'Only records with state "Available" can be converted to "Absorption".',
+                'code' => 400
+            ];
+        }
+
+        $validatedData['building_state'] = 'Absorption';
+
+        $buildingAvailable->update($validatedData);
+
+        return [
+            'success' => true,
+            'data' => $buildingAvailable
+        ];
+    }
 }

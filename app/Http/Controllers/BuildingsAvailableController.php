@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConvertToAbsorptionRequest;
 use App\Http\Requests\IndexBuildingsAvailableRequest;
 use App\Http\Requests\StoreBuildingsAvailableRequest;
 use App\Http\Requests\UpdateBuildingsAvailableRequest;
@@ -111,10 +112,27 @@ class BuildingsAvailableController extends ApiController
             if ($buildingAvailable->delete()) {
                 return $this->success('Building Available deleted successfully', $buildingAvailable);
             }
-            return $this->error('Building Available delete failed', 423);
+            return $this->error('Building Available delete failed', ['error_code' => 423]);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), ['error_code' => 500]);
         }
+    }
+
+    /**
+     * @param ConvertToAbsorptionRequest $request
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function toAbsorption(ConvertToAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        $validated = $request->validated();
+        $result = $this->buildingAvailableService->convertToAbsorption($validated, $building->id, $buildingAvailable->id);
+        if (!$result['success']) {
+            return $this->error($result['message'], ['error_code' => $result['code']]);
+        }
+
+        return $this->success(data: $result['data']);
     }
 
 
