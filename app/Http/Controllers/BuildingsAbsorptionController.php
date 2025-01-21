@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConvertToAvailableRequest;
 use App\Http\Requests\StoreBuildingsAbsorptionRequest;
 use App\Http\Requests\UpdateBuildingsAbsorptionRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
+use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 
 class BuildingsAbsorptionController extends ApiController
 {
+    private BuildingsAvailableService $buildingAvailableService;
+
+    public function __construct(BuildingsAvailableService $buildingAvailableService)
+    {
+        $this->buildingAvailableService = $buildingAvailableService;
+    }
+
     /**
      * @param Request $request
      * @param Building $building
@@ -157,6 +166,24 @@ class BuildingsAbsorptionController extends ApiController
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
+    }
+
+    /**
+     * @param ConvertToAvailableRequest $request
+     * @param Building $building
+     * @param BuildingAvailable $buildingAbsorption
+     * @return ApiResponse
+     */
+    public function toAvailable(ConvertToAvailableRequest $request, Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    {
+        $validated = $request->validated();
+        $result = $this->buildingAvailableService->convertToAvailable($validated, $building->id, $buildingAbsorption->id);
+        if (!$result['success']) {
+            return $this->error($result['message'], ['error_code' => $result['code']]);
+        }
+
+        return $this->success(data: $result['data']);
+
     }
 
 

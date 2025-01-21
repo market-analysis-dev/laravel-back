@@ -42,4 +42,36 @@ class BuildingsAvailableService
             ->orderBy($order, $direction)
             ->paginate($size);
     }
+
+    /**
+     * @param array $validatedData
+     * @param int $buildingId
+     * @param int $buildingAbsorptionId
+     * @return array
+     */
+    public function convertToAvailable(array $validatedData, int $buildingId, int $buildingAbsorptionId): array
+    {
+        $buildingAbsorption = BuildingAvailable::where('building_id', $buildingId)
+            ->where('id', $buildingAbsorptionId)
+            ->firstOrFail();
+
+        if ($buildingAbsorption->building_state !== 'Absorption') {
+            return [
+                'success' => false,
+                'message' => 'Only records with state "Absorption" can be converted to "Availability".',
+                'code' => 400
+            ];
+        }
+
+        $validatedData['building_state'] = 'Availability';
+
+        $buildingAbsorption->update($validatedData);
+
+        return [
+            'success' => true,
+            'data' => $buildingAbsorption
+        ];
+
+
+    }
 }
