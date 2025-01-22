@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BuildingAvailable;
+use App\Enums\BuildingState;
 
 class BuildingsAvailableService
 {
@@ -16,7 +17,7 @@ class BuildingsAvailableService
         $direction = $validatedData['state'] ?? 'desc';
 
         return BuildingAvailable::where('building_id', $buildingId)
-            ->where('building_state', '=', 'Availability')
+            ->where('building_state', '=', BuildingState::AVAILABILITY->value)
             ->when($validatedData['search'] ?? false, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('building_state', 'like', "%{$search}%")

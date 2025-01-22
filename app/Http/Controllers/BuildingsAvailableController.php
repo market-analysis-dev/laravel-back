@@ -10,6 +10,7 @@ use App\Models\BuildingAvailable;
 use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use App\Enums\BuildingState;
 
 class BuildingsAvailableController extends ApiController
 {
@@ -44,12 +45,7 @@ class BuildingsAvailableController extends ApiController
     {
         $data = $request->validated();
         $data['building_id'] = $building->id;
-        $data['building_state'] = 'Availability';
-
-        $buildingExists = Building::where('id', $building->id)->exists();
-        if (!$buildingExists) {
-            return $this->error('Invalid building_id: The land does not exist.', 422);
-        }
+        $data['building_state'] = BuildingState::AVAILABILITY;
 
         $availability = BuildingAvailable::create($data);
 
@@ -67,7 +63,7 @@ class BuildingsAvailableController extends ApiController
             return $this->error('Building Available not found for this Building', ['error_code' => 404]);
         }
 
-        if ($buildingAvailable->building_state !== 'Availability') {
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
@@ -86,7 +82,7 @@ class BuildingsAvailableController extends ApiController
         if ($buildingAvailable->building_id !== $building->id) {
             return $this->error('Building Available not found for this Building', ['error_code' => 404]);
         }
-        if ($buildingAvailable->building_state !== 'Availability') {
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
@@ -112,7 +108,7 @@ class BuildingsAvailableController extends ApiController
             return $this->error('Building Available not found for this Building', ['error_code' => 404]);
         }
 
-        if ($buildingAvailable->building_state !== 'Availability') {
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
