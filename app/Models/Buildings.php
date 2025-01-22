@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\BuildingsAbsorption|null $buildingAbsorption
  * @property-read \App\Models\BuildingsAvailable|null $buildingAvailable
@@ -125,7 +125,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedBy($value)
  * @property int $expansion_land
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionLand($value)
- * @property int $submarket_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereSubmarketId($value)
  * @mixin \Eloquent
  */

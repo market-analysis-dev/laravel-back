@@ -13,5 +13,6 @@ Route::group([
     Route::get('/{buildingAvailable}', [BuildingsAvailableController::class, 'show'])->name('show');
     Route::put('/{buildingAvailable}', [BuildingsAvailableController::class, 'update'])->name('update');
     Route::delete('/{buildingAvailable}', [BuildingsAvailableController::class, 'destroy'])->name('destroy');
+    Route::put('/{buildingAvailable}/to-absorption', [BuildingsAvailableController::class, 'toAbsorption'])->name('to-absorption');
 });
 

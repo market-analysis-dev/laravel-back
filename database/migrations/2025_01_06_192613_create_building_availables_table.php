@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreignId('abs_industry_id')->nullable()->constrained('cat_industries');
             $table->foreignId('abs_country_id')->nullable()->constrained('countries');
             $table->foreignId('broker_id')->constrained('cat_developers');
-            $table->integer('avl_size_sf')->nullable();
+            $table->foreignId('abs_shelter_id')->nullable()->constrained('cat_shelters');
+            $table->foreignId('abs_broker_id')->nullable()->constrained('cat_developers');
+            $table->integer('size_sf')->nullable();
             $table->string('avl_building_dimensions', 45)->nullable();
             $table->integer('avl_minimum_space_sf')->nullable();
             $table->integer('avl_expansion_up_to_sf')->nullable();
@@ -43,6 +45,13 @@ return new class extends Migration
             $table->decimal('abs_closing_rate', 18, 2)->nullable();
             $table->date('abs_closing_date')->nullable();
             $table->date('abs_lease_up')->nullable();
+            $table->boolean('has_expansion_land');
+            $table->boolean('has_crane');
+            $table->boolean('has_hvac');
+            $table->boolean('has_rail_spur');
+            $table->boolean('has_sprinklers');
+            $table->boolean('has_office');
+            $table->boolean('has_leed');
             $table->date('abs_month')->nullable();
             $table->decimal('abs_sale_price', 18, 2)->nullable();
             $table->enum('building_state', ['Availability', 'Absorption']);
@@ -50,6 +59,8 @@ return new class extends Migration
             $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory'])->nullable();
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
+            $table->enum('deal', ['Sale','Lease']);
+            $table->enum('currency', ['USD','MXP']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();

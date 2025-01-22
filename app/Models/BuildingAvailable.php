@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $abs_country_id
  * @property int $broker_id
  * @property string $building_state
- * @property int $avl_size_sf
+ * @property int $size_sf
  * @property string $avl_building_dimensions
  * @property string $avl_building_phase
  * @property string $abs_building_phase
@@ -129,7 +129,7 @@ class BuildingAvailable extends Model
         'abs_country_id',
         'broker_id',
         'building_state',
-        'avl_size_sf',
+        'size_sf',
         'avl_building_dimensions',
         'avl_building_phase',
         'abs_building_phase',
@@ -160,6 +160,17 @@ class BuildingAvailable extends Model
         'abs_final_use',
         'abs_company_type',
         'abs_sale_price',
+        'abs_shelter_id',
+        'abs_broker_id',
+        'has_expansion_land',
+        'has_crane',
+        'has_hvac',
+        'has_rail_spur',
+        'has_sprinklers',
+        'has_office',
+        'has_leed',
+        'deal',
+        'currency',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -188,5 +199,15 @@ class BuildingAvailable extends Model
     public function broker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(BuildingContact::class, 'broker_id');
+    }
+
+    public function absShelter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Shelter::class, 'abs_shelter_id');
+    }
+
+    public function absBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Developer::class, 'abs_broker_id');
     }
 }
