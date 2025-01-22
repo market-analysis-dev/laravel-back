@@ -22,14 +22,20 @@ class UpdateContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|max:100",
-            "email" => "required|string|max:100",
-            "phone" => "required|string|max:20",
-            "comments" => "nullable|string",
-            "has_building" => "boolean",
-            "has_land" => "boolean",
-            "has_broker" => "boolean",
-            "has_company" => "boolean",
+            'contact_name' => 'nullable|string|max:255',
+            'contact_phone' => 'nullable|string|max:50',
+            'contact_email' => 'nullable|string|email|max:255',
+            'contact_comments' => 'nullable|string|max:255',
+            'is_direct_contact' => 'nullable|boolean',
+            'is_land_contact' => 'nullable|boolean',
+            'is_buildings_contact' => 'nullable|boolean',
+            'is_broker_contact' => 'nullable|boolean',
+            'is_developer_contact' => 'nullable|boolean',
+            'is_owner_contact' => 'nullable|boolean',
+            'is_company_contact' => 'nullable|boolean',
+            'created_by' => 'nullable|integer',
+            'updated_by' => 'nullable|integer',
+            'deleted_by' => 'nullable|integer',
         ];
     }
 }
