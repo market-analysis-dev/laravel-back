@@ -173,4 +173,16 @@ class BuildingController extends ApiController
     {
         return $this->success(data: BuildingStatus::array());
     }
+
+    /**
+     * Generate and stream the layout design PDF for a bulding.
+     * 
+     * @param Building $building
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+    */
+
+    public function layoutDesign(Building $building)
+    {
+        return $this->buildingService->layoutDesign($building);
+    }
 }

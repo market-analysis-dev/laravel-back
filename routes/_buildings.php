@@ -25,5 +25,8 @@ Route::group([
     Route::get('/{building}', [BuildingController::class, 'show'])->name('show');
     Route::put('/{building}', [BuildingController::class, 'update'])->name('update');
     Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');
+
+    // * Flyer Design
+    Route::get('/{building}/layout-design', [BuildingController::class, 'layoutDesign'])->name('layoutDesign');
 });
 

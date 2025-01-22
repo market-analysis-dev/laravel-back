@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Building;
 
 class BuildingService
@@ -61,5 +62,17 @@ class BuildingService
             'contact',
             'buildingsAvailable',
         ]);
+    }
+
+    // * Flyer Design
+    public function layoutDesign(Building $building)
+    {
+        $companyName =  config('app.name');
+        $pdf = Pdf::loadView('buildings.layout-design', [
+            'building' => $building,
+            'companyName' => $companyName,
+        ]);
+
+        return $pdf->stream('building-layout-design.pdf');
     }
 }
