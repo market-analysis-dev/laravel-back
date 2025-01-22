@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Developer;
+use App\Models\Market;
+use App\Models\SubMarket;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +15,7 @@ class DeveloperSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = storage_path('app/builders.csv');
+        $path = storage_path('app/builders_new.csv');
         $file = fopen($path, 'r');
 
         fgetcsv($file);
@@ -21,9 +23,21 @@ class DeveloperSeeder extends Seeder
         $data = [];
         $id = 1;
         while (($row = fgetcsv($file)) !== false) {
+            $market_id = null;
+            $submarket_id = null;
+            $market = Market::where('name', $row[4])->first();
+            $submarket = SubMarket::where('name', $row[5])->first();
+            if($market) {
+                $market_id = $market->id;
+            }
+            if($submarket) {
+                $submarket_id = $submarket->id;
+            }
             $data[] = [
                 'id' => $id++,
-                'name' => $row[1],
+                'name' => $row[0],
+                'market_id' => $market_id,
+                'submarket_id' => $submarket_id,
                 'is_developer' => false,
                 'is_owner' => false,
                 'is_builder' => true,
@@ -44,49 +58,24 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => true,
                 'is_owner' => false,
                 'is_builder' => false,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'Parks',
                 'is_developer' => true,
                 'is_owner' => true,
                 'is_builder' => true,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'MEOR',
                 'is_developer' => true,
                 'is_owner' => false,
                 'is_builder' => false,
-                'is_user_owner' => true,
-            ],
-            [
-                'name' => 'Grupo Favier',
-                'is_developer' => true,
-                'is_owner' => false,
-                'is_builder' => true,
-                'is_user_owner' => true,
-            ],
-            [
-                'name' => 'MPA Group',
-                'is_developer' => true,
-                'is_owner' => false,
-                'is_builder' => true,
-                'is_user_owner' => true,
-                ],
-            [
-                'name' => 'Construye Industrial',
-                'is_developer' => true,
-                'is_owner' => true,
-                'is_builder' => true,
-                'is_user_owner' => true,
             ],
             [
                 'name' => 'CPA',
                 'is_developer' => false,
                 'is_owner' => false,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
 
             [
@@ -94,7 +83,6 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
 
             [
@@ -102,14 +90,18 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                'is_user_owner' => true,
                 ],
             [
                 'name' => 'Zayat',
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                'is_user_owner' => true,
+                ],
+            [
+                'name' => 'User Owner',
+                'is_developer' => true,
+                'is_owner' => true,
+                'is_builder' => false,
                 ],
         ];
 
