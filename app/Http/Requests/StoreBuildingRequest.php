@@ -62,9 +62,9 @@ class StoreBuildingRequest extends FormRequest
             'status' => 'required|in:Active,Inactive,Pending,Approved',
             'columns_spacing' => 'string|max:20',
             'bay_size' => 'string|max:20',
-            'floor_thickness' => 'nullable|integer|min:0',
-            'floor_resistance' => 'nullable|string|max:255',
-            'expansion_up_to_sf' => 'nullable|integer|min:0',
+            'floor_thickness' => 'required|integer|min:0',
+            'floor_resistance' => 'required|string|max:255',
+            'expansion_up_to_sf' => 'required|integer|min:0',
         ];
 
     }
