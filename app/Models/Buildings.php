@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\BuildingsAbsorption|null $buildingAbsorption
  * @property-read \App\Models\BuildingsAvailable|null $buildingAvailable
@@ -126,6 +126,16 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $expansion_land
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionLand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereSubmarketId($value)
+ * @property string $columns_spacing
+ * @property string $bay_size
+ * @property int $floor_thickness
+ * @property string $floor_resistance
+ * @property int $expansion_up_to_sf
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereBaySize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereColumnsSpacing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionUpToSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereFloorResistance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereFloorThickness($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model

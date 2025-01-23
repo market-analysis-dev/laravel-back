@@ -33,5 +33,12 @@ class BrokerSeeder extends Seeder
         foreach (array_chunk($data, 500) as $chunk) {
             DB::table('cat_brokers')->insert($chunk);
         }
+
+        $data = [
+            [
+                'name' => 'None',
+            ]
+            ];
+        Broker::insert($data);
     }
 }

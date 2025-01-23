@@ -140,6 +140,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $expansion_land
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionLand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubmarketId($value)
+ * @property string $columns_spacing
+ * @property string $bay_size
+ * @property int $floor_thickness
+ * @property string $floor_resistance
+ * @property int $expansion_up_to_sf
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBaySize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereColumnsSpacing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionUpToSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorResistance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThickness($value)
  * @mixin \Eloquent
  */
 class Building extends Model
