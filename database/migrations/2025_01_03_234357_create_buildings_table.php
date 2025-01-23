@@ -42,6 +42,9 @@ return new class extends Migration
             $table->integer('expansion_land');
             $table->string('columns_spacing', 20);
             $table->string('bay_size', 20);
+            $table->integer('floor_thickness')->nullable();
+            $table->string('floor_resistance', 255)->nullable();
+            $table->integer('expansion_up_to_sf')->nullable();
             $table->enum('class', ['A', 'B', 'C']);
             $table->enum('type_generation', ['1st Generation', '2nd Generation']);
             $table->enum('currency', ['USD', 'MXP']);

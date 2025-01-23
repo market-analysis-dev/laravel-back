@@ -61,7 +61,10 @@ class StoreBuildingRequest extends FormRequest
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
             'status' => 'required|in:Active,Inactive,Pending,Approved',
             'columns_spacing' => 'string|max:20',
-            'bay_size' => 'string|max:20'
+            'bay_size' => 'string|max:20',
+            'floor_thickness' => 'nullable|integer|min:0',
+            'floor_resistance' => 'nullable|string|max:255',
+            'expansion_up_to_sf' => 'nullable|integer|min:0',
         ];
 
     }

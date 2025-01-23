@@ -130,6 +130,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $bay_size
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereBaySize($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereColumnsSpacing($value)
+ * @property int|null $floor_thickness
+ * @property string|null $floor_resistance
+ * @property int|null $expansion_up_to_sf
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionUpToSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereFloorResistance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereFloorThickness($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model

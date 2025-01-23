@@ -126,6 +126,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereYearBuilt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withoutTrashed()
+ * @property int|null $floor_thickness
+ * @property string|null $floor_resistance
+ * @property int|null $expansion_up_to_sf
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionUpToSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorResistance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThickness($value)
  * @mixin \Eloquent
  */
 class Building extends Model
@@ -174,6 +180,9 @@ class Building extends Model
         'above_market_tis',
         'status',
         'columns_spacing',
+        'floor_thickness',
+        'floor_resistance',
+        'expansion_up_to_sf',
         'bay_size',
         'created_by',
         'updated_by',
