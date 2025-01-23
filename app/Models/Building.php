@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 /**
  * 
  *
@@ -21,58 +22,69 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_owner_id
  * @property int|null $contact_id
  * @property string $building_name
- * @property string $class
  * @property int $building_size_sf
- * @property string $type_generation
- * @property string $currency
- * @property string $tenancy
  * @property string $latitud
  * @property string $longitud
  * @property int|null $year_built
  * @property int|null $clear_height
  * @property string|null $total_land
  * @property int|null $offices_space
- * @property int $has_expansion_land
  * @property int $has_crane
- * @property int $has_hvac
  * @property int $has_rail_spur
- * @property int $has_sprinklers
- * @property int $has_office
  * @property int $has_leed
  * @property string|null $hvac_production_area
- * @property string|null $construction_type
- * @property string|null $lightning
  * @property string|null $ventilation
- * @property string|null $transformer_capacity
- * @property string|null $construction_state
  * @property string|null $roof_system
- * @property string $fire_protection_system
  * @property string|null $skylights_sf
  * @property string|null $coverage
  * @property string|null $kvas
+ * @property int $expansion_land
+ * @property string $columns_spacing
+ * @property string $bay_size
+ * @property string $class
+ * @property string $type_generation
+ * @property string $currency
+ * @property string $tenancy
+ * @property string|null $construction_type
+ * @property string|null $lightning
+ * @property string|null $fire_protection_system
  * @property string $deal
  * @property string|null $loading_door
  * @property string|null $above_market_tis
  * @property string $status
  * @property int|null $created_by
  * @property int|null $updated_by
+ * @property int|null $deleted_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Developer $builder
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingsAvailable
+ * @property-read int|null $buildings_available_count
+ * @property-read \App\Models\Contact|null $contact
  * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\Developer $developer
+ * @property-read \App\Models\IndustrialPark $industrialPark
+ * @property-read \App\Models\Market $market
+ * @property-read \App\Models\Developer $owner
+ * @property-read \App\Models\Region $region
+ * @property-read \App\Models\SubMarket $subMarket
  * @property-read \App\Models\User|null $updater
+ * @property-read \App\Models\Developer $userOwner
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building createdBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building updatedBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereAboveMarketTis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBaySize($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuilderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingPhase($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingSizeSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereClass($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereClearHeight($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereConstructionState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereColumnsSpacing($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereConstructionType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereContactId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCoverage($value)
@@ -80,15 +92,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeveloperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionLand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFireProtectionSystem($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasCrane($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasExpansionLand($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasHvac($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasLeed($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasOffice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasRailSpur($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHasSprinklers($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereHvacProductionArea($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereIndustrialParkId($value)
@@ -98,48 +109,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereLoadingDoor($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereLongitud($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereMarketId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereNewConstruction($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOfficesSpace($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRegionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRoofSystem($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSkylightsSf($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStartingConstruction($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubmarketId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTenancy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTotalLand($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTransformerCapacity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTypeGeneration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUserOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereYearBuilt($value)
- * @property-read \App\Models\BuildingContact $builder
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingsAvailable
- * @property-read int|null $buildings_available_count
- * @property-read \App\Models\BuildingContact|null $contact
- * @property-read \App\Models\BuildingContact $developer
- * @property-read \App\Models\IndustrialPark $industrialPark
- * @property-read \App\Models\Market $market
- * @property-read \App\Models\BuildingContact $owner
- * @property-read \App\Models\Region $region
- * @property-read \App\Models\SubMarket $subMarket
- * @property-read \App\Models\BuildingContact $userOwner
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withoutTrashed()
- * @property int|null $deleted_by
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereDeletedBy($value)
- * @property int $new_construction
- * @property int $starting_construction
- * @property string $building_phase
- * @property int $expansion_land
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionLand($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubmarketId($value)
  * @mixin \Eloquent
  */
 class Building extends Model
@@ -166,17 +152,11 @@ class Building extends Model
         'clear_height',
         'total_land',
         'offices_space',
-        'has_expansion_land',
         'has_crane',
-        'has_hvac',
         'has_rail_spur',
-        'has_sprinklers',
-        'has_office',
         'has_leed',
         'hvac_production_area',
         'ventilation',
-        'transformer_capacity',
-        'construction_state',
         'roof_system',
         'skylights_sf',
         'coverage',
@@ -193,6 +173,8 @@ class Building extends Model
         'loading_door',
         'above_market_tis',
         'status',
+        'columns_spacing',
+        'bay_size',
         'created_by',
         'updated_by',
         'deleted_by',

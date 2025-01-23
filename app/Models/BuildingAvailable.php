@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -113,6 +113,31 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedBy($value)
+ * @property int|null $abs_shelter_id
+ * @property int|null $abs_broker_id
+ * @property int $has_expansion_land
+ * @property int $has_crane
+ * @property int $has_hvac
+ * @property int $has_rail_spur
+ * @property int $has_sprinklers
+ * @property int $has_office
+ * @property int $has_leed
+ * @property string $deal
+ * @property string $currency
+ * @property-read \App\Models\Developer|null $absBroker
+ * @property-read \App\Models\Shelter|null $absShelter
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsShelterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasCrane($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasExpansionLand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasHvac($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasLeed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasOffice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasRailSpur($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasSprinklers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSizeSf($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model

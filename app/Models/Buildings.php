@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\BuildingsAbsorption|null $buildingAbsorption
  * @property-read \App\Models\BuildingsAvailable|null $buildingAvailable
@@ -126,6 +126,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $expansion_land
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionLand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereSubmarketId($value)
+ * @property string $columns_spacing
+ * @property string $bay_size
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereBaySize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereColumnsSpacing($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model
