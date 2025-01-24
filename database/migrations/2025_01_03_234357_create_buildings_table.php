@@ -51,10 +51,8 @@ return new class extends Migration
             $table->enum('tenancy', ['Single', 'Multitenant']);
             $table->enum('construction_type', ['TILT_UP', 'Precast', 'Block & Sheet Metal', 'Sheet Metal'])->nullable();
             $table->enum('lightning', ['LED', 'T5', 'Metal Halide'])->nullable();
-            $table->enum('fire_protection_system', ['Hose Station', 'Sprinkler', 'Extinguisher']);
             $table->enum('deal', ['Sale', 'Lease']);
             $table->enum('loading_door', ['Crossdock', 'Back Loading', 'Front Loading'])->nullable();
-            $table->enum('above_market_tis', ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'])->nullable();
             $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
@@ -62,6 +60,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::statement('ALTER TABLE buildings ADD fire_protection_system SET("Hose Station", "Sprinkler", "Extinguisher") NOT NULL AFTER `status`');
+        DB::statement('ALTER TABLE buildings ADD above_market_tis SET("HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion") NULL AFTER `fire_protection_system`');
     }
 
     /**
