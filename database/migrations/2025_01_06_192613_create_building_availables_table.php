@@ -38,7 +38,6 @@ return new class extends Migration
             $table->integer('trailer_parking_space')->nullable();
             $table->decimal('avl_min_lease', 18, 2)->nullable();
             $table->decimal('avl_max_lease', 18, 2)->nullable();
-            $table->decimal('abs_asking_rate_shell', 18, 2)->nullable();
             $table->decimal('abs_closing_rate', 18, 2)->nullable();
             $table->date('abs_closing_date')->nullable();
             $table->date('abs_lease_up')->nullable();
@@ -49,14 +48,15 @@ return new class extends Migration
             $table->enum('abs_building_phase', ['BTS', 'Expansion', 'Inventory'])->nullable();
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
-            $table->enum('fire_protection_system', ['Hose Station', 'Sprinkler', 'Extinguisher']);
-            $table->enum('above_market_tis', ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'])->nullable();
+            $table->enum('abs_deal', ['Sale', 'Lease']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
+        DB::statement('ALTER TABLE buildings_available ADD fire_protection_system SET("Hose Station", "Sprinkler", "Extinguisher") NOT NULL AFTER `abs_company_type`');
+        DB::statement('ALTER TABLE buildings_available ADD above_market_tis SET("HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion") NULL AFTER `fire_protection_system`');
     }
 
     /**

@@ -35,7 +35,6 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'columns_spacing' => 'nullable|string|max:45',
             'abs_lease_term_month' => 'nullable|integer|min:0',
             'parking_space' => 'nullable|integer|min:0',
-            'abs_asking_rate_shell' => 'required|numeric|min:0',
             'abs_closing_rate' => 'required|numeric|min:0',
             'abs_closing_date' => 'nullable|date',
             'abs_lease_up' => 'nullable|date',
@@ -50,6 +49,7 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'abs_deal' =>'required|in:Sale,Lease'
         ];
     }
 }
