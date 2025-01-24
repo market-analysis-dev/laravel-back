@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('cat_developers', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
+            $table->foreignId('market_id')->nullable()->constrained('cat_markets')->after('name');
+            $table->foreignId('submarket_id')->nullable()->constrained('cat_submarkets')->after('market_id');
             $table->boolean('is_developer')->default(0);
             $table->boolean('is_builder')->default(0);
             $table->boolean('is_owner')->default(0);
-            $table->boolean('is_user_owner')->default(0);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
