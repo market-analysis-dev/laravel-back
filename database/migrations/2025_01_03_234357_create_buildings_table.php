@@ -30,39 +30,39 @@ return new class extends Migration
             $table->integer('clear_height')->nullable();
             $table->decimal('total_land', 18, 0)->nullable();
             $table->integer('offices_space')->nullable();
-            $table->boolean('has_expansion_land');
             $table->boolean('has_crane');
-            $table->boolean('has_hvac');
             $table->boolean('has_rail_spur');
-            $table->boolean('has_sprinklers');
-            $table->boolean('has_office');
             $table->boolean('has_leed');
             $table->string('hvac_production_area', 45)->nullable();
             $table->string('ventilation', 45)->nullable();
-            $table->string('transformer_capacity', 45)->nullable();
-            $table->string('construction_state', 45)->nullable();
             $table->string('roof_system', 45)->nullable();
             $table->string('skylights_sf', 45)->nullable();
             $table->string('coverage', 45)->nullable();
-            $table->string('kvas', 45)->nullable();
+            $table->string('kvas', 20)->nullable();
             $table->integer('expansion_land');
+            $table->string('columns_spacing', 20);
+            $table->string('bay_size', 20);
+            $table->integer('floor_thickness');
+            $table->string('floor_resistance', 255);
+            $table->integer('expansion_up_to_sf');
             $table->enum('class', ['A', 'B', 'C']);
             $table->enum('type_generation', ['1st Generation', '2nd Generation']);
             $table->enum('currency', ['USD', 'MXP']);
             $table->enum('tenancy', ['Single', 'Multitenant']);
             $table->enum('construction_type', ['TILT_UP', 'Precast', 'Block & Sheet Metal', 'Sheet Metal'])->nullable();
-            $table->enum('lightning', ['LED 350 LUXES', 'T5', 'Metal Halide'])->nullable();
-            $table->enum('fire_protection_system', ['Hose Station', 'Sprinkler', 'Extinguisher']);
+            $table->enum('lightning', ['LED', 'T5', 'Metal Halide'])->nullable();
             $table->enum('deal', ['Sale', 'Lease']);
             $table->enum('loading_door', ['Crossdock', 'Back Loading', 'Front Loading'])->nullable();
-            $table->enum('above_market_tis', ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'])->nullable();
             $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
+            $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
+            $table->set('above_market_tis', ["HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion"])->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
+
     }
 
     /**
