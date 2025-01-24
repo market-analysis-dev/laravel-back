@@ -41,7 +41,7 @@ class BuildingController extends ApiController
         $building = Building::create($request->validated());
         return $this->success('Building created successfully', $building);
     }
-    
+
     public function show(Building $building): ApiResponse
     {
         $building = $this->buildingService->show($building);
@@ -106,7 +106,25 @@ class BuildingController extends ApiController
      */
     public function listPhases(): ApiResponse
     {
-        return $this->success(data: BuildingPhase::array());
+        $phases = BuildingPhase::array();
+
+        $filteredPhases = collect($phases)
+            ->when(request()->boolean('availability'), function ($collection) {
+                return $collection->filter(fn($phase) => in_array($phase, [
+                    BuildingPhase::CONSTRUCTION->value,
+                    BuildingPhase::PLANNED->value,
+                BuildingPhase::SUBLEASE->value,
+                BuildingPhase::EXPIRATION->value,
+            ]));
+        })
+            ->when(request()->boolean('absorption'), function ($collection) {
+                return $collection->filter(fn($phase) => in_array($phase, [
+                    BuildingPhase::BTS->value,
+                    BuildingPhase::EXPANSION->value,
+            ]));
+        });
+
+        return $this->success(data: $filteredPhases->values());
     }
 
     /**
