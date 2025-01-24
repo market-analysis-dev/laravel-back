@@ -10,6 +10,7 @@ use App\Models\BuildingAvailable;
 use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use App\Enums\BuildingState;
 
 class BuildingsAbsorptionController extends ApiController
 {
@@ -48,7 +49,7 @@ class BuildingsAbsorptionController extends ApiController
         $direction = $validated['state'] ?? 'desc';
 
         $absorptions = BuildingAvailable::with(['tenant', 'industry'])->where('building_id', $building->id)
-        ->where('building_state', '=', 'Absorption')
+        ->where('building_state', '=', BuildingState::ABSORPTION->value)
         ->when($validated['search'] ?? false, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->where('abs_lease_term_month', 'like', "%{$search}%")
@@ -95,6 +96,7 @@ class BuildingsAbsorptionController extends ApiController
     {
         $data = $request->validated();
         $data['building_id'] = $building->id;
+        $data['building_state'] = BuildingState::ABSORPTION;
 
         $absorption = BuildingAvailable::create($data);
 
@@ -112,7 +114,7 @@ class BuildingsAbsorptionController extends ApiController
             return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
         }
 
-        if ($buildingAbsorption->building_state !== 'Absorption') {
+        if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
@@ -131,12 +133,15 @@ class BuildingsAbsorptionController extends ApiController
         if ($buildingAbsorption->building_id !== $building->id) {
             return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
         }
-        if ($buildingAbsorption->building_state !== 'Absorption') {
+        if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
+        $data = $request->validated();
+        $data['building_id'] = $building->id;
+        $data['building_state'] = BuildingState::ABSORPTION;
         try {
-            $buildingAbsorption->update($request->validated());
+            $buildingAbsorption->update($data);
             return $this->success('Building Absorption updated successfully', $buildingAbsorption);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
@@ -154,7 +159,7 @@ class BuildingsAbsorptionController extends ApiController
             return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
         }
 
-        if ($buildingAbsorption->building_state !== 'Absorption') {
+        if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 

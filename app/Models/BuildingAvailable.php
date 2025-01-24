@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -17,9 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $abs_industry_id
  * @property int|null $abs_country_id
  * @property int $broker_id
- * @property int|null $abs_shelter_id
- * @property int|null $abs_broker_id
- * @property int|null $size_sf
+ * @property int|null $avl_size_sf
  * @property string|null $avl_building_dimensions
  * @property int|null $avl_minimum_space_sf
  * @property int|null $avl_expansion_up_to_sf
@@ -40,16 +37,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $parking_space
  * @property string|null $avl_min_lease
  * @property string|null $avl_max_lease
+ * @property string|null $abs_asking_rate_shell
  * @property string|null $abs_closing_rate
  * @property string|null $abs_closing_date
  * @property string|null $abs_lease_up
- * @property int $has_expansion_land
- * @property int $has_crane
- * @property int $has_hvac
- * @property int $has_rail_spur
- * @property int $has_sprinklers
- * @property int $has_office
- * @property int $has_leed
  * @property string|null $abs_month
  * @property string|null $abs_sale_price
  * @property string $building_state
@@ -57,8 +48,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $abs_building_phase
  * @property string|null $abs_final_use
  * @property string|null $abs_company_type
- * @property string $deal
- * @property string $currency
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $deleted_by
@@ -80,7 +69,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable updatedBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsAskingRateShell($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsBrokerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsBuildingPhase($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsClosingDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsClosingRate($value)
@@ -92,7 +80,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsLeaseUp($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsMonth($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsSalePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsShelterId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsTenantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlBuildingDimensions($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlBuildingPhase($value)
@@ -101,6 +88,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlMaxLease($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlMinLease($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlMinimumSpaceSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlSizeSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBaySize($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBrokerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingId($value)
@@ -108,34 +96,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereColumnsSpacing($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCurrency($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDockDoors($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDriveInDoor($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereFloorResistance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereFloorThickness($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasCrane($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasCrossdock($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasExpansionLand($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasHvac($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasLeed($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasOffice($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasRailSpur($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereHasSprinklers($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereIsStartingConstruction($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereKnockoutsDocks($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereNewConstruction($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereParkingSpace($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSharedTruck($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSizeSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTruckCourt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
+ * @property-read \App\Models\Contact $broker
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -157,9 +136,13 @@ class BuildingAvailable extends Model
         'avl_building_phase',
         'abs_building_phase',
         'avl_minimum_space_sf',
+        'avl_expansion_up_to_sf',
         'dock_doors',
-        'rams',
+        'drive_in_door',
+        'floor_thickness',
+        'floor_resistance',
         'truck_court',
+        'has_crossdock',
         'shared_truck',
         'new_construction',
         'is_starting_construction',
@@ -167,10 +150,11 @@ class BuildingAvailable extends Model
         'columns_spacing',
         'avl_date',
         'abs_lease_term_month',
+        'knockouts_docks',
         'parking_space',
         'avl_min_lease',
         'avl_max_lease',
-        'abs_deal',
+        'abs_asking_rate_shell',
         'abs_closing_rate',
         'abs_closing_date',
         'abs_lease_up',
@@ -180,9 +164,15 @@ class BuildingAvailable extends Model
         'abs_sale_price',
         'abs_shelter_id',
         'abs_broker_id',
-        'trailer_parking_space',
-        'fire_protection_system',
-        'above_market_tis',
+        'has_expansion_land',
+        'has_crane',
+        'has_hvac',
+        'has_rail_spur',
+        'has_sprinklers',
+        'has_office',
+        'has_leed',
+        'deal',
+        'currency',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -210,7 +200,7 @@ class BuildingAvailable extends Model
 
     public function broker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(BuildingContact::class, 'broker_id');
+        return $this->belongsTo(Contact::class, 'broker_id');
     }
 
     public function absShelter(): \Illuminate\Database\Eloquent\Relations\BelongsTo

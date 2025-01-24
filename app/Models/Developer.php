@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
+ * @property int $is_user_owner
  * @mixin \Eloquent
  */
 class Developer extends Model

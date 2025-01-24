@@ -57,6 +57,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withoutTrashed()
+ * @property string $name
+ * @property string $phone
+ * @property string $email
+ * @property string|null $comments
+ * @property int $has_building
+ * @property int $has_land
+ * @property int $has_broker
+ * @property int $has_company
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasBroker($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasBuilding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasCompany($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasLand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact wherePhone($value)
  * @mixin \Eloquent
  */
 class Contact extends Model
