@@ -49,14 +49,14 @@ return new class extends Migration
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
             $table->enum('abs_deal', ['Sale', 'Lease']);
+            $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
+            $table->set('above_market_tis', ["HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion"])->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
-        DB::statement('ALTER TABLE buildings_available ADD fire_protection_system SET("Hose Station", "Sprinkler", "Extinguisher") NOT NULL AFTER `abs_company_type`');
-        DB::statement('ALTER TABLE buildings_available ADD above_market_tis SET("HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion") NULL AFTER `fire_protection_system`');
     }
 
     /**
