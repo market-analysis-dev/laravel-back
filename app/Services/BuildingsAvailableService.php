@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BuildingAvailable;
+use App\Enums\BuildingState;
 
 class BuildingsAvailableService
 {
@@ -16,7 +17,7 @@ class BuildingsAvailableService
         $direction = $validatedData['state'] ?? 'desc';
 
         return BuildingAvailable::where('building_id', $buildingId)
-            ->where('building_state', '=', 'Availability')
+            ->where('building_state', '=', BuildingState::AVAILABILITY->value)
             ->when($validatedData['search'] ?? false, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('building_state', 'like', "%{$search}%")
@@ -41,5 +42,66 @@ class BuildingsAvailableService
             })
             ->orderBy($order, $direction)
             ->paginate($size);
+    }
+
+    /**
+     * @param array $validatedData
+     * @param int $buildingId
+     * @param int $buildingAbsorptionId
+     * @return array
+     */
+    public function convertToAvailable(array $validatedData, int $buildingId, int $buildingAbsorptionId): array
+    {
+        $buildingAbsorption = BuildingAvailable::where('building_id', $buildingId)
+            ->where('id', $buildingAbsorptionId)
+            ->firstOrFail();
+
+        if ($buildingAbsorption->building_state !== 'Absorption') {
+            return [
+                'success' => false,
+                'message' => 'Only records with state "Absorption" can be converted to "Availability".',
+                'code' => 400
+            ];
+        }
+
+        $validatedData['building_state'] = 'Availability';
+
+        $buildingAbsorption->update($validatedData);
+
+        return [
+            'success' => true,
+            'data' => $buildingAbsorption
+        ];
+
+
+    }
+
+    /**
+     * @param array $validatedData
+     * @param int $buildingId
+     * @param int $buildingAvailableId
+     * @return array|\Illuminate\Database\Eloquent\TModel
+     */
+    public function convertToAbsorption(array $validatedData, int $buildingId, int $buildingAvailableId) {
+        $buildingAvailable = BuildingAvailable::where('building_id', $buildingId)
+            ->where('id', $buildingAvailableId)
+            ->firstOrFail();
+
+        if ($buildingAvailable->building_state !== 'Availability') {
+            return [
+                'success' => false,
+                'message' => 'Only records with state "Available" can be converted to "Absorption".',
+                'code' => 400
+            ];
+        }
+
+        $validatedData['building_state'] = 'Absorption';
+
+        $buildingAvailable->update($validatedData);
+
+        return [
+            'success' => true,
+            'data' => $buildingAvailable
+        ];
     }
 }

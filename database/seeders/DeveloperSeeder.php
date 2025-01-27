@@ -76,33 +76,33 @@ class DeveloperSeeder extends Seeder
                 'is_developer' => false,
                 'is_owner' => false,
                 'is_builder' => false,
-                ],
+            ],
 
             [
                 'name' => 'FUNO',
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                ],
+            ],
 
             [
                 'name' => 'Fibra Danhos',
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                ],
+            ],
             [
                 'name' => 'Zayat',
                 'is_developer' => false,
                 'is_owner' => true,
                 'is_builder' => false,
-                ],
+            ],
             [
                 'name' => 'User Owner',
                 'is_developer' => true,
                 'is_owner' => true,
                 'is_builder' => false,
-                ],
+            ],
         ];
 
         Developer::insert($data);

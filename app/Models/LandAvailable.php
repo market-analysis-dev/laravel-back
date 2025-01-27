@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\Developer|null $absBroker
  * @property-read \App\Models\Company|null $absCompany
@@ -25,6 +25,78 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable updatedBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withoutTrashed()
+ * @property int $id
+ * @property int $land_id
+ * @property int|null $abs_company_id
+ * @property int|null $avl_broker_id
+ * @property int|null $abs_country_id
+ * @property int|null $abs_broker_id
+ * @property string $land_state
+ * @property int|null $avl_size_sm
+ * @property string|null $avl_land_sm
+ * @property int|null $avl_minimum
+ * @property string|null $avl_min_sale
+ * @property string|null $avl_max_sale
+ * @property string|null $avl_zoning
+ * @property string|null $avl_pacel_shape
+ * @property int|null $avl_rail_spur
+ * @property int|null $avl_natural_gas
+ * @property int|null $avl_sewage
+ * @property int|null $avl_water
+ * @property int|null $avl_electric
+ * @property int|null $avl_conditioned_construction
+ * @property int|null $avl_quarter
+ * @property int|null $avl_year
+ * @property string|null $land_condition
+ * @property int|null $abs_size_HA
+ * @property int|null $abs_quarter
+ * @property int|null $abs_year
+ * @property string|null $abs_closing_price
+ * @property string|null $abs_type_buyer
+ * @property string|null $abs_company_type
+ * @property string|null $comments
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsClosingPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsCompanyType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsCountryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsQuarter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsSizeHA($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsTypeBuyer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlConditionedConstruction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlElectric($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlLandSm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlMaxSale($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlMinSale($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlMinimum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlNaturalGas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlPacelShape($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlQuarter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlRailSpur($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlSewage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlSizeSm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlWater($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlZoning($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereLandCondition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereLandId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereLandState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereUpdatedBy($value)
  * @mixin \Eloquent
  */
 class LandAvailable extends Model

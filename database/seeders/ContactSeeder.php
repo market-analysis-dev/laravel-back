@@ -23,10 +23,10 @@ class ContactSeeder extends Seeder
         while (($row = fgetcsv($file)) !== false) {
             $data[] = [
                 'id' => $id++,
-                'name' => $row[0],
-                'email' => $row[1],
-                'phone' => $row[2],
-                'has_company' => true,
+                'contact_name' => $row[0],
+                'contact_email' => $row[1],
+                'contact_phone' => $row[2],
+                'is_company_contact' => true,
             ];
         }
 

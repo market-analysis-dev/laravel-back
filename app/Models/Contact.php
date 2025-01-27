@@ -7,18 +7,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 /**
  * 
  *
  * @property int $id
- * @property string $name
- * @property string $phone
- * @property string $email
- * @property string|null $comments
- * @property int $has_building
- * @property int $has_land
- * @property int $has_broker
- * @property int $has_company
+ * @property string|null $contact_name
+ * @property string|null $contact_phone
+ * @property string|null $contact_email
+ * @property string|null $contact_comments
+ * @property int $is_direct_contact
+ * @property int $is_land_contact
+ * @property int $is_buildings_contact
+ * @property int $is_broker_contact
+ * @property int $is_developer_contact
+ * @property int $is_owner_contact
+ * @property int $is_company_contact
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $deleted_by
@@ -33,23 +37,42 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact updatedBy($userId)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereContactComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereContactEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereContactName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereContactPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsBrokerContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsBuildingsContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsCompanyContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsDeveloperContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsDirectContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsLandContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereIsOwnerContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withoutTrashed()
+ * @property string $name
+ * @property string $phone
+ * @property string $email
+ * @property string|null $comments
+ * @property int $has_building
+ * @property int $has_land
+ * @property int $has_broker
+ * @property int $has_company
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereComments($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasBroker($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasBuilding($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasCompany($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasLand($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereUpdatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withoutTrashed()
  * @mixin \Eloquent
  */
 class Contact extends Model
@@ -59,14 +82,17 @@ class Contact extends Model
     protected $table = 'contacts';
 
     protected $fillable = [
-        'name',
-        'phone',
-        'email',
-        'comments',
-        'has_building',
-        'has_land',
-        'has_broker',
-        'has_company',
+        'contact_name',
+        'contact_phone',
+        'contact_email',
+        'contact_comments',
+        'is_direct_contact',
+        'is_land_contact',
+        'is_buildings_contact',
+        'is_broker_contact',
+        'is_developer_contact',
+        'is_owner_contact',
+        'is_company_contact',
         'created_by',
         'updated_by',
         'deleted_by',

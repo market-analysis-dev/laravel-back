@@ -9,5 +9,5 @@ enum BuildingDeal: string
     use EnumHelper;
 
     case SALE = 'Sale';
-    case LEAS = 'Leas';
+    case LEASE = 'Lease';
 }

@@ -99,6 +99,30 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereDeletedBy($value)
+ * @property int|null $abs_shelter_id
+ * @property int|null $abs_broker_id
+ * @property int|null $size_sf
+ * @property int $has_expansion_land
+ * @property int $has_crane
+ * @property int $has_hvac
+ * @property int $has_rail_spur
+ * @property int $has_sprinklers
+ * @property int $has_office
+ * @property int $has_leed
+ * @property string $deal
+ * @property string $currency
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereAbsBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereAbsShelterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasCrane($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasExpansionLand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasHvac($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasLeed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasOffice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasRailSpur($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasSprinklers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereSizeSf($value)
  * @mixin \Eloquent
  */
 class BuildingsAvailable extends Model

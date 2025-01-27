@@ -33,7 +33,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $is_developer
  * @property int $is_builder
  * @property int $is_owner
- * @property int $is_user_owner
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsBuilder($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsDeveloper($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereIsOwner($value)
@@ -45,6 +44,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
+ * @property int $is_user_owner
  * @mixin \Eloquent
  */
 class Developer extends Model
@@ -58,7 +58,6 @@ class Developer extends Model
         'is_developer',
         'is_builder',
         'is_owner',
-        'is_user_owner',
         'created_by',
         'updated_by',
         'deleted_by',

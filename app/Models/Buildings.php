@@ -125,8 +125,17 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereDeletedBy($value)
  * @property int $expansion_land
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionLand($value)
- * @property int $submarket_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereSubmarketId($value)
+ * @property string $columns_spacing
+ * @property string $bay_size
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereBaySize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereColumnsSpacing($value)
+ * @property int|null $floor_thickness
+ * @property string|null $floor_resistance
+ * @property int|null $expansion_up_to_sf
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereExpansionUpToSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereFloorResistance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Buildings whereFloorThickness($value)
  * @mixin \Eloquent
  */
 class Buildings extends Model
