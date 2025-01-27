@@ -7,26 +7,35 @@ use Illuminate\Support\Facades\Storage;
 class FileService
 {
     /**
-     * Create a new class instance.
+     * @param $files
+     * @param int $buildingId
+     * @param string|null $type
+     * @return array
      */
-    public function uploadFiles($files, $buildingId)
+    public function uploadFiles($files, int $buildingId, ?string $type = null): array
     {
         $result = [];
 
-        foreach ($files as $file) {
-            $type = $this->determineFileType($file->getClientOriginalName());
+        // Если $files — это одиночный файл, преобразуем его в массив
+        if (!is_array($files)) {
+            $files = [$files];
+        }
 
-            if (!$type) {
-                continue; // * Ignorando archivos no válidos.
+        foreach ($files as $file) {
+            // Используем уже существующую логику
+            $fileType = $type ?? $this->determineFileType($file->getClientOriginalName());
+
+            if (!$fileType) {
+                continue; // Пропускаем недопустимые типы
             }
 
-            $path = "public/buildings/{buildingId}";
+            $path = "public/buildings/{$buildingId}/{$fileType}/";
             $filename = $file->getClientOriginalName();
 
             Storage::putFileAs($path, $file, $filename);
 
             $result[] = [
-                'type' => $type,
+                'type' => $fileType,
                 'path' => $path . $filename,
             ];
         }
@@ -34,7 +43,43 @@ class FileService
         return $result;
     }
 
-    private function determineFileType($fileName)
+    /**
+     * Upload a single file for a building.
+     * Type can be explicitly provided.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param int $buildingId
+     * @param string|null $type
+     * @return array
+     */
+    public function uploadSingleTypeFile($file, int $buildingId, ?string $type = null): array
+    {
+        // Use explicitly provided type or determine it from the file name
+        $fileType = $type ?? $this->determineFileType($file->getClientOriginalName());
+
+        if (!$fileType) {
+            throw new \InvalidArgumentException("Invalid file type or file name: {$file->getClientOriginalName()}");
+        }
+
+        // Save the file to the appropriate folder
+        $path = "public/buildings/{$buildingId}/";
+        $filename = $file->getClientOriginalName();
+
+        Storage::putFileAs($path, $file, $filename);
+
+        return [
+            'type' => $fileType,
+            'path' => $path . $filename,
+        ];
+    }
+
+    /**
+     * Determine file type based on its name.
+     *
+     * @param string $fileName
+     * @return string|null
+     */
+    private function determineFileType(string $fileName): ?string
     {
         $name = strtolower($fileName);
 
@@ -54,6 +99,6 @@ class FileService
             return 'KMZ';
         }
 
-        return null; // * Tipo no válido
+        return null; // Invalid or undetermined type
     }
 }

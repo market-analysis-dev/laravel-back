@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BuildingController;
+use App\Http\Controllers\BuildingFileController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -25,5 +26,6 @@ Route::group([
     Route::get('/{building}', [BuildingController::class, 'show'])->name('show');
     Route::put('/{building}', [BuildingController::class, 'update'])->name('update');
     Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');
+    Route::post('/{building}/files', [BuildingFileController::class, 'uploadFiles'])->name('uploadFiles');
 });
 
