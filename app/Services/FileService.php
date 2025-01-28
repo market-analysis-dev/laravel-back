@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
+use App\Models\File;
+use App\Models\BuildingFile;
+use Illuminate\Http\UploadedFile;
 
 class FileService
 {
@@ -44,24 +47,70 @@ class FileService
     }
 
     /**
-     * Upload a single file for a building.
-     * Type can be explicitly provided.
-     *
-     * @param \Illuminate\Http\UploadedFile $file
+     * @param array $files
      * @param int $buildingId
      * @param string|null $type
      * @return array
      */
-    public function uploadSingleTypeFile($file, int $buildingId, ?string $type = null): array
+    public function uploadBuildingFiles(array $files, int $buildingId, ?string $type = null): array
     {
-        // Use explicitly provided type or determine it from the file name
+        $uploadedFilesInfo = [];
+
+        foreach ($files as $file) {
+
+            $uploadedFile = $this->uploadSingleTypeFile($file, $buildingId, $type);
+
+            $fileRecord = File::create([
+                'name' => pathinfo($uploadedFile['path'], PATHINFO_FILENAME),
+                'original_name' => $file->getClientOriginalName(),
+                'extension' => $file->getClientOriginalExtension(),
+                'size' => $file->getSize(),
+                'mime_type' => $file->getMimeType(),
+                'path' => $uploadedFile['path'],
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+                'deleted_by' => null,
+            ]);
+
+
+            BuildingFile::create([
+                'building_id' => $buildingId,
+                'type' => $uploadedFile['type'],
+                'file_id' => $fileRecord->id,
+                'path' => $uploadedFile['path'],
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+                'deleted_by' => null,
+            ]);
+
+            $uploadedFilesInfo[] = [
+                'file_id' => $fileRecord->id,
+                'building_id' => $buildingId,
+                'type' => $uploadedFile['type'],
+                'original_name' => $file->getClientOriginalName(),
+                'path' => $uploadedFile['path'],
+                'size' => $file->getSize(),
+                'mime_type' => $file->getMimeType(),
+            ];
+        }
+
+        return $uploadedFilesInfo;
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @param int $buildingId
+     * @param string|null $type
+     * @return array
+     */
+    public function uploadSingleTypeFile(UploadedFile $file, int $buildingId, ?string $type = null): array
+    {
         $fileType = $type ?? $this->determineFileType($file->getClientOriginalName());
 
         if (!$fileType) {
             throw new \InvalidArgumentException("Invalid file type or file name: {$file->getClientOriginalName()}");
         }
 
-        // Save the file to the appropriate folder
         $path = "public/buildings/{$buildingId}/";
         $filename = $file->getClientOriginalName();
 
