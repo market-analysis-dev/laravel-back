@@ -33,6 +33,10 @@ class UpdateLandRequest extends FormRequest
             'currency' => 'required|in:USD,MXP',
             'latitud' => 'required|string|max:45',
             'longitud' => 'required|string|max:45',
+            'size_ha' => 'integer',
+            'kvas' => 'nullable|string|max:20',
+            'zoning' => 'required|in:Industrial,Commercial,Residential',
+            'parcel_shape' => 'required|in:Regular,Irregular',
             'status' => 'required|in:Active,Inactive,Pending,Approved',
         ];
     }

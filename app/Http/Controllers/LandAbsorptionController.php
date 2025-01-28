@@ -18,7 +18,7 @@ class LandAbsorptionController extends ApiController
     public function index(Land $land): ApiResponse
     {
         $landsAbsorption = LandAvailable::where('land_id', $land->id)
-            ->where('land_state', '=', 'Absorption')
+            ->where('state', '=', 'Absorption')
             ->paginate(10);
         return $this->success(data: $landsAbsorption);
     }
@@ -34,7 +34,7 @@ class LandAbsorptionController extends ApiController
             return $this->error('Land Absorption not found for this Land', ['error_code' => 404]);
         }
 
-        if ($landAbsorption->land_state !== 'Absorption') {
+        if ($landAbsorption->state !== 'Absorption') {
             return $this->error('Invalid land state', ['error_code' => 403]);
         }
 
@@ -51,7 +51,7 @@ class LandAbsorptionController extends ApiController
         $validatedData = $request->validated();
 
         $validatedData['land_id'] = $land->id;
-        $validatedData['land_state'] = 'Absorption';
+        $validatedData['state'] = 'Absorption';
 
         $landExists = Land::where('id', $land->id)->exists();
         if (!$landExists) {
@@ -79,7 +79,7 @@ class LandAbsorptionController extends ApiController
             $validatedData = $request->validated();
 
             $validatedData['land_id'] = $land->id;
-            $validatedData['land_state'] = 'Absorption';
+            $validatedData['state'] = 'Absorption';
 
             $landAbsorption->update($validatedData);
 
@@ -100,7 +100,7 @@ class LandAbsorptionController extends ApiController
             return $this->error('Land Absorption not found for this Land', ['error_code' => 404]);
         }
 
-        if ($landAbsorption->land_state !== 'Absorption') {
+        if ($landAbsorption->state !== 'Absorption') {
             return $this->error('Invalid land state', ['error_code' => 403]);
         }
 

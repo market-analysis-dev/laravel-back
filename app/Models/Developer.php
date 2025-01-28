@@ -45,6 +45,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
  * @property int $is_user_owner
+ * @property int|null $market_id
+ * @property int|null $submarket_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereSubmarketId($value)
  * @mixin \Eloquent
  */
 class Developer extends Model

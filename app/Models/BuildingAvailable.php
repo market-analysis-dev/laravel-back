@@ -115,6 +115,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
  * @property-read \App\Models\Contact $broker
+ * @property int|null $abs_shelter_id
+ * @property int|null $abs_broker_id
+ * @property int|null $size_sf
+ * @property int|null $rams
+ * @property int|null $trailer_parking_space
+ * @property string $abs_deal
+ * @property string $fire_protection_system
+ * @property string|null $above_market_tis
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAboveMarketTis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsShelterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereFireProtectionSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereRams($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSizeSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTrailerParkingSpace($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model

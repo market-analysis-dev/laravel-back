@@ -123,6 +123,16 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasRailSpur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasSprinklers($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereSizeSf($value)
+ * @property int|null $rams
+ * @property int|null $trailer_parking_space
+ * @property string $abs_deal
+ * @property string $fire_protection_system
+ * @property string|null $above_market_tis
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereAboveMarketTis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereAbsDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereFireProtectionSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereRams($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereTrailerParkingSpace($value)
  * @mixin \Eloquent
  */
 class BuildingsAvailable extends Model

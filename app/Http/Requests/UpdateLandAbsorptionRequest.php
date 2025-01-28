@@ -22,17 +22,25 @@ class UpdateLandAbsorptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'abs_company_id' => 'required|integer|exists:companies,id',
-            'abs_country_id' => 'required|integer|exists:countries,id',
-            'abs_broker_id' => 'required|integer|exists:cat_developers,id',
             'land_condition' => 'nullable|in:Fully Developed,Undeveloped',
-            'abs_size_HA' => 'required|integer',
-            'abs_quarter' => 'required|integer',
-            'abs_year' => 'required|integer',
-            'abs_closing_price' => 'required|numeric',
+            'rail_spur' => 'nullable|boolean',
+            'natural_gas' => 'nullable|in:yes,no,feasibility',
+            'sewage' => 'nullable|in:yes,no,feasibility',
+            'water' => 'nullable|in:yes,no,feasibility',
+            'electric' => 'nullable|in:yes,no,feasibility',
+            'kvas' => 'nullable|integer',
+            'abs_company_id' => 'nullable|exists:companies,id',
+            'abs_country_id' => 'nullable|exists:countries,id',
+            'abs_size_ha' => 'nullable|integer',
+            'abs_date' => 'nullable|date',
+            'abs_closing_price' => 'nullable|numeric|min:0',
             'abs_type_buyer' => 'nullable|in:User,Developer',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
-            'comments' => 'nullable|string|max:45',
+            'abs_industry_id' => 'nullable|exists:cat_industries,id',
+            'abs_final_use' => 'nullable|in:Logistic,Manufacturing,TBD',
+            'abs_broker_id' => 'nullable|exists:cat_developers,id',
+            'abs_comments' => 'nullable|string|max:45',
+            'abs_kvas_price' => 'nullable|numeric|min:0',
         ];
     }
 }
