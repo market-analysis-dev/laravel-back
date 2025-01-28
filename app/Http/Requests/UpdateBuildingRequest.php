@@ -29,7 +29,6 @@ class UpdateBuildingRequest extends FormRequest
             'industrial_park_id' => 'required|integer|exists:cat_industrial_parks,id',
             'developer_id' => 'required|integer|exists:cat_developers,id',
             'owner_id' => 'required|integer|exists:cat_developers,id',
-            'user_owner_id' => 'required|integer|exists:cat_developers,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
             'building_name' => 'required|string|max:255',
             'building_size_sf' => 'required|integer',

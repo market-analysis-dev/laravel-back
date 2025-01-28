@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $industrial_park_id
  * @property int $developer_id
  * @property int $owner_id
- * @property int $user_owner_id
  * @property int|null $contact_id
  * @property string $building_name
  * @property int $building_size_sf
@@ -150,7 +149,6 @@ class Building extends Model
         'industrial_park_id',
         'developer_id',
         'owner_id',
-        'user_owner_id',
         'contact_id',
         'building_name',
         'building_size_sf',
@@ -229,10 +227,6 @@ class Building extends Model
         return $this->belongsTo(Developer::class, 'owner_id');
     }
 
-    public function userOwner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Developer::class, 'user_owner_id');
-    }
 
     public function contact(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
