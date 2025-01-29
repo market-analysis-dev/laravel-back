@@ -6,6 +6,7 @@ use App\Http\Requests\StoreIndustrialParkRequest;
 use App\Http\Requests\UpdateIndustrialParkRequest;
 use App\Models\IndustrialPark;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class IndustrialParkController extends ApiController
 {
@@ -43,6 +44,15 @@ class IndustrialParkController extends ApiController
         } catch (\Exception $e) {
             return $this->error('Error creating industrial park: ' . $e->getMessage(), status: 500);
         }
+    }
+
+    /**
+     * @param IndustrialPark $industrialPark
+     * @return \App\Responses\ApiResponse
+     */
+    public function show(IndustrialPark $industrialPark): \App\Responses\ApiResponse
+    {
+        return $this->success(data: $industrialPark);
     }
 
     /**

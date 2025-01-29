@@ -31,6 +31,15 @@ class TenantController extends ApiController
     }
 
     /**
+     * @param Tenant $tenant
+     * @return ApiResponse
+     */
+    public function show(Tenant $tenant): \App\Responses\ApiResponse
+    {
+        return $this->success(data: $tenant);
+    }
+
+    /**
      * @param UpdateTenantRequest $request
      * @param Tenant $tenant
      * @return ApiResponse
