@@ -22,7 +22,7 @@ class IndustrySeeder extends Seeder
             ["id" => 6, "name" => "3PL"],
             ["id" => 7, "name" => "Supply Chain"],
             ["id" => 8, "name" => "Contruction"],
-            ["id" => 9, "name" => ""],
+            ["id" => 9, "name" => "TBD"],
             ["id" => 10, "name" => "Aluminum"],
             ["id" => 11, "name" => "e-commerce"],
             ["id" => 12, "name" => "Beauty & Health"],

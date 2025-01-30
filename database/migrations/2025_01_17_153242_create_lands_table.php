@@ -24,6 +24,10 @@ return new class extends Migration
             $table->enum('currency', ['USD', 'MXP']);
             $table->string('latitud', 45);
             $table->string('longitud', 45);
+            $table->bigInteger('size_ha');
+            $table->string('kvas', 20)->nullable();
+            $table->enum('zoning', ['Industrial','Commercial','Residential']);
+            $table->enum('parcel_shape', ['Regular', 'Irregular']);
             $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

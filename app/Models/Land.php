@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 /**
  * 
  *
@@ -22,6 +23,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $currency
  * @property string $latitud
  * @property string $longitud
+ * @property int $size_ha
+ * @property string|null $kvas
+ * @property string $zoning
+ * @property string $parcel_shape
  * @property string $status
  * @property int|null $created_by
  * @property int|null $updated_by
@@ -53,16 +58,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereDeveloperId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereIndustrialParkId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereKvas($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereLandName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereLatitud($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereLongitud($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereMarketId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereParcelShape($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereRegionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereSizeHa($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereSubMarketId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereZoning($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withoutTrashed()
  * @mixin \Eloquent
@@ -85,6 +94,10 @@ class Land extends Model
         'currency',
         'latitud',
         'longitud',
+        'size_ha',
+        'kvas',
+        'zoning',
+        'parcel_shape',
         'status',
         'created_by',
         'updated_by',
