@@ -38,7 +38,13 @@ class BuildingController extends ApiController
 
     public function store(StoreBuildingRequest $request): ApiResponse
     {
-        $building = Building::create($request->validated());
+        $validated = $request->validated();
+
+        if ($validated['sqftToM2'] ?? false) {
+            $validated = $this->buildingService->convertMetrics($validated);
+        }
+
+        $building = $this->buildingService->create($validated);
         return $this->success('Building created successfully', $building);
     }
 
@@ -56,11 +62,15 @@ class BuildingController extends ApiController
     public function update(UpdateBuildingRequest $request, Building $building): ApiResponse
     {
         try {
-            if ($building->update($request->validated())) {
-                return $this->success('Building updated successfully', $building);
+            $validated = $request->validated();
+
+            if ($validated['sqftToM2'] ?? false) {
+                $validated = $this->buildingService->convertMetrics($validated);
             }
 
-            return $this->error('Building update failed', status:423);
+            $building = $this->buildingService->update($building, $validated);
+            return $this->success('Building updated successfully', $building);
+
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }

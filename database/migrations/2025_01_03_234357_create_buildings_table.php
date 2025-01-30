@@ -26,9 +26,9 @@ return new class extends Migration
             $table->string('latitud', 45);
             $table->string('longitud', 45);
             $table->integer('year_built')->nullable();
-            $table->integer('clear_height')->nullable();
-            $table->decimal('total_land', 18, 0)->nullable();
-            $table->integer('offices_space')->nullable();
+            $table->integer('clear_height_ft')->nullable();
+            $table->integer('total_land_sf')->nullable();
+            $table->integer('offices_space_sf')->nullable();
             $table->boolean('has_crane');
             $table->boolean('has_rail_spur');
             $table->boolean('has_leed');
@@ -39,9 +39,9 @@ return new class extends Migration
             $table->string('coverage', 45)->nullable();
             $table->string('kvas', 20)->nullable();
             $table->integer('expansion_land');
-            $table->string('columns_spacing', 20);
+            $table->string('columns_spacing_ft', 20);
             $table->string('bay_size', 20);
-            $table->integer('floor_thickness');
+            $table->integer('floor_thickness_in');
             $table->string('floor_resistance', 255);
             $table->integer('expansion_up_to_sf');
             $table->enum('class', ['A', 'B', 'C']);

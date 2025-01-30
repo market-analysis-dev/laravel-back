@@ -35,9 +35,9 @@ class UpdateBuildingRequest extends FormRequest
             'latitud' => 'required|string|max:45',
             'longitud' => 'required|string|max:45',
             'year_built' => 'nullable|integer',
-            'clear_height' => 'nullable|integer|max:99',
-            'total_land' => 'nullable|numeric|min:0|max:999999999999999999',
-            'offices_space' => 'nullable|integer',
+            'clear_height_ft' => 'nullable|integer|max:99',
+            'total_land_sf' => 'nullable|numeric|min:0|max:999999999999999999',
+            'offices_space_sf' => 'nullable|integer',
             'has_crane' => 'required|boolean',
             'has_rail_spur' => 'required|boolean',
             'has_leed' => 'required|boolean',
@@ -59,11 +59,12 @@ class UpdateBuildingRequest extends FormRequest
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
             'status' => 'required|in:Active,Inactive,Pending,Approved',
-            'columns_spacing' => 'string|max:20',
+            'columns_spacing_ft' => 'string|max:20',
             'bay_size' => 'string|max:20',
-            'floor_thickness' => 'required|integer|min:0',
+            'floor_thickness_in' => 'required|integer|min:0',
             'floor_resistance' => 'required|string|max:255',
             'expansion_up_to_sf' => 'required|integer|min:0',
+            'sqftToM2' => 'boolean',
         ];
     }
 }
