@@ -25,9 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $latitud
  * @property string $longitud
  * @property int|null $year_built
- * @property int|null $clear_height
- * @property string|null $total_land
- * @property int|null $offices_space
+ * @property int|null $clear_height_ft
+ * @property int|null $total_land_sf
+ * @property int|null $offices_space_sf
  * @property int $has_expansion_land
  * @property int $has_crane
  * @property int $has_hvac
@@ -165,9 +165,9 @@ class Building extends Model
         'latitud',
         'longitud',
         'year_built',
-        'clear_height',
-        'total_land',
-        'offices_space',
+        'clear_height_ft',
+        'total_land_sf',
+        'offices_space_sf',
         'has_crane',
         'has_rail_spur',
         'has_leed',
@@ -189,8 +189,8 @@ class Building extends Model
         'loading_door',
         'above_market_tis',
         'status',
-        'columns_spacing',
-        'floor_thickness',
+        'columns_spacing_ft',
+        'floor_thickness_in',
         'floor_resistance',
         'expansion_up_to_sf',
         'bay_size',

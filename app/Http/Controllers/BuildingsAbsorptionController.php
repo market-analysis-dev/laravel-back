@@ -94,11 +94,15 @@ class BuildingsAbsorptionController extends ApiController
      */
     public function store(StoreBuildingsAbsorptionRequest $request, Building $building): ApiResponse
     {
-        $data = $request->validated();
-        $data['building_id'] = $building->id;
-        $data['building_state'] = BuildingState::ABSORPTION;
+        $validated = $request->validated();
+        $validated['building_id'] = $building->id;
+        $validated['building_state'] = BuildingState::ABSORPTION;
 
-        $absorption = BuildingAvailable::create($data);
+        if ($validated['sqftToM2'] ?? false) {
+            $validated = $this->buildingAvailableService->convertMetrics($validated);
+        }
+
+        $absorption = $this->buildingAvailableService->create($validated);
 
         return $this->success('Building Absorption created successfully', $absorption);
     }
@@ -137,11 +141,15 @@ class BuildingsAbsorptionController extends ApiController
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
-        $data = $request->validated();
-        $data['building_id'] = $building->id;
-        $data['building_state'] = BuildingState::ABSORPTION;
+        $validated = $request->validated();
+        $validated['building_id'] = $building->id;
+        $validated['building_state'] = BuildingState::ABSORPTION;
         try {
-            $buildingAbsorption->update($data);
+            if ($validated['sqftToM2'] ?? false) {
+                $validated = $this->buildingAvailableService->convertMetrics($validated);
+            }
+            $building = $this->buildingAvailableService->update($buildingAbsorption, $validated);
+
             return $this->success('Building Absorption updated successfully', $buildingAbsorption);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
