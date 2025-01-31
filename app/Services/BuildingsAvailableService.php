@@ -104,4 +104,72 @@ class BuildingsAvailableService
             'data' => $buildingAvailable
         ];
     }
+
+    public function create(array $validated): BuildingAvailable
+    {
+        return BuildingAvailable::create($validated);
+    }
+
+    public function update(BuildingAvailable $buildingAvailable, array $validated): BuildingAvailable
+    {
+        $buildingAvailable->update($validated);
+        return $buildingAvailable;
+    }
+
+    public function convertMetrics(array $data): array
+    {
+        if (isset($data['size_sf'])) {
+            $data['size_sf'] = $this->convertM2ToSqFt($data['size_sf']);
+        }
+
+        if (isset($data['truck_court_ft'])) {
+            $data['truck_court_ft'] = $this->convertMToFt($data['truck_court_ft']);
+        }
+
+        if (isset($data['avl_minimum_space_sf'])) {
+            $data['avl_minimum_space_sf'] = $this->convertM2ToSqFt($data['avl_minimum_space_sf']);
+        }
+
+        if (isset($data['avl_building_dimensions_ft'])) {
+            $data['avl_building_dimensions_ft'] = $this->convertColumnsSpacingToFt($data['avl_building_dimensions_ft']);
+        }
+
+        if (isset($data['avl_min_lease'])) {
+            $data['avl_min_lease'] = $this->convertUsdM2ToUsdSqft($data['avl_min_lease']);
+        }
+
+        if (isset($data['avl_max_lease'])) {
+            $data['avl_max_lease'] = $this->convertUsdM2ToUsdSqft($data['avl_max_lease']);
+        }
+
+        if (isset($data['abs_closing_rate'])) {
+            $data['abs_closing_rate'] = $this->convertUsdM2ToUsdSqft($data['abs_closing_rate']);
+        }
+
+        return $data;
+    }
+
+    public function convertM2ToSqFt(float $m2): int
+    {
+        return (int) round($m2 * 10.764);
+    }
+
+    public function convertMToFt(float $m): int
+    {
+        return (int) round($m * 3.281);
+    }
+
+    public function convertUsdM2ToUsdSqft(float $usdM2): int
+    {
+        return (int) round($usdM2 / 10.764);
+    }
+
+    public function convertColumnsSpacingToFt(string $spacing): string
+    {
+        $parts = explode('x', $spacing);
+        $convertedParts = array_map(fn($value) => $this->convertMToFt((float) $value), $parts);
+        return implode('x', $convertedParts);
+    }
+
+
 }

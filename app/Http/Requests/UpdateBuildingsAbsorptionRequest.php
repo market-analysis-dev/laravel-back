@@ -27,7 +27,7 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'abs_country_id' => 'required|integer|exists:countries,id',
             'broker_id' => 'required|integer|exists:cat_developers,id',
             'rams' => 'nullable|integer|min:0',
-            'truck_court' => 'nullable|integer|min:0',
+            'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
             'new_construction' => 'nullable|boolean',
             'is_starting_construction' => 'nullable|boolean',
@@ -49,7 +49,8 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
-            'abs_deal' =>'required|in:Sale,Lease'
+            'abs_deal' =>'required|in:Sale,Lease',
+            'sqftToM2' => 'boolean',
         ];
     }
 }

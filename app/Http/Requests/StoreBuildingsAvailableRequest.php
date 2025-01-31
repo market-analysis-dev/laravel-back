@@ -24,11 +24,11 @@ class StoreBuildingsAvailableRequest extends FormRequest
         return [
             'broker_id' => 'required|integer|exists:cat_developers,id',
             'size_sf' => 'required|integer|min:0',
-            'avl_building_dimensions' => 'required|string|max:45',
+            'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
             'dock_doors' => 'nullable|integer|min:0',
             'rams' => 'nullable|integer|min:0',
-            'truck_court' => 'nullable|integer|min:0',
+            'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
             'new_construction' => 'nullable|boolean',
             'is_starting_construction' => 'nullable|boolean',
@@ -44,6 +44,7 @@ class StoreBuildingsAvailableRequest extends FormRequest
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'sqftToM2' => 'boolean',
         ];
     }
 }

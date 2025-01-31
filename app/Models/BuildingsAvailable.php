@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable newQuery()
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $broker_id
  * @property string $building_state
  * @property int $avl_size_sf
- * @property string $avl_building_dimensions
+ * @property string $avl_building_dimensions_ft
  * @property string $avl_building_phase
  * @property string $abs_building_phase
  * @property int|null $avl_minimum_space_sf
