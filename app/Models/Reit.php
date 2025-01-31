@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Fiber extends Model
+class Reit extends Model
 {
     use HasFactory, BlameableTrait, SoftDeletes;
 
-    protected $table = 'fibers';
+    protected $table = 'reits';
 
     protected $fillable = [
         'name',

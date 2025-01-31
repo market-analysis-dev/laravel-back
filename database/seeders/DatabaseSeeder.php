@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             IndustrySeeder::class,
             CompanySeeder::class,
             CompanyContactSeeder::class,
-            FiberSeeder::class,
+            ReitSeeder::class,
         ]);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Fiber;
+use App\Models\Reit;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class FiberSeeder extends Seeder
+class ReitSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,6 +30,6 @@ class FiberSeeder extends Seeder
             ['name' => 'UPSITE'],
         ];
 
-        Fiber::insert($data);
+        Reit::insert($data);
     }
 }
