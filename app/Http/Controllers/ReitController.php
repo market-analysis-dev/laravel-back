@@ -30,6 +30,15 @@ class ReitController extends ApiController
     }
 
     /**
+     * @param Reit $reit
+     * @return ApiResponse
+     */
+    public function show(Reit $reit): ApiResponse
+    {
+        return $this->success(data: $reit);
+    }
+
+    /**
      * @param UpdateReitRequest $request
      * @param Reit $reit
      * @return ApiResponse

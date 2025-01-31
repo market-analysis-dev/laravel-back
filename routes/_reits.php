@@ -10,6 +10,7 @@ Route::group([
 ], function () {
     Route::get('/', [ReitController::class, 'index'])->name('index');
     Route::post('/', [ReitController::class, 'store'])->name('store');
+    Route::get('{reit}', [ReitController::class, 'show'])->name('show');
     Route::put('/{reit}', [ReitController::class, 'update'])->name('update');
     Route::delete('/{reit}', [ReitController::class, 'destroy'])->name('destroy');
 });
