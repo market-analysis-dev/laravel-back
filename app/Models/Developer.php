@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
@@ -58,6 +58,8 @@ class Developer extends Model
     protected $table = 'cat_developers';
 
     protected $fillable = [
+        'market_id',
+        'submarket_id',
         'name',
         'is_developer',
         'is_builder',
@@ -75,4 +77,14 @@ class Developer extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function market(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Market::class, 'market_id');
+    }
+
+    public function submarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Submarket::class, 'submarket_id');
+    }
 }
