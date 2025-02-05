@@ -13,10 +13,6 @@ class DeveloperController extends ApiController
     /**
      * Display a listing of the resource.
      */
-    /*public function index(): \App\Responses\ApiResponse
-    {
-        return $this->success(data: DeveloperResource::collection(Developer::all()));
-    }*/
 
     public function index(Request $request): \App\Responses\ApiResponse
     {
