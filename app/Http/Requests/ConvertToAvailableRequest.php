@@ -22,20 +22,26 @@ class ConvertToAvailableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'avl_building_dimensions' => 'required|string|max:45',
+            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'size_sf' => 'required|integer|min:0',
+            'dock_doors' => 'nullable|integer|min:0',
+            'rams' => 'nullable|integer|min:0',
+            'truck_court_ft' => 'nullable|integer|min:0',
+            'shared_truck' => 'nullable|boolean',
+            'new_construction' => 'nullable|boolean',
+            'is_starting_construction' => 'nullable|boolean',
+            'bay_size' => 'nullable|string|max:45',
+            'columns_spacing' => 'nullable|string|max:45',
+            'parking_space' => 'nullable|integer|min:0',
+            'trailer_parking_space' => 'nullable|integer|min:0',
+            'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
+            'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
-            'avl_expansion_up_to_sf' => 'nullable|integer|min:0',
             'avl_date' => 'nullable|date',
             'avl_min_lease' => 'required|numeric|min:0',
             'avl_max_lease' => 'required|numeric|min:0',
             'avl_building_phase' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
-            'has_expansion_land' => 'required|boolean',
-            'has_crane' => 'required|boolean',
-            'has_hvac' => 'required|boolean',
-            'has_rail_spur' => 'required|boolean',
-            'has_sprinklers' => 'required|boolean',
-            'has_office' => 'required|boolean',
-            'has_leed' => 'required|boolean',
         ];
     }
 }

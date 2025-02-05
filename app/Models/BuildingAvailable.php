@@ -141,6 +141,8 @@ class BuildingAvailable extends Model
 
     protected $fillable = [
         'building_id',
+        'rams',
+        'trailer_parking_space',
         'abs_tenant_id',
         'abs_industry_id',
         'abs_shelter_id',
