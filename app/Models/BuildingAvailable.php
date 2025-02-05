@@ -37,7 +37,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $parking_space
  * @property string|null $avl_min_lease
  * @property string|null $avl_max_lease
- * @property string|null $abs_asking_rate_shell
  * @property string|null $abs_closing_rate
  * @property string|null $abs_closing_date
  * @property string|null $abs_lease_up
@@ -141,6 +140,9 @@ class BuildingAvailable extends Model
 
     protected $fillable = [
         'building_id',
+        'rams',
+        'trailer_parking_space',
+        'above_market_tis',
         'abs_tenant_id',
         'abs_industry_id',
         'abs_shelter_id',
@@ -170,7 +172,6 @@ class BuildingAvailable extends Model
         'parking_space',
         'avl_min_lease',
         'avl_max_lease',
-        'abs_asking_rate_shell',
         'abs_closing_rate',
         'abs_closing_date',
         'abs_lease_up',
