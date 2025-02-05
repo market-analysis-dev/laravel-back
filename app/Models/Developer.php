@@ -87,4 +87,23 @@ class Developer extends Model
     {
         return $this->belongsTo(Submarket::class, 'submarket_id');
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        foreach ($filters as $key => $value) {
+            if (in_array($key, ['is_owner', 'is_builder', 'is_developer'])) {
+                $query->where($key, filter_var($value, FILTER_VALIDATE_BOOLEAN));
+            } elseif ($key === 'market' && !empty($value)) {
+                $query->whereHas('market', function ($q) use ($value) {
+                    $q->where('id', $value);
+                });
+            } elseif ($key === 'submarket' && !empty($value)) {
+                $query->whereHas('submarket', function ($q) use ($value) {
+                    $q->where('id', $value);
+                });
+            }
+        }
+
+        return $query;
+    }
 }

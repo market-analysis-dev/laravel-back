@@ -21,26 +21,7 @@ class DeveloperController extends ApiController
     public function index(Request $request): \App\Responses\ApiResponse
     {
         $filters = $request->only(['is_owner', 'is_builder', 'is_developer', 'market', 'submarket']);
-
-        $query = Developer::query();
-
-        foreach ($filters as $key => $value) {
-            if (in_array($key, ['is_owner', 'is_builder', 'is_developer'])) {
-                $query->where($key, '=', filter_var($value, FILTER_VALIDATE_BOOLEAN));
-            } elseif ($key === 'market' && !empty($value)) {
-                $query->whereHas('market', function ($q) use ($value) {
-                    $q->where('id', '=', $value);
-                });
-            } elseif ($key === 'submarket' && !empty($value)) {
-                $query->whereHas('submarket', function ($q) use ($value) {
-                    $q->where('id', '=', $value);
-                });
-            }
-        }
-
-
-        $developers = $query->get();
-
+        $developers = Developer::query()->filter($filters)->get();
         return $this->success(data: DeveloperResource::collection($developers));
     }
 
