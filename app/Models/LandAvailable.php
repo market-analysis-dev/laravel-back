@@ -7,24 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 /**
  * 
  *
- * @property-read \App\Models\Developer|null $absBroker
- * @property-read \App\Models\Company|null $absCompany
- * @property-read \App\Models\Country|null $absCountry
- * @property-read \App\Models\Developer|null $avlBroker
- * @property-read \App\Models\User|null $creator
- * @property-read \App\Models\Land|null $land
- * @property-read \App\Models\User|null $updater
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable createdBy($userId)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable updatedBy($userId)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withoutTrashed()
  * @property int $id
  * @property int $land_id
  * @property int|null $abs_company_id
@@ -61,6 +47,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Developer|null $absBroker
+ * @property-read \App\Models\Company|null $absCompany
+ * @property-read \App\Models\Country|null $absCountry
+ * @property-read \App\Models\Developer|null $avlBroker
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\Land $land
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable createdBy($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable updatedBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsBrokerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsClosingPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsCompanyId($value)
@@ -97,6 +96,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereLandState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withoutTrashed()
  * @mixin \Eloquent
  */
 class LandAvailable extends Model
@@ -107,41 +108,40 @@ class LandAvailable extends Model
 
     protected $fillable = [
         'land_id',
-        'abs_company_id',
+        'land_condition',
+        'rail_spur',
+        'natural_gas',
+        'sewage',
+        'water',
+        'electric',
+        'kvas',
         'avl_broker_id',
-        'abs_country_id',
-        'abs_broker_id',
-        'land_state',
-        'avl_size_sm',
-        'avl_land_sm',
+        'avl_size_ha',
         'avl_minimum',
         'avl_min_sale',
         'avl_max_sale',
-        'avl_zoning',
-        'avl_pacel_shape',
-        'avl_rail_spur',
-        'avl_natural_gas',
-        'avl_sewage',
-        'avl_water',
-        'avl_electric',
         'avl_conditioned_construction',
-        'avl_quarter',
-        'avl_year',
-        'land_condition',
-        'abs_size_HA',
-        'abs_quarter',
-        'abs_year',
+        'avl_date',
+        'avl_deal',
+        'avl_comments',
+        'abs_company_id',
+        'abs_country_id',
+        'abs_size_ha',
+        'abs_date',
         'abs_closing_price',
         'abs_type_buyer',
         'abs_company_type',
-        'comments',
+        'abs_industry_id',
+        'abs_final_use',
+        'abs_broker_id',
+        'abs_comments',
+        'abs_kvas_price',
+        'state',
         'created_by',
         'updated_by',
         'deleted_by',
-        'created_at',
-        'updated_at',
-        'deleted_at',
     ];
+
 
     public function land(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

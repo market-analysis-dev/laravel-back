@@ -21,11 +21,11 @@ return new class extends Migration
             $table->foreignId('abs_shelter_id')->nullable()->constrained('cat_shelters');
             $table->foreignId('abs_broker_id')->nullable()->constrained('cat_developers');
             $table->integer('size_sf')->nullable();
-            $table->string('avl_building_dimensions', 45)->nullable();
+            $table->string('avl_building_dimensions_ft', 45)->nullable();
             $table->integer('avl_minimum_space_sf')->nullable();
             $table->integer('dock_doors')->nullable();
             $table->integer('rams')->nullable();
-            $table->integer('truck_court')->nullable();
+            $table->integer('truck_court_ft')->nullable();
             $table->boolean('shared_truck')->nullable();
             $table->boolean('new_construction')->nullable();
             $table->boolean('is_starting_construction')->nullable();

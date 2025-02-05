@@ -109,3 +109,4 @@ require_once '_land_absorption.php';
 require_once '_land_available.php';
 require_once '_lands.php';
 require_once '_reits.php';
+require_once '_modules.php';

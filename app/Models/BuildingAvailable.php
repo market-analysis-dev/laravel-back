@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -17,14 +17,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $abs_country_id
  * @property int $broker_id
  * @property int|null $avl_size_sf
- * @property string|null $avl_building_dimensions
+ * @property string|null $avl_building_dimensions_ft
  * @property int|null $avl_minimum_space_sf
  * @property int|null $avl_expansion_up_to_sf
  * @property int|null $dock_doors
  * @property int|null $drive_in_door
  * @property int|null $floor_thickness
  * @property string|null $floor_resistance
- * @property int|null $truck_court
+ * @property int|null $truck_court_ft
  * @property int|null $has_crossdock
  * @property int|null $shared_truck
  * @property int|null $new_construction
@@ -115,6 +115,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
  * @property-read \App\Models\Contact $broker
+ * @property int|null $abs_shelter_id
+ * @property int|null $abs_broker_id
+ * @property int|null $size_sf
+ * @property int|null $rams
+ * @property int|null $trailer_parking_space
+ * @property string $abs_deal
+ * @property string $fire_protection_system
+ * @property string|null $above_market_tis
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAboveMarketTis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsBrokerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsShelterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereFireProtectionSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereRams($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSizeSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTrailerParkingSpace($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -132,7 +148,7 @@ class BuildingAvailable extends Model
         'broker_id',
         'building_state',
         'size_sf',
-        'avl_building_dimensions',
+        'avl_building_dimensions_ft',
         'avl_building_phase',
         'abs_building_phase',
         'avl_minimum_space_sf',
@@ -141,7 +157,7 @@ class BuildingAvailable extends Model
         'drive_in_door',
         'floor_thickness',
         'floor_resistance',
-        'truck_court',
+        'truck_court_ft',
         'has_crossdock',
         'shared_truck',
         'new_construction',
@@ -171,8 +187,9 @@ class BuildingAvailable extends Model
         'has_sprinklers',
         'has_office',
         'has_leed',
-        'deal',
+        'abs_deal',
         'currency',
+        'fire_protection_system',
         'created_by',
         'updated_by',
         'deleted_by',

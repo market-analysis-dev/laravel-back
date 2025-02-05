@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable newQuery()
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $broker_id
  * @property string $building_state
  * @property int $avl_size_sf
- * @property string $avl_building_dimensions
+ * @property string $avl_building_dimensions_ft
  * @property string $avl_building_phase
  * @property string $abs_building_phase
  * @property int|null $avl_minimum_space_sf
@@ -123,6 +123,16 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasRailSpur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereHasSprinklers($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereSizeSf($value)
+ * @property int|null $rams
+ * @property int|null $trailer_parking_space
+ * @property string $abs_deal
+ * @property string $fire_protection_system
+ * @property string|null $above_market_tis
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereAboveMarketTis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereAbsDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereFireProtectionSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereRams($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingsAvailable whereTrailerParkingSpace($value)
  * @mixin \Eloquent
  */
 class BuildingsAvailable extends Model

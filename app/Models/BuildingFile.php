@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $file_id
@@ -41,6 +41,7 @@ class BuildingFile extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'building_files';
     protected $fillable = [
         'file_id',
         'building_id',

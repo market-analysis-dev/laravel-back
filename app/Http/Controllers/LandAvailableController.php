@@ -18,7 +18,7 @@ class LandAvailableController extends ApiController
     public function index(Land $land): ApiResponse
     {
         $landsAvailable = LandAvailable::where('land_id', $land->id)
-            ->where('land_state', '=', 'Availability')
+            ->where('state', '=', 'Availability')
             ->paginate(10);
         return $this->success(data: $landsAvailable);
     }
@@ -35,7 +35,7 @@ class LandAvailableController extends ApiController
             return $this->error('Land Available not found for this Land', ['error_code' => 404]);
         }
 
-        if ($landAvailable->land_state !== 'Availability') {
+        if ($landAvailable->state !== 'Availability') {
             return $this->error('Invalid land state', ['error_code' => 403]);
         }
 
@@ -53,7 +53,7 @@ class LandAvailableController extends ApiController
         $validatedData = $request->validated();
 
         $validatedData['land_id'] = $land->id;
-        $validatedData['land_state'] = 'Availability';
+        $validatedData['state'] = 'Availability';
 
         $landExists = Land::where('id', $land->id)->exists();
         if (!$landExists) {
@@ -82,7 +82,7 @@ class LandAvailableController extends ApiController
             $validatedData = $request->validated();
 
             $validatedData['land_id'] = $land->id;
-            $validatedData['land_state'] = 'Availability';
+            $validatedData['state'] = 'Availability';
 
             $landAvailable->update($validatedData);
 
@@ -104,7 +104,7 @@ class LandAvailableController extends ApiController
             return $this->error('Land Available not found for this Land', ['error_code' => 404]);
         }
 
-        if ($landAvailable->land_state !== 'Availability') {
+        if ($landAvailable->state !== 'Availability') {
             return $this->error('Invalid land state', ['error_code' => 403]);
         }
 

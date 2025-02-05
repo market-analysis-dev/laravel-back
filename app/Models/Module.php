@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Module newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Module newQuery()
@@ -17,14 +17,10 @@ class Module extends Model
 {
     use HasFactory;
 
-    protected $table = 'cat_modules';
-    protected $fillable = [
-        'moduleName',
-        'status'
-    ];
+    protected $table = 'modules';
 
-    // * Definir columnas de marca de tiempo personalizadas
-    const CREATED_AT = 'createdAt';
-    const UPDATED_AT = 'modifiedAt';
+    protected $fillable = [
+        'name',
+    ];
 
 }
