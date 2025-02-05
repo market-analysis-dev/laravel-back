@@ -22,6 +22,7 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'dock_doors' => 'nullable|integer|min:0',
             'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
@@ -50,6 +51,8 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
             'abs_deal' =>'required|in:Sale,Lease',
+            'abs_broker_id' => 'nullable|exists:cat_developers,id',
+            'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
             'sqftToM2' => 'boolean',
         ];
     }
