@@ -22,7 +22,7 @@ class ConvertToAbsorptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'broker_id' => 'required|integer|exists:cat_brokers,id',
             'size_sf' => 'required|integer|min:0',
             'dock_doors' => 'nullable|integer|min:0',
             'rams' => 'nullable|integer|min:0',
@@ -48,7 +48,7 @@ class ConvertToAbsorptionRequest extends FormRequest
             'abs_sale_price' => 'nullable|numeric|min:0',
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
             'abs_building_phase' => 'required|in:BTS,Expansion,Inventory',
-            'abs_broker_id' => 'nullable|exists:cat_developers,id',
+            'abs_broker_id' => 'nullable|exists:cat_brokers,id',
             'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
         ];
     }

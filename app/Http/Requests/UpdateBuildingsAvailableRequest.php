@@ -22,7 +22,7 @@ class UpdateBuildingsAvailableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'broker_id' => 'required|integer|exists:cat_brokers,id',
             'size_sf' => 'required|integer|min:0',
             'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',

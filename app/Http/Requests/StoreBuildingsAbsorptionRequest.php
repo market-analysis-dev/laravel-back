@@ -26,7 +26,7 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
-            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'broker_id' => 'required|integer|exists:cat_brokers,id',
             'rams' => 'nullable|integer|min:0',
             'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
@@ -51,7 +51,7 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
             'abs_deal' =>'required|in:Sale,Lease',
-            'abs_broker_id' => 'nullable|exists:cat_developers,id',
+            'abs_broker_id' => 'nullable|exists:cat_brokers,id',
             'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
             'sqftToM2' => 'boolean',
         ];
