@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Building;
+use App\Models\BuildingAvailable;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBuildingsAvailableRequest extends FormRequest
@@ -23,7 +25,6 @@ class StoreBuildingsAvailableRequest extends FormRequest
     {
         return [
             'broker_id' => 'required|integer|exists:cat_developers,id',
-            'size_sf' => 'required|integer|min:0',
             'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
             'dock_doors' => 'nullable|integer|min:0',
@@ -45,6 +46,33 @@ class StoreBuildingsAvailableRequest extends FormRequest
             'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
             'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
             'sqftToM2' => 'boolean',
+            'size_sf' => [
+                'required',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) {
+                    $buildingId = $this->route('building')->id ?? null;
+
+                    if (!$buildingId) {
+                        return $fail(__('Building ID is required.'));
+                    }
+                    $building = Building::find($buildingId);
+
+                    if (!$building) {
+                        return $fail(__('Building does not exist.'));
+                    }
+
+                    if ($value > $building->building_size_sf) {
+                        return $fail(__('The size_sf of buildings_available must be less than or equal to the building_size_sf of buildings.'));
+                    }
+
+                    $totalAbsorbed = BuildingAvailable::where('building_id', $buildingId)->sum('size_sf');
+
+                    if (($totalAbsorbed + $value) > $building->building_size_sf) {
+                        return $fail(__('The total sum of size_sf for all availability records must be less than or equal to the building_size_sf of buildings.'));
+                    }
+                },
+            ],
         ];
     }
 }
