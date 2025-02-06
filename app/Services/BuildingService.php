@@ -57,7 +57,6 @@ class BuildingService
             'industrialPark',
             'developer',
             'owner',
-            'userOwner',
             'contact',
             'buildingsAvailable',
         ]);
