@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -73,7 +73,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Region $region
  * @property-read \App\Models\SubMarket $subMarket
  * @property-read \App\Models\User|null $updater
- * @property-read \App\Models\Developer $userOwner
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building createdBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building newQuery()
@@ -128,7 +127,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTypeGeneration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUpdatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUserOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereYearBuilt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
