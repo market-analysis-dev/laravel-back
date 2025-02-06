@@ -34,8 +34,32 @@ class ConvertToAvailableRequest extends FormRequest
             'columns_spacing' => 'nullable|string|max:45',
             'parking_space' => 'nullable|integer|min:0',
             'trailer_parking_space' => 'nullable|integer|min:0',
-            'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
-            'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'fire_protection_system' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in fire_protection_system.'));
+                        }
+                    }
+                }
+            ],
+            'above_market_tis' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in above_market_tis.'));
+                        }
+                    }
+                }
+            ],
             'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
             'avl_date' => 'nullable|date',

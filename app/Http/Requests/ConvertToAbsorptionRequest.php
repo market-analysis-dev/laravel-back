@@ -34,8 +34,32 @@ class ConvertToAbsorptionRequest extends FormRequest
             'columns_spacing' => 'nullable|string|max:45',
             'parking_space' => 'nullable|integer|min:0',
             'trailer_parking_space' => 'nullable|integer|min:0',
-            'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
-            'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'fire_protection_system' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in fire_protection_system.'));
+                        }
+                    }
+                }
+            ],
+            'above_market_tis' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in above_market_tis.'));
+                        }
+                    }
+                }
+            ],
             'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',

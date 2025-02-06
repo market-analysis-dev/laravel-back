@@ -48,8 +48,32 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
             'size_sf' => 'required|integer|min:0',
             'trailer_parking_space' => 'nullable|integer|min:0',
-            'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
-            'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'fire_protection_system' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in fire_protection_system.'));
+                        }
+                    }
+                }
+            ],
+            'above_market_tis' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in above_market_tis.'));
+                        }
+                    }
+                }
+            ],
             'abs_deal' =>'required|in:Sale,Lease',
             'abs_broker_id' => 'nullable|exists:cat_developers,id',
             'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
