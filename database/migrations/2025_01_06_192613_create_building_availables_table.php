@@ -30,7 +30,6 @@ return new class extends Migration
             $table->boolean('new_construction')->nullable();
             $table->boolean('is_starting_construction')->nullable();
             $table->string('bay_size', 45)->nullable();
-            $table->string('columns_spacing', 45)->nullable();
             $table->date('avl_date')->nullable();
             $table->integer('abs_lease_term_month')->nullable();
             $table->integer('parking_space')->nullable();

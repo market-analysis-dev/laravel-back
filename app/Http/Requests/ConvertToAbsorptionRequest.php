@@ -31,7 +31,6 @@ class ConvertToAbsorptionRequest extends FormRequest
             'new_construction' => 'nullable|boolean',
             'is_starting_construction' => 'nullable|boolean',
             'bay_size' => 'nullable|string|max:45',
-            'columns_spacing' => 'nullable|string|max:45',
             'parking_space' => 'nullable|integer|min:0',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => [
