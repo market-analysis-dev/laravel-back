@@ -218,7 +218,7 @@ class BuildingAvailable extends Model
 
     public function broker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Contact::class, 'broker_id');
+        return $this->belongsTo(Broker::class, 'broker_id');
     }
 
     public function absShelter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -228,6 +228,6 @@ class BuildingAvailable extends Model
 
     public function absBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Developer::class, 'abs_broker_id');
+        return $this->belongsTo(Broker::class, 'abs_broker_id');
     }
 }
