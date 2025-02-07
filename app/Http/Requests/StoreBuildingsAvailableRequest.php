@@ -33,7 +33,6 @@ class StoreBuildingsAvailableRequest extends FormRequest
             'new_construction' => 'nullable|boolean',
             'is_starting_construction' => 'nullable|boolean',
             'bay_size' => 'nullable|string|max:45',
-            'columns_spacing' => 'nullable|string|max:45',
             'avl_date' => 'nullable|date',
             'parking_space' => 'nullable|integer|min:0',
             'avl_min_lease' => 'required|numeric|min:0',

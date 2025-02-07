@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $new_construction
  * @property int|null $is_starting_construction
  * @property string|null $bay_size
- * @property string|null $columns_spacing
  * @property string|null $avl_date
  * @property int|null $abs_lease_term_month
  * @property int|null $knockouts_docks
@@ -92,7 +91,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBrokerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingState($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereColumnsSpacing($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedAt($value)
@@ -165,7 +163,6 @@ class BuildingAvailable extends Model
         'new_construction',
         'is_starting_construction',
         'bay_size',
-        'columns_spacing',
         'avl_date',
         'abs_lease_term_month',
         'knockouts_docks',
