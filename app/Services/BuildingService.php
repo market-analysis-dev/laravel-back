@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Building;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BuildingService
 {
@@ -123,5 +124,50 @@ class BuildingService
         $parts = explode('x', $spacing);
         $convertedParts = array_map(fn($value) => $this->convertMToFt((float) $value), $parts);
         return implode('x', $convertedParts);
+    }
+
+    public function getBuildingData($buildingId)
+    {
+        return Building::query()
+            ->leftJoin('cat_markets as market', 'buildings.market_id', '=', 'market.id')
+            ->leftJoin('cat_submarkets as submarket', 'buildings.submarket_id', '=', 'submarket.id')
+            ->leftJoin('cat_industrial_parks as industrial_parks', 'buildings.industrial_park_id', '=', 'industrial_parks.id')
+            ->leftJoin('buildings_available as building_av', 'building_av.building_id', '=', 'buildings.id')
+            ->select([
+                'buildings.id',
+                'buildings.total_land_sf',
+                'buildings.building_size_sf',
+                'buildings.expansion_up_to_sf',
+                'buildings.construction_type',
+                'buildings.floor_thickness_in',
+                'buildings.floor_resistance',
+                'buildings.roof_system',
+                'buildings.clear_height_ft',
+                'building_av.avl_building_dimensions_ft',
+                'buildings.columns_spacing_ft',
+                'buildings.bay_size',
+                'building_av.dock_doors',
+                'building_av.knockouts_docks',
+                'building_av.truck_court_ft',
+                'building_av.trailer_parking_space',
+                'building_av.shared_truck',
+                'buildings.offices_space_sf',
+                'market.name as market_name',
+                'submarket.name as submarket_name',
+                'industrial_parks.name as industrial_park_name',
+                'buildings.year_built',
+                'buildings.currency',
+            ])
+            ->where('buildings.id', $buildingId)
+            ->firstOrFail();
+    }
+
+    public function layoutDesign($buildingId)
+    {
+        $building = $this->getBuildingData($buildingId);
+
+        $pdf = Pdf::loadView('buildings.layout-design', compact('building'));
+
+        return $pdf->stream('layout-design.pdf');
     }
 }

@@ -20,6 +20,7 @@ use App\Models\Building;
 use App\Services\BuildingService;
 use App\Responses\ApiResponse;
 use Illuminate\Http\Request;
+use PDF;
 
 class BuildingController extends ApiController
 {
@@ -200,5 +201,14 @@ class BuildingController extends ApiController
     public function listBuildingsStatus(): ApiResponse
     {
         return $this->success(data: BuildingStatus::array());
+    }
+
+    public function layoutDesign($buildingId)
+    {
+        return response()->make(
+            $this->buildingService->layoutDesign($buildingId),
+            200,
+            ['Content-Type' => 'application/pdf'] 
+        );
     }
 }
