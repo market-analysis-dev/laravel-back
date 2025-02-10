@@ -19,6 +19,7 @@ class ReitTypeSeeder extends Seeder
             ['name' => 'Hotel'],
             ['name' => 'Retail'],
             ['name' => 'Self-storage'],
+            ['name' => 'Mortgage'],
         ];
 
         ReitType::insert($data);
