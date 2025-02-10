@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Building;
+use App\Models\BuildingAvailable;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBuildingsAvailableRequest extends FormRequest
@@ -68,6 +70,39 @@ class UpdateBuildingsAvailableRequest extends FormRequest
                 }
             ],
             'sqftToM2' => 'boolean',
+            'size_sf' => [
+                'required',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) {
+                    $buildingId = $this->route('building')->id ?? null;
+                    $buildingAvailableId = $this->route('buildingAvailable')->id ?? null;
+
+                    if (!$buildingId) {
+                        return $fail(__('Building ID is required.'));
+                    }
+
+                    $building = Building::find($buildingId);
+
+                    if (!$building) {
+                        return $fail(__('Building does not exist.'));
+                    }
+
+                    if ($value > $building->building_size_sf) {
+                        return $fail(__('The size_sf of buildings_available must be less than or equal to the building_size_sf of buildings.'));
+                    }
+
+                    $totalAbsorbed = BuildingAvailable::where('building_id', $buildingId)
+                        ->sum('size_sf');
+
+
+                    $currentSizeSf = BuildingAvailable::where('id', $buildingAvailableId)->value('size_sf') ?? 0;
+
+                    if (($totalAbsorbed - $currentSizeSf + $value) > $building->building_size_sf) {
+                        return $fail(__('The total sum of size_sf for all availability/absorption records must be less than or equal to the building_size_sf of buildings.'));
+                    }
+                },
+            ],
         ];
     }
 }
