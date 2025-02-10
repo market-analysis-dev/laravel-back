@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Reit extends Model
+class ReitType extends Model
 {
     use HasFactory, BlameableTrait, SoftDeletes;
 
-    protected $table = 'cat_reits';
+    protected $table = 'cat_reit_types';
 
     protected $fillable = [
         'name',
