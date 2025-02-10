@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::create('cat_reits', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('reit_type_id')->nullable()->constrained('cat_reit_types');
             $table->string('name');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
@@ -20,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**
@@ -27,6 +30,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::dropIfExists('cat_reits');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 };

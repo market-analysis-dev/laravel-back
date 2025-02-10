@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -46,6 +46,7 @@ class Reit extends Model
 
     protected $fillable = [
         'name',
+        'reit_type_id',
         'created_by',
         'updated_by',
         'deleted_by',
