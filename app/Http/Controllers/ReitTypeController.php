@@ -10,23 +10,39 @@ use App\Http\Requests\UpdateReitTypeRequest;
 
 class ReitTypeController extends ApiController
 {
+    /**
+     * @return ApiResponse
+     */
     public function index(): ApiResponse
     {
         $reitTypes = ReitType::all();
         return $this->success(data: $reitTypes);
     }
 
+    /**
+     * @param StoreReitTypeRequest $request
+     * @return ApiResponse
+     */
     public function store(StoreReitTypeRequest $request): ApiResponse
     {
         $reitType = ReitType::create($request->validated());
         return $this->success('Reit type created successfully', $reitType);
     }
 
+    /**
+     * @param ReitType $reitType
+     * @return ApiResponse
+     */
     public function show(ReitType $reitType): ApiResponse
     {
         return $this->success(data: $reitType);
     }
 
+    /**
+     * @param UpdateReitTypeRequest $request
+     * @param ReitType $reitType
+     * @return ApiResponse
+     */
     public function update(UpdateReitTypeRequest $request, ReitType $reitType): ApiResponse
     {
         try{
@@ -39,6 +55,10 @@ class ReitTypeController extends ApiController
         }
     }
 
+    /**
+     * @param ReitType $reitType
+     * @return ApiResponse
+     */
     public function destroy(ReitType $reitType): ApiResponse
     {
         try{
