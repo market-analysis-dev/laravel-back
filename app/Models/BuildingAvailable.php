@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -128,6 +128,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereRams($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSizeSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTrailerParkingSpace($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlBuildingDimensionsFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTruckCourtFt($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model

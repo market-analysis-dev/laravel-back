@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -141,6 +141,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionUpToSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorResistance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThickness($value)
+ * @property string $columns_spacing_ft
+ * @property int $floor_thickness_in
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereClearHeightFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereColumnsSpacingFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThicknessIn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOfficesSpaceSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTotalLandSf($value)
  * @mixin \Eloquent
  */
 class Building extends Model

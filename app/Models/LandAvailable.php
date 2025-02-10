@@ -98,6 +98,40 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable withoutTrashed()
+ * @property int|null $abs_industry_id
+ * @property int|null $avl_size_ha
+ * @property int|null $kvas
+ * @property int|null $abs_size_ha
+ * @property string|null $abs_kvas_price
+ * @property int|null $rail_spur
+ * @property string|null $avl_comments
+ * @property string|null $abs_comments
+ * @property string $state
+ * @property string|null $natural_gas
+ * @property string|null $sewage
+ * @property string|null $water
+ * @property string|null $electric
+ * @property string|null $abs_final_use
+ * @property string|null $avl_date
+ * @property string|null $abs_date
+ * @property string $avl_deal
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsFinalUse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsIndustryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsKvasPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAbsSizeHa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlSizeHa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereElectric($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereKvas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereNaturalGas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereRailSpur($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereSewage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereWater($value)
  * @mixin \Eloquent
  */
 class LandAvailable extends Model

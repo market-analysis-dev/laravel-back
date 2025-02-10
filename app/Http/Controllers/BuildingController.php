@@ -14,6 +14,7 @@ use App\Enums\BuildingTypeGeneration;
 use App\Enums\TechnicalImprovements;
 use App\Enums\BuildingStatus;
 use App\Enums\BuildingCompanyType;
+use App\Enums\BuildingFinalUse;
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
@@ -247,5 +248,13 @@ class BuildingController extends ApiController
     public function listBuildingsCompanyTypes(): ApiResponse
     {
         return $this->success(data: BuildingCompanyType::array());
+    }
+
+    /**
+     * @return ApiResponse
+     */
+    public function listFinalUses(): ApiResponse
+    {
+        return $this->success(data: BuildingFinalUse::array());
     }
 }

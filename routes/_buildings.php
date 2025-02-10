@@ -21,7 +21,7 @@ Route::group([
     Route::get('/technical-improvements', [BuildingController::class, 'listTechnicalImprovements'])->name('listTechnicalImprovements');
     Route::get('/status', [BuildingController::class, 'listBuildingsStatus'])->name('listBuildingsStatus');
     Route::get('/company-types', [BuildingController::class, 'listBuildingsCompanyTypes'])->name('listBuildingsCompanyTypes');
-
+    Route::get('/final-uses', [BuildingController::class, 'listFinalUses'])->name('listFinalUses');
     Route::get('/', [BuildingController::class, 'index'])->name('index');
     Route::post('/', [BuildingController::class, 'store'])->name('store');
     Route::get('/{building}', [BuildingController::class, 'show'])->name('show');
