@@ -208,7 +208,7 @@ class BuildingController extends ApiController
         return response()->make(
             $this->buildingService->layoutDesign($buildingId),
             200,
-            ['Content-Type' => 'application/pdf'] 
+            ['Content-Type' => 'application/pdf']
         );
     }
 }

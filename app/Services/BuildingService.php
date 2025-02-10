@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
 use App\Models\Building;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -139,6 +140,7 @@ class BuildingService
                 'buildings.building_size_sf',
                 'buildings.expansion_up_to_sf',
                 'buildings.construction_type',
+                'buildings.building_name',
                 'buildings.floor_thickness_in',
                 'buildings.floor_resistance',
                 'buildings.roof_system',
@@ -165,9 +167,7 @@ class BuildingService
     public function layoutDesign($buildingId)
     {
         $building = $this->getBuildingData($buildingId);
-
         $pdf = Pdf::loadView('buildings.layout-design', compact('building'));
-
         return $pdf->stream('layout-design.pdf');
     }
 }

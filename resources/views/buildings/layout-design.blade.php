@@ -1,164 +1,226 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building Layout Design</title>
-    <style>
-        .tables-container {
-            display: flex;
-            justify-content: space-between; /* Distribuye el espacio entre ambas tablas */
-            gap: 20px; /* Espaciado entre tablas */
-        }
-        .table {
-            width: 48%; /* Ajusta el ancho de cada tabla para que ocupen la misma fila */
-            border-collapse: collapse;
-        }
-        .table, .table th, .table td {
-            border: 1px solid black;
-        }
-        .table th, .table td {
-            padding: 8px;
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Building Layout Design</title>
 
-    <div class="header">
-        {{ $building->building_name }}
-    </div>
+        <!-- Agregar Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <div class="image-container">
-        <img src="{{ asset('buildings-flyer/detalle-header-flyer.png') }}" alt="Building Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
-    </div>
+        <style>
 
-    <div class="section">
-        <div class="tables-container">
-            <table class="table">
+            .first-img img {
+                width: 100%;
+                height: auto;
+            }
+
+            /* Estilos tabla principal */
+            .main-table table {
+                border-collapse:collapse;
+                margin-left:5.35pt;
+            }
+
+            .primary-row {
+                background-color: #F1F1F1;
+            }
+
+            tr {
+                height:15pt;
+            }
+
+            th {
+                text-align: left;
+            }
+
+            .s2 {
+                color: #1F4E78;
+                font-family: Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 9pt;
+                padding-left: 12pt;
+            }
+
+            .s3 {
+                color: #1F4E78;
+                font-family: Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 9pt;
+                width:156pt;
+                text-align: right;
+            }
+
+        </style>
+    </head>
+    <body>
+        <header style="display: flex; align-items: center; width: 100%;">
+            <!-- Título centrado con fondo -->
+            <table style="width: 100%;">
                 <tr>
-                    <th>Total Land</th>
-                    <td>{{ $building->total_land_sf }} SF</td>
+                    <!-- Imagen izquierda -->
+                    <td style="text-align: left;">
+                        <img src="{{ public_path('buildings-flyer/detalle-header-flyer.png') }}" style="height: 50px; width:auto;">
+                    </td>
+                    <td style="text-align: left; background-color: #a7c64b; color: white; font-size: 1.5rem; font-weight: bold; padding: 10px; width:100%;">
+                        {{ $building->building_name }}
+                    </td>
+                    <!-- Imagen derecha -->
+                    <td style="text-align: right;">
+                        <img src="{{ public_path('buildings-flyer/detalle-header-flyer.png') }}" style="height: 50px; width:auto;">
+                    </td>
                 </tr>
-                <tr>
-                    <th>Total Building Size</th>
-                    <td>{{ number_format($building->building_size_sf, 0) }} SF</td>
-                </tr>
-                <tr>
-                    <th>Available Building</th>
-                    <td>169,432 SF</td>
-                </tr>
-                <tr>
-                    <th>Expansion Up To</th>
-                    <td>{{ $building->expansion_up_to_sf }} SF</td>
-                </tr>
-                <tr>
-                    <th>Construction Type</th>
-                    <td>{{ $building->construction_type }}</td>
-                </tr>
-                <tr>
-                    <th>Floor Slab Thickness</th>
-                    <td>{{ $building->floor_thickness_in }}</td>
-                </tr>
-                <tr>
-                    <th>Floor Resistance</th>
-                    <td>{{ $building->floor_resistance }}</td>
-                </tr>
-                <tr>
-                    <th>Roofing</th>
-                    <td>{{ $building->roof_system }}</td>
-                </tr>
-                <tr>
-                    <th>Min. Clear Height</th>
-                    <td>{{ $building->clear_height_ft }}</td>
-                </tr>
-                <tr>
-                    <th>Building Dimensions</th>
-                    <td>{{ $building->avl_building_dimensions }}</td>
-                </tr>
-                <tr>
-                    <th>Columns Spacing</th>
-                    <td>{{ $building->columns_spacing }}</td>
-                </tr>
-                <tr>
-                    <th>Bay's Size</th>
-                    <td>{{ $building->bay_size }}</td>
-                </tr>
-                <tr>
-                    <th>Dock Doors</th>
-                    <td>{{ $building->dock_doors }}</td>
-                </tr>
-                <tr>
-                    <th>Knockouts Docks</th>
-                    <td>{{ $building->knockouts_docks }}</td>
-                </tr>
-                <tr>
-                    <th>Drive In Door</th>
-                    <td>2</td>
-                </tr>
-                <tr>
-                    <th>Truck Court</th>
-                    <td>{{ $building->truck_court_ft }}</td>
-                </tr>
-                <tr>
-                    <th>Trailer Parking Spaces</th>
-                    <td>{{ $building->trailer_parking_space }}</td>
-                </tr>
-                <tr>
-                    <th>Shared Truck Court Area</th>
-                    <td>{{ $building->shared_truck }}</td>
-                </tr>
+
             </table>
+        </header>
         
-            <table class="table">
-                <tr>
-                    <th>Office Space</th>
-                    <td>{{ $building->offices_space_sf }}</td>
-                </tr>
-                <tr>
-                    <th>Market</th>
-                    <td>{{ $building->market_name }}</td>
-                </tr>
-                <tr>
-                    <th>Submarket</th>
-                    <td>{{ $building->submarket_name }}</td>
-                </tr>
-                <tr>
-                    <th>Industrial Park</th>
-                    <td>{{ $building->industrial_park_name }}</td>
-                </tr>
-                <tr>
-                    <th>Year Built</th>
-                    <td>{{ $building->year_built }}</td>
-                </tr>
-                <tr>
-                    <th>Owner</th>
-                    <td>{{ $building->owner_id }}</td>
-                </tr>
-                <tr>
-                    <th>Builder</th>
-                    <td>{{ $building->builder_id }}</td>
-                </tr>
-                <tr>
-                    <th>Currency</th>
-                    <td>{{ $building->currency }}</td>
-                </tr>
-                <tr>
-                    <th>Min. Asking Rate (SF/MO)</th>
-                    <td>$0.4</td>
-                </tr>
-                <tr>
-                    <th>Max. Asking Rate (SF/MO)</th>
-                    <td>$0</td>
-                </tr>
-            </table>
+        <br>
+
+        <div class="first-img">
+            <img src="{{ public_path('buildings-flyer\detalle-header-flyer.png') }}">
         </div>
-    </div>
 
-    <div class="footer">
-        <p>LUIS SEGOVIA - luis.segovia@sitiusnet.com</p>
-        <p>2025 SITIUS. La información ha sido obtenida de fuentes confiables, pero no garantizamos su exactitud.</p>
-    </div>
+        <br>
+       
+        <table class="main-table" cellspacing="0">
+            <tbody>
+                <tr class="primary-row">
+                    <th class="s2">Total Land:</th>
+                    <td class="s3">{{ $building->total_land_sf }} SF</td>
+                
+                    <th class="s2">Electric Substations:</th>
+                    <td class="s3"> KVAS</td>
+                </tr>
+                <tr>
+                    <th class="s2">Total Building Size:</th>
+                    <td class="s3">{{ number_format($building->building_size_sf, 0) }} SF</td>
+                
+                    <th class="s2">Skylight:</th>
+                    <td class="s3">%</td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Available Building:</th>
+                    <td class="s3">169,432 SF</td>
+                
+                    <th class="s2">Lighting:</th>
+                    <td class="s3">169,432 SF</td>    
+                </tr>
+                <tr>
+                    <th class="s2">Expansion Up To:</th>
+                    <td class="s3">{{ $building->expansion_up_to_sf }} SF</td>
+                    
+                    <th class="s2">Ventilation System:</th>
+                    <td class="s3"></td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Construction Type:</th>
+                    <td class="s3">{{ $building->construction_type }}</td>
+                    
+                    <th class="s2">HVAC for Production Area:</th>
+                    <td class="s3"></td>
+                </tr>
+                <tr>
+                    <th class="s2">Floor Slab Thickness:</th>
+                    <td class="s3">{{ $building->floor_thickness_in }}</td>
+                    
+                    <th class="s2">Fire Protection System:</th>
+                    <td class="s3">{{ $building->floor_thickness_in }}</td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Floor Resistance:</th>
+                    <td class="s3">{{ $building->floor_resistance }}</td>
+                
+                    <th class="s2">Parking Space:</th>
+                    <td class="s3"></td>
+                </tr>
+                <tr>
+                    <th class="s2">Roofing</th>
+                    <td class="s3">{{ $building->roof_system }}</td>
+                
+                    <th class="s2">Office Space</th>
+                    <td class="s3">{{ $building->offices_space_sf }}</td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Min. Clear Height</th>
+                    <td class="s3">{{ $building->clear_height_ft }}</td>
+                
+                    <th class="s2">Market</th>
+                    <td class="s3">{{ $building->market_name }}</td>
+                </tr>
+                {{-- Segunda columna --}}
+                <tr>
+                    <th class="s2">Building Dimensions</th>
+                    <td class="s3">{{ $building->avl_building_dimensions }}</td>
+                    
+                    <th class="s2">Submarket</th>
+                    <td class="s3">{{ $building->submarket_name }}</td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Columns Spacing</th>
+                    <td class="s3">{{ $building->columns_spacing }}</td>
+                    
+                    <th class="s2">Industrial Park</th>
+                    <td class="s3">{{ $building->industrial_park_name }}</td>
+                </tr>
+                <tr>
+                    <th class="s2">Bay's Size</th>
+                    <td class="s3">{{ $building->bay_size }}</td>
+                
+                    <th class="s2">Year Built</th>
+                    <td class="s3">{{ $building->year_built }}</td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Dock Doors</th>
+                    <td class="s3">{{ $building->dock_doors }}</td>
+                
+                    <th class="s2">Available From</th>
+                    <td class="s3">{{ $building->dock_doors }}</td>
+                </tr>
+                <tr>
+                    <th class="s2">Knockouts Docks</th>
+                    <td class="s3">{{ $building->knockouts_docks }}</td>
+                
+                    <th class="s2">Owner</th>
+                    <td class="s3">{{ $building->owner_id }}</td>
+                </tr>
+                <tr class="primary-row">
+                    <th class="s2">Drive In Door</th>
+                    <td class="s3">2</td>
+                
+                    <th class="s2">Builder</th>
+                    <td class="s3">{{ $building->builder_id }}</td>
+                </tr>
+                <tr>    
+                    <th class="s2">Truck Court</th>
+                    <td class="s3">{{ $building->truck_court_ft }}</td>
+                
+                    <th class="s2">Currency</th>
+                    <td class="s3">{{ $building->currency }}</td>
+                </tr>
+                <tr class="primary-row">    
+                    <th class="s2">Trailer Parking Spaces</th>
+                    <td class="s3">{{ $building->trailer_parking_space }}</td>
+                
+                    <th class="s2">Min. Asking Rate (SF/MO)</th>
+                    <td class="s3">$0.4</td>
+                </tr>
+                <tr>    
+                    <th class="s2">Shared Truck Court Area</th>
+                    <td class="s3">{{ $building->shared_truck }}</td>
+                
+                    <th class="s2">Max. Asking Rate (SF/MO)</th>
+                    <td class="s3">$0</td>
+                </tr>
+            </tbody>
+        </table>
 
-</body>
+        <div class="footer">
+            <p>LUIS SEGOVIA - luis.segovia@sitiusnet.com</p>
+            <p>2025 SITIUS. La información ha sido obtenida de fuentes confiables, pero no garantizamos su exactitud.</p>
+        </div>
+
+    </body>
 </html>
