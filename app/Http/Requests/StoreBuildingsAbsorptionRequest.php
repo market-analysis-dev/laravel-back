@@ -28,14 +28,13 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
-            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'broker_id' => 'required|integer|exists:cat_brokers,id',
             'rams' => 'nullable|integer|min:0',
             'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
             'new_construction' => 'nullable|boolean',
             'is_starting_construction' => 'nullable|boolean',
             'bay_size' => 'nullable|string|max:45',
-            'columns_spacing' => 'nullable|string|max:45',
             'abs_lease_term_month' => 'nullable|integer|min:0',
             'parking_space' => 'nullable|integer|min:0',
             'abs_closing_rate' => 'required|numeric|min:0',
@@ -49,10 +48,34 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
             'trailer_parking_space' => 'nullable|integer|min:0',
-            'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
-            'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'fire_protection_system' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in fire_protection_system.'));
+                        }
+                    }
+                }
+            ],
+            'above_market_tis' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in above_market_tis.'));
+                        }
+                    }
+                }
+            ],
             'abs_deal' =>'required|in:Sale,Lease',
-            'abs_broker_id' => 'nullable|exists:cat_developers,id',
+            'abs_broker_id' => 'nullable|exists:cat_brokers,id',
             'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
             'sqftToM2' => 'boolean',
             'size_sf' => [

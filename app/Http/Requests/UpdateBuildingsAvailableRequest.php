@@ -24,7 +24,8 @@ class UpdateBuildingsAvailableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'broker_id' => 'required|integer|exists:cat_developers,id',
+            'broker_id' => 'required|integer|exists:cat_brokers,id',
+            'size_sf' => 'required|integer|min:0',
             'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
             'dock_doors' => 'nullable|integer|min:0',
@@ -34,7 +35,6 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'new_construction' => 'nullable|boolean',
             'is_starting_construction' => 'nullable|boolean',
             'bay_size' => 'nullable|string|max:45',
-            'columns_spacing' => 'nullable|string|max:45',
             'avl_date' => 'nullable|date',
             'parking_space' => 'nullable|integer|min:0',
             'avl_min_lease' => 'required|numeric|min:0',
@@ -43,8 +43,32 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'updated_by' => 'nullable|integer|exists:users,id',
             'avl_building_phase' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
             'trailer_parking_space' => 'nullable|integer|min:0',
-            'fire_protection_system' => 'required|in:Hose Station,Sprinkler,Extinguisher',
-            'above_market_tis' => 'nullable|in:HVAC,CRANE,Rail Spur,Sprinklers,Crossdock,Office,Leed,Land Expansion',
+            'fire_protection_system' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in fire_protection_system.'));
+                        }
+                    }
+                }
+            ],
+            'above_market_tis' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
+
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            return $fail(__('Invalid value in above_market_tis.'));
+                        }
+                    }
+                }
+            ],
             'sqftToM2' => 'boolean',
             'size_sf' => [
                 'required',

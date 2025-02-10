@@ -73,7 +73,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Region $region
  * @property-read \App\Models\SubMarket $subMarket
  * @property-read \App\Models\User|null $updater
- * @property-read \App\Models\Developer $userOwner
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building createdBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building newQuery()
@@ -128,7 +127,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTypeGeneration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUpdatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereUserOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereYearBuilt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
@@ -143,6 +141,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereExpansionUpToSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorResistance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThickness($value)
+ * @property string $columns_spacing_ft
+ * @property int $floor_thickness_in
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereClearHeightFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereColumnsSpacingFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThicknessIn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOfficesSpaceSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTotalLandSf($value)
  * @mixin \Eloquent
  */
 class Building extends Model

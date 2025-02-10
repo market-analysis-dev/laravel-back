@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $new_construction
  * @property int|null $is_starting_construction
  * @property string|null $bay_size
- * @property string|null $columns_spacing
  * @property string|null $avl_date
  * @property int|null $abs_lease_term_month
  * @property int|null $knockouts_docks
@@ -92,7 +91,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBrokerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingState($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereColumnsSpacing($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereDeletedAt($value)
@@ -130,6 +128,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereRams($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereSizeSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTrailerParkingSpace($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlBuildingDimensionsFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereTruckCourtFt($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -165,7 +165,6 @@ class BuildingAvailable extends Model
         'new_construction',
         'is_starting_construction',
         'bay_size',
-        'columns_spacing',
         'avl_date',
         'abs_lease_term_month',
         'knockouts_docks',
@@ -218,7 +217,7 @@ class BuildingAvailable extends Model
 
     public function broker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Contact::class, 'broker_id');
+        return $this->belongsTo(Broker::class, 'broker_id');
     }
 
     public function absShelter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -228,6 +227,6 @@ class BuildingAvailable extends Model
 
     public function absBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Developer::class, 'abs_broker_id');
+        return $this->belongsTo(Broker::class, 'abs_broker_id');
     }
 }

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('abs_tenant_id')->nullable()->constrained('cat_tenants');
             $table->foreignId('abs_industry_id')->nullable()->constrained('cat_industries');
             $table->foreignId('abs_country_id')->nullable()->constrained('countries');
-            $table->foreignId('broker_id')->constrained('cat_developers');
+            $table->foreignId('broker_id')->constrained('cat_brokers');
             $table->foreignId('abs_shelter_id')->nullable()->constrained('cat_shelters');
-            $table->foreignId('abs_broker_id')->nullable()->constrained('cat_developers');
+            $table->foreignId('abs_broker_id')->nullable()->constrained('cat_brokers');
             $table->integer('size_sf')->nullable();
             $table->string('avl_building_dimensions_ft', 45)->nullable();
             $table->integer('avl_minimum_space_sf')->nullable();
@@ -30,7 +30,6 @@ return new class extends Migration
             $table->boolean('new_construction')->nullable();
             $table->boolean('is_starting_construction')->nullable();
             $table->string('bay_size', 45)->nullable();
-            $table->string('columns_spacing', 45)->nullable();
             $table->date('avl_date')->nullable();
             $table->integer('abs_lease_term_month')->nullable();
             $table->integer('parking_space')->nullable();
