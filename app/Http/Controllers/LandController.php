@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexLandRequest;
 use App\Http\Requests\StoreLandRequest;
 use App\Http\Requests\UpdateLandRequest;
 use App\Models\Land;
+use App\Services\LandService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Enums\LandParcelShape;
@@ -12,12 +14,19 @@ use App\Enums\LandZoning;
 
 class LandController extends ApiController
 {
+    private LandService $landService;
+
+    public function __construct(LandService $landService)
+    {
+        $this->landService = $landService;
+    }
+
     /**
      * @return ApiResponse
      */
-    public function index(): ApiResponse
+    public function index(IndexLandRequest $request): ApiResponse
     {
-        $lands = Land::paginate(10);
+        $lands = $this->landService->filter($request->validated());
         return $this->success(data: $lands);
     }
 
@@ -27,6 +36,7 @@ class LandController extends ApiController
      */
     public function show(Land $land): ApiResponse
     {
+        $land = $this->landService->show($land);
         return $this->success(data: $land);
     }
 
