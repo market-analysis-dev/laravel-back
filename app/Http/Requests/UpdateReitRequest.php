@@ -23,6 +23,7 @@ class UpdateReitRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'reit_type_id' => 'nullable|exists:cat_reit_types,id',
         ];
     }
 }
