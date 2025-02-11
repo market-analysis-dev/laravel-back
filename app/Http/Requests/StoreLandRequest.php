@@ -36,7 +36,7 @@ class StoreLandRequest extends FormRequest
             'size_ha' => 'integer',
             'kvas' => 'nullable|string|max:20',
             'zoning' => 'required|in:Industrial,Commercial,Residential',
-            'parcel_shape' => 'required|in:Regular, Irregular',
+            'parcel_shape' => 'required|in:Regular,Irregular',
             'status' => 'required|in:Active,Inactive,Pending,Approved',
         ];
     }
