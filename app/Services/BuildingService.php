@@ -4,7 +4,9 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use App\Models\Building;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class BuildingService
 {
@@ -164,10 +166,62 @@ class BuildingService
             ->firstOrFail();
     }
 
+    public function userData($userId)
+    {
+        return User::query()
+            ->leftJoin('companies', 'users.company_id', '=', 'companies.id')
+            ->leftJoin('files', 'companies.logo_id', '=', 'files.id') // Unir con la tabla files
+            ->select([
+                'users.id',
+                'users.name',
+                'users.middle_name',
+                'users.last_name',
+                'users.email as email',
+                'companies.name as company_name',
+                'companies.primary_color',
+                'companies.secondary_color',
+                'files.path as logo_path' // Obtener la ruta del logo
+            ])
+            ->where('users.id', $userId)
+            ->first();
+    }
+
+    public function getBuildingImages($buildingId)
+    {
+        // Obtener los archivos filtrando por los tipos necesarios
+        $files = \DB::table('building_files')
+            ->join('files', 'building_files.file_id', '=', 'files.id')
+            ->where('building_files.building_id', $buildingId)
+            ->whereIn('building_files.type', ['Front Page', 'Aerial', 'Gallery'])
+            ->select('building_files.type', 'files.path')
+            ->get();
+
+        // Validar si los archivos existen en el directorio
+        $validFiles = [];
+
+        foreach ($files as $file) {
+            $filePath = storage_path('app/public/' . $file->path); // Ruta del archivo en storage
+            if (file_exists($filePath)) {
+                $validFiles[] = [
+                    'type' => $file->type,
+                    'url' => asset('storage/' . $file->path) // Convertir a URL accesible
+                ];
+            }
+        }
+
+        return $validFiles;
+    }
+
     public function layoutDesign($buildingId)
     {
+        $userId = auth()->id();
+        $user = $this->userData($userId);
         $building = $this->getBuildingData($buildingId);
-        $pdf = Pdf::loadView('buildings.layout-design', compact('building'));
+        $images = $this->getBuildingImages($buildingId); // Obtener imágenes validadas
+
+        // Obtener la ruta del logo
+        $logoPath = $user->logo_path ? storage_path('app/public/' . $user->logo_path) : null;
+        $pdf = Pdf::loadView('buildings.layout-design', compact('building', 'user', 'logoPath', 'images'));
         return $pdf->stream('layout-design.pdf');
     }
 }
