@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateLandRequest;
 use App\Models\Land;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use App\Enums\LandParcelShape;
 use App\Enums\LandZoning;
 
 class LandController extends ApiController
@@ -73,6 +74,14 @@ class LandController extends ApiController
         }catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
+    }
+
+    /**
+     * @return ApiResponse
+     */
+    public function listParcelShape(): ApiResponse
+    {
+        return $this->success(data: LandParcelShape::array());
     }
 
     /**
