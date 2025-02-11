@@ -11,7 +11,7 @@ class ReitAnnual extends Model
 {
     use HasFactory, BlameableTrait, SoftDeletes;
 
-    protected $table = 'reit_annual';
+    protected $table = 'reit_annuals';
 
     protected $fillable = [
         'reit_id',
