@@ -25,7 +25,8 @@ Route::group([
     Route::get('/', [BuildingController::class, 'index'])->name('index');
     Route::post('/', [BuildingController::class, 'store'])->name('store');
     Route::get('/{building}', [BuildingController::class, 'show'])->name('show');
-    Route::put('/{building}', [BuildingController::class, 'update'])->name('update');
+    /*Route::put('/{building}', [BuildingController::class, 'update'])->name('update');*/
+    Route::post('/{building}', [BuildingController::class, 'update'])->name('update');
     Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');
     Route::post('/{building}/files', [BuildingFileController::class, 'uploadFiles'])->name('uploadFiles');
 });

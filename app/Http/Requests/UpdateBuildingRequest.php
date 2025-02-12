@@ -89,6 +89,9 @@ class UpdateBuildingRequest extends FormRequest
             'floor_resistance' => 'required|string|max:255',
             'expansion_up_to_sf' => 'required|integer|min:0',
             'sqftToM2' => 'boolean',
+            'files' => 'nullable|array',
+            'files.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'type' => 'nullable|string',
         ];
     }
 }
