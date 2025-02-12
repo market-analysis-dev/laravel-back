@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $land_id
@@ -189,7 +189,7 @@ class LandAvailable extends Model
 
     public function avlBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Developer::class, 'avl_broker_id');
+        return $this->belongsTo(Broker::class, 'avl_broker_id');
     }
 
     public function absCountry(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -199,7 +199,7 @@ class LandAvailable extends Model
 
     public function absBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Developer::class, 'abs_broker_id');
+        return $this->belongsTo(Broker::class, 'abs_broker_id');
     }
 
 }

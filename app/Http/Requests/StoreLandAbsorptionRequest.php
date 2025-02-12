@@ -38,7 +38,7 @@ class StoreLandAbsorptionRequest extends FormRequest
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
             'abs_industry_id' => 'nullable|exists:cat_industries,id',
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing,TBD',
-            'abs_broker_id' => 'nullable|exists:cat_developers,id',
+            'abs_broker_id' => 'nullable|exists:cat_brokers,id',
             'abs_comments' => 'nullable|string|max:45',
             'abs_kvas_price' => 'nullable|numeric|min:0',
         ];

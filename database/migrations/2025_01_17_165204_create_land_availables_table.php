@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('land_id')->constrained('lands', 'id');
             $table->foreignId('abs_company_id')->nullable()->constrained('companies', 'id');
-            $table->foreignId('avl_broker_id')->nullable()->constrained('cat_developers', 'id');
+            $table->foreignId('avl_broker_id')->nullable()->constrained('cat_brokers', 'id');
             $table->foreignId('abs_country_id')->nullable()->constrained('countries', 'id');
-            $table->foreignId('abs_broker_id')->nullable()->constrained('cat_developers', 'id');
+            $table->foreignId('abs_broker_id')->nullable()->constrained('cat_brokers', 'id');
             $table->foreignId('abs_industry_id')->nullable()->constrained('cat_industries');
             $table->bigInteger('avl_size_ha')->nullable();
             $table->integer('avl_minimum')->nullable();

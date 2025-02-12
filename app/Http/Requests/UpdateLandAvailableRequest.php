@@ -29,7 +29,7 @@ class UpdateLandAvailableRequest extends FormRequest
             'water' => 'nullable|in:yes,no,feasibility',
             'electric' => 'nullable|in:yes,no,feasibility',
             'kvas' => 'nullable|integer',
-            'avl_broker_id' => 'nullable|exists:cat_developers,id',
+            'avl_broker_id' => 'nullable|exists:cat_brokers,id',
             'avl_size_ha' => 'nullable|integer',
             'avl_minimum' => 'nullable|integer',
             'avl_min_sale' => 'nullable|numeric|min:0',
