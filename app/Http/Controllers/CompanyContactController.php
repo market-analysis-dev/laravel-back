@@ -107,9 +107,13 @@ class CompanyContactController extends ApiController
                 ->where('contact_id', $contact->id)
                 ->first();
             if($companyContact) {
+                $contact->update([
+                    'is_company_contact' => false
+                    ]
+                );
 
-                $contact->delete();
-                return $this->success('Contact deleted successfully', $contact);
+                $companyContact->delete();
+                return $this->success('Company contact deleted successfully', $contact);
 
             } else {
 
