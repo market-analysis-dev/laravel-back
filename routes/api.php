@@ -86,6 +86,7 @@ Route::post('/market/login', [MarketAuthController::class, 'login']);
 require_once '_users.php';
 require_once '_buildings_available.php';
 require_once '_buildings_absorption.php';
+require_once '_building_contacts.php';
 require_once '_buildings.php';
 require_once '_industrial_parks.php';
 require_once '_regions.php';
