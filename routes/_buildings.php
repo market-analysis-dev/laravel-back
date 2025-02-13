@@ -28,5 +28,7 @@ Route::group([
     Route::put('/{building}', [BuildingController::class, 'update'])->name('update');
     Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');
     Route::post('/{building}/files', [BuildingFileController::class, 'uploadFiles'])->name('uploadFiles');
+
+    Route::get('/{building}/layout-design', [BuildingController::class, 'layoutDesign'])->name('layoutDesign');
 });
 
