@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
             IndustrySeeder::class,
             CompanySeeder::class,
             CompanyContactSeeder::class,
+            ReitTypeSeeder::class,
+            ReitSeeder::class,
             ModuleSeeder::class,
         ]);
     }

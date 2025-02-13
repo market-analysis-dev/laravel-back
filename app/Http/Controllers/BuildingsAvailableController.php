@@ -33,6 +33,13 @@ class BuildingsAvailableController extends ApiController
         $validated = $request->validated();
         $availabilities = $this->buildingAvailableService->filterAvailable($validated, $building->id);
 
+        if (!empty($building->fire_protection_system)) {
+            $building->fire_protection_system = explode(',', $building->fire_protection_system);
+        }
+        if (!empty($building->above_market_tis)) {
+            $building->above_market_tis = explode(',', $building->above_market_tis);
+        }
+
         return $this->success(data: $availabilities);
     }
 
@@ -51,8 +58,21 @@ class BuildingsAvailableController extends ApiController
         if ($validated['sqftToM2'] ?? false) {
             $validated = $this->buildingAvailableService->convertMetrics($validated);
         }
+        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+        }
+        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+        }
 
         $availability = $this->buildingAvailableService->create($validated);
+
+        if (!empty($building->fire_protection_system)) {
+            $building->fire_protection_system = explode(',', $building->fire_protection_system);
+        }
+        if (!empty($building->above_market_tis)) {
+            $building->above_market_tis = explode(',', $building->above_market_tis);
+        }
 
         return $this->success('Building Available created successfully', $availability);
     }
@@ -71,6 +91,13 @@ class BuildingsAvailableController extends ApiController
         if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
+
+        if (!empty($building->fire_protection_system)) {
+            $building->fire_protection_system = explode(',', $building->fire_protection_system);
+        }
+        if (!empty($building->above_market_tis)) {
+           $building->above_market_tis = explode(',', $building->above_market_tis);
+       }
 
         return $this->success(data: $buildingAvailable);
     }
@@ -98,7 +125,19 @@ class BuildingsAvailableController extends ApiController
             if ($validated['sqftToM2'] ?? false) {
                 $validated = $this->buildingAvailableService->convertMetrics($validated);
             }
+            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+            }
+            if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+                $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+            }
             $building = $this->buildingAvailableService->update($buildingAvailable, $validated);
+            if (!empty($building->fire_protection_system)) {
+                $building->fire_protection_system = explode(',', $building->fire_protection_system);
+            }
+            if (!empty($building->above_market_tis)) {
+                $building->above_market_tis = explode(',', $building->above_market_tis);
+            }
             return $this->success('Building Available updated successfully', $buildingAvailable);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
@@ -139,9 +178,21 @@ class BuildingsAvailableController extends ApiController
     public function toAbsorption(ConvertToAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
         $validated = $request->validated();
+        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+        }
+        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+        }
         $result = $this->buildingAvailableService->convertToAbsorption($validated, $building->id, $buildingAvailable->id);
         if (!$result['success']) {
             return $this->error($result['message'], ['error_code' => $result['code']]);
+        }
+        if (!empty($building->fire_protection_system)) {
+            $building->fire_protection_system = explode(',', $building->fire_protection_system);
+        }
+        if (!empty($building->above_market_tis)) {
+            $building->above_market_tis = explode(',', $building->above_market_tis);
         }
 
         return $this->success(data: $result['data']);

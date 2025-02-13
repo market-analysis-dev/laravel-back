@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $file_id
@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile withoutTrashed()
+ * @property string $path
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile wherePath($value)
  * @mixin \Eloquent
  */
 class BuildingFile extends Model
