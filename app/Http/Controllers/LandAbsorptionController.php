@@ -2,24 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexLandsAbsorptionRequest;
 use App\Http\Requests\StoreLandAbsorptionRequest;
 use App\Http\Requests\UpdateLandAbsorptionRequest;
 use App\Models\Land;
 use App\Models\LandAvailable;
+use App\Services\LandsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 
 class LandAbsorptionController extends ApiController
 {
+    private LandsAvailableService $landsAvailableService;
+
+    public function __construct(LandsAvailableService $landsAvailableService)
+    {
+        $this->landsAvailableService = $landsAvailableService;
+    }
+
     /**
      * @param Land $land
      * @return ApiResponse
      */
-    public function index(Land $land): ApiResponse
+    public function index(IndexLandsAbsorptionRequest $request, Land $land): ApiResponse
     {
-        $landsAbsorption = LandAvailable::where('land_id', $land->id)
-            ->where('state', '=', 'Absorption')
-            ->paginate(10);
+        $validated = $request->validated();
+        $landsAbsorption = $this->landsAvailableService->filterAbsorption($validated, $land->id);
         return $this->success(data: $landsAbsorption);
     }
 
