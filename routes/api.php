@@ -112,3 +112,4 @@ require_once '_reits_types.php';
 require_once '_reits.php';
 require_once '_modules.php';
 require_once '_reit_annual.php';
+require_once '_reit_mortgages.php';

@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string $name
@@ -36,6 +36,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Reit whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Reit withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Reit withoutTrashed()
+ * @property int|null $reit_type_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Reit whereReitTypeId($value)
  * @mixin \Eloquent
  */
 class Reit extends Model
