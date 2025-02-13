@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Enums\LandParcelShape;
 use App\Enums\LandZoning;
+use App\Enums\LandsTypeBuyer;
 
 class LandController extends ApiController
 {
@@ -102,4 +103,8 @@ class LandController extends ApiController
         return $this->success(data: LandZoning::array());
     }
 
+    public function getLandTypeBuyer(): ApiResponse
+    {
+        return $this->success(data: LandsTypeBuyer::array());
+    }
 }
