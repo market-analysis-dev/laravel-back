@@ -32,10 +32,10 @@ return new class extends Migration
             $table->string('avl_comments', 45)->nullable();
             $table->string('abs_comments', 45)->nullable();
             $table->enum('state', ['Availability', 'Absorption']);
-            $table->enum('natural_gas', ['yes','no','feasibility'])->nullable();
-            $table->enum('sewage', ['yes','no','feasibility'])->nullable();
-            $table->enum('water', ['yes','no','feasibility'])->nullable();
-            $table->enum('electric', ['yes','no','feasibility'])->nullable();
+            $table->enum('natural_gas', ['Yes','No','Feasibility'])->nullable();
+            $table->enum('sewage', ['Yes','No','Feasibility'])->nullable();
+            $table->enum('water', ['Yes','No','Feasibility'])->nullable();
+            $table->enum('electric', ['Yes','No','Feasibility'])->nullable();
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing','TBD'])->nullable();
             $table->enum('land_condition', ['Fully Developed', 'Undeveloped'])->nullable();
             $table->date('avl_date')->nullable();

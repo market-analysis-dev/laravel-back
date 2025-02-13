@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Enums\LandParcelShape;
 use App\Enums\LandZoning;
+use App\Enums\LandsServiceState;
 
 class LandController extends ApiController
 {
@@ -100,6 +101,11 @@ class LandController extends ApiController
     public function listZoning(): ApiResponse
     {
         return $this->success(data: LandZoning::array());
+    }
+
+    public function getServiceState(): ApiResponse
+    {
+        return $this->success(data: LandsServiceState::array());
     }
 
 }
