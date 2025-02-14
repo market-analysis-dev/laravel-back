@@ -45,4 +45,5 @@ class StoreContactRequest extends FormRequest
             'deleted_by' => 'nullable|integer',
         ];
     }
+
 }
