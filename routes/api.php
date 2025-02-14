@@ -14,7 +14,7 @@ use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 
 // * COMPANIES (COMPLETADO)
 Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza
@@ -81,7 +81,7 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
 
 
 
-Route::post('/market/login', [MarketAuthController::class, 'login']);
+// Route::post('/market/login', [MarketAuthController::class, 'login']);
 
 require_once '_users.php';
 require_once '_buildings_available.php';
