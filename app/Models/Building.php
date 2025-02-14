@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $industrial_park_id
  * @property int $developer_id
  * @property int $owner_id
- * @property int|null $contact_id
  * @property string $building_name
  * @property int $building_size_sf
  * @property string $latitud
@@ -164,7 +163,6 @@ class Building extends Model
         'industrial_park_id',
         'developer_id',
         'owner_id',
-        'contact_id',
         'building_name',
         'building_size_sf',
         'latitud',
@@ -242,11 +240,6 @@ class Building extends Model
         return $this->belongsTo(Developer::class, 'owner_id');
     }
 
-
-    public function contact(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Contact::class, 'contact_id');
-    }
 
     public function buildingsAvailable(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

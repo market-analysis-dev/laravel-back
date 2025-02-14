@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
-use App\Models\Company;
-use App\Models\CompanyContact;
+use App\Models\Building;
+use App\Models\BuildingContact;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 
-class CompanyContactController extends ApiController
+class BuildingContactController extends ApiController
 {
     /**
-     * @param Company $company
+     * @param Building $building
      * @return ApiResponse
      */
-    public function index(Company $company): ApiResponse
+    public function index(Building $building): ApiResponse
     {
-        $contacts = CompanyContact::where('company_id', $company->id)
+        $contacts = BuildingContact::where('building_id', $building->id)
             ->with('contact')
             ->get()
             ->pluck('contact');
@@ -28,13 +27,13 @@ class CompanyContactController extends ApiController
     }
 
     /**
-     * @param Company $company
+     * @param Building $building
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function show(Company $company, Contact $contact): ApiResponse
+    public function show(Building $building, Contact $contact): ApiResponse
     {
-        $contact = CompanyContact::where('company_id', $company->id)
+        $contact = BuildingContact::where('building_id', $building->id)
             ->where('contact_id', $contact->id)
             ->with('contact')
             ->get()
@@ -44,10 +43,10 @@ class CompanyContactController extends ApiController
 
     /**
      * @param StoreContactRequest $request
-     * @param Company $company
+     * @param Building $building
      * @return ApiResponse
      */
-    public function store(StoreContactRequest $request, Company $company): ApiResponse
+    public function store(StoreContactRequest $request, Building $building): ApiResponse
     {
         try {
             $validated = $request->validated();
@@ -59,19 +58,20 @@ class CompanyContactController extends ApiController
                     $contact->restore();
                 }
             } else {
-                $contact = Contact::create(array_merge($validated, ['is_company_contact' => true]));
+                $contact = Contact::create(array_merge($validated, ['is_buildings_contact' => true]));
             }
 
-            $exists = CompanyContact::where('company_id', $company->id)
+
+            $exists = BuildingContact::where('building_id', $building->id)
                 ->where('contact_id', $contact->id)
                 ->exists();
 
             if ($exists) {
-                return $this->error('This contact is already linked to the company.', ['errors' => 422]);
+                return $this->error('This contact is already linked to the building.', ['errors' => 422]);
             }
 
-            CompanyContact::create([
-                'company_id' => $company->id,
+            BuildingContact::create([
+                'building_id' => $building->id,
                 'contact_id' => $contact->id,
             ]);
 
@@ -79,59 +79,57 @@ class CompanyContactController extends ApiController
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), ['errors' => 500]);
         }
-
     }
 
     /**
      * @param UpdateContactRequest $request
-     * @param Company $company
+     * @param Building $building
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function update(UpdateContactRequest $request, Company $company, Contact $contact): ApiResponse
+    public function update(UpdateContactRequest $request, Building $building, Contact $contact): ApiResponse
     {
-        try{
-            $companyContact = CompanyContact::where('company_id', $company->id)
+        try {
+            $buildingContact = BuildingContact::where('building_id', $building->id)
                 ->where('contact_id', $contact->id)
                 ->first();
-            if($companyContact) {
+
+            if ($buildingContact) {
                 if ($contact->trashed()) {
                     $contact->restore();
                 }
 
-                $contact->update(array_merge(
-                    $request->validated(),
-                    ['is_company_contact' => true]
-                ));
+                $contact->update(array_merge($request->validated(), ['is_buildings_contact' => true]));
                 return $this->success('Contact updated successfully', $contact);
-
             } else {
-                return $this->error('Company with id '. $company->id . ' does not have contact with id '. $contact->id , ['error' => 404]);
+                return $this->error('Building does not have this contact', ['errors' => 404]);
             }
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), ['error' => 500]);
+            return $this->error($e->getMessage(), ['errors' => 500]);
         }
     }
 
     /**
-     * @param Company $company
+     * @param Building $building
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function destroy(Company $company, Contact $contact): ApiResponse
+    public function destroy(Building $building, Contact $contact): ApiResponse
     {
         try{
-            $companyContact = CompanyContact::where('company_id', $company->id)
+            $buildingContact = BuildingContact::where('building_id', $building->id)
                 ->where('contact_id', $contact->id)
                 ->first();
-            if($companyContact) {
-
-                $contact->delete();
+            if($buildingContact) {
+                $contact->update(
+                    ['is_buildings_contact' => false]
+                );
+                $buildingContact->delete();
                 return $this->success('Contact deleted successfully', $contact);
 
             } else {
 
-                return $this->error('Company with id '. $company->id . ' does not have contact with id '. $contact->id , 404);
+                return $this->error('Building with id '. $building->id . ' does not have contact with id '. $contact->id , 404);
             }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
