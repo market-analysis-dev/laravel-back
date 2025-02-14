@@ -30,6 +30,15 @@ class BrokerController extends ApiController
     }
 
     /**
+     * @param Broker $broker
+     * @return ApiResponse
+     */
+    public function show(Broker $broker): ApiResponse
+    {
+        return $this->success(data: $broker);
+    }
+
+    /**
      * @param UpdateBrokerRequest $request
      * @param Broker $broker
      * @return ApiResponse

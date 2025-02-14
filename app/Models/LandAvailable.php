@@ -202,4 +202,9 @@ class LandAvailable extends Model
         return $this->belongsTo(Broker::class, 'abs_broker_id');
     }
 
+    public function absIndustry(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'abs_industry_id');
+    }
+
 }

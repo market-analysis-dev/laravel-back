@@ -20,7 +20,6 @@ return new class extends Migration
             $table->foreignId('industrial_park_id')->constrained('cat_industrial_parks');
             $table->foreignId('developer_id')->constrained('cat_developers');
             $table->foreignId('owner_id')->constrained('cat_developers');
-            $table->foreignId('contact_id')->nullable()->constrained('contacts');
             $table->string('building_name', 255);
             $table->integer('building_size_sf');
             $table->string('latitud', 45);

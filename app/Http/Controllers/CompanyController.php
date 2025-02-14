@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,7 @@ class CompanyController extends ApiController
     public function index(): ApiResponse
     {
         $companies = Company::all();
-        return $this->success(data: $companies);
+        return $this->success(data: CompanyResource::collection($companies));
     }
 
 
@@ -30,7 +31,7 @@ class CompanyController extends ApiController
     {
         $company = Company::findOrFail($companyId);
 
-        return $this->success(data: $company);
+        return $this->success(data: new CompanyResource($company));
     }
 
 
