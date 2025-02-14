@@ -150,4 +150,45 @@ class FileService
 
         return null; // Invalid or undetermined type
     }
+
+    /**
+     * @param $buildingId
+     * @param null $type
+     * @return array
+     */
+    public function deleteBuildingFiles($buildingId, $type = null)
+    {
+        $query = BuildingFile::where('building_id', $buildingId);
+
+        if ($type) {
+            $query->where('type', $type);
+        }
+
+        $files = $query->get();
+
+        if ($files->isEmpty()) {
+            return [
+                'message' => 'No files found for deletion',
+                'deleted_files' => [],
+            ];
+        }
+
+        $deletedFiles = [];
+
+        foreach ($files as $file) {
+            Storage::disk('public')->delete($file->path);
+            $deletedFiles[] = [
+                'id' => $file->id,
+                'name' => $file->name,
+                'path' => $file->path,
+                'type' => $file->type,
+            ];
+            $file->delete();
+        }
+
+        return [
+            'message' => 'Files deleted successfully',
+            'deleted_files' => $deletedFiles,
+        ];
+    }
 }

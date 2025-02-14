@@ -21,16 +21,19 @@ use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
 use App\Services\BuildingService;
 use App\Responses\ApiResponse;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use PDF;
 
 class BuildingController extends ApiController
 {
     private BuildingService $buildingService;
+    private FileService $fileService;
 
-    public function __construct(BuildingService $buildingService)
+    public function __construct(BuildingService $buildingService, FileService $fileService)
     {
         $this->buildingService = $buildingService;
+        $this->fileService = $fileService;
     }
 
     public function index(IndexBuildingRequest $request): ApiResponse
@@ -61,13 +64,21 @@ class BuildingController extends ApiController
 
         $building = $this->buildingService->create($validated);
 
+        if ($request->hasFile('files')) {
+            $type = $request->input('type');
+            $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
+        }
+
         if (!empty($building->fire_protection_system)) {
             $building->fire_protection_system = explode(',', $building->fire_protection_system);
         }
         if (!empty($building->above_market_tis)) {
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
-        return $this->success('Building created successfully', $building);
+        return $this->success('Building created successfully', [
+            'building' => $building,
+            'uploaded_files' => $uploadedFilesInfo ?? null,
+        ]);
     }
 
     public function show(Building $building): ApiResponse
@@ -104,13 +115,26 @@ class BuildingController extends ApiController
             }
 
             $building = $this->buildingService->update($building, $validated);
+
+            if ($request->hasFile('files')) {
+                $type = $request->input('type');
+
+                $deletedFiles = $this->fileService->deleteBuildingFiles($building->id, $type);
+
+                $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
+            }
+
             if (!empty($building->fire_protection_system)) {
                 $building->fire_protection_system = explode(',', $building->fire_protection_system);
             }
             if (!empty($building->above_market_tis)) {
                 $building->above_market_tis = explode(',', $building->above_market_tis);
             }
-            return $this->success('Building updated successfully', $building);
+            return $this->success('Building updated successfully', [
+                'building' => $building,
+                'uploaded_files' => $uploadedFilesInfo ?? null,
+                'deleted_files' => $deletedFiles ?? null,
+            ]);
 
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
