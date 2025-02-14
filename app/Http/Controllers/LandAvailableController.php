@@ -2,24 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexLandsAvailableRequest;
 use App\Http\Requests\StoreLandAvailableRequest;
 use App\Http\Requests\UpdateLandAvailableRequest;
 use App\Models\Land;
 use App\Models\LandAvailable;
+use App\Services\LandsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 
 class LandAvailableController extends ApiController
 {
+    private LandsAvailableService $landsAvailableService;
+
+
+    public function __construct(LandsAvailableService $landsAvailableService)
+    {
+        $this->landsAvailableService = $landsAvailableService;
+    }
     /**
      * @param Land $land
      * @return ApiResponse
      */
-    public function index(Land $land): ApiResponse
+    public function index(IndexLandsAvailableRequest $request, Land $land): ApiResponse
     {
-        $landsAvailable = LandAvailable::where('land_id', $land->id)
-            ->where('state', '=', 'Availability')
-            ->paginate(10);
+        $validated = $request->validated();
+
+        $landsAvailable = $this->landsAvailableService->filterAvailable($validated, $land->id);
         return $this->success(data: $landsAvailable);
     }
 
