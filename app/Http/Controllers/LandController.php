@@ -12,6 +12,7 @@ use App\Responses\ApiResponse;
 use App\Enums\LandParcelShape;
 use App\Enums\LandZoning;
 use App\Enums\LandsTypeBuyer;
+use App\Enums\LandsServiceState;
 
 class LandController extends ApiController
 {
@@ -107,4 +108,9 @@ class LandController extends ApiController
     {
         return $this->success(data: LandsTypeBuyer::array());
     }
+    public function getServiceState(): ApiResponse
+    {
+        return $this->success(data: LandsServiceState::array());
+    }
+
 }
