@@ -30,7 +30,9 @@ class UpdateContactRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('contacts', 'contact_email')->whereNull('deleted_at')
+                Rule::unique('contacts', 'contact_email')
+                    ->whereNull('deleted_at')
+                ->ignore($this->contact->id)
             ],
             'contact_comments' => 'nullable|string|max:255',
             'is_direct_contact' => 'nullable|boolean',
