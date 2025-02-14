@@ -19,3 +19,6 @@ yarn-error.log
 /.idea
 /.vscode
 /market-back.zip
+!/storage/app/tenants.csv
+!/storage/app/industrial-parks.csv
+acert

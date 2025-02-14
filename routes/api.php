@@ -1,24 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\MarketAuthController;
+use App\Http\Controllers\MarketController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ModulesColumnController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserTypeController;
-use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\BuildingsController;
-use App\Http\Controllers\UniquePermissionController;
-use App\Http\Controllers\MarketController;
 use App\Http\Controllers\SubMarketController;
-use App\Http\Controllers\ExcelController;
-use App\Models\BuildingsContacts;
+use App\Http\Controllers\UniquePermissionController;
+use App\Http\Controllers\UserDetailsController;
+use App\Http\Controllers\UserTypeController;
+use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\MarketAuthController;
-
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login']);
 
 // * COMPANIES (COMPLETADO)
 Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza
@@ -27,14 +23,6 @@ Route::put('/companies/{id}', [CompanyController::class, 'update']); // * Este s
 Route::put('/companies/{id}/delete', [CompanyController::class, 'destroy']); // * Este si se utiliza
 Route::post('/companies', [CompanyController::class, 'store']);
 
-// * USERS (COMPLETADO)
-Route::get('/user', [UserController::class, 'index']); // * Este si se utiliza
-Route::get('/user/device', [UserController::class, 'getUserDevice']); // * Este si se utiliza
-Route::post('/user/combo', [UserController::class, 'getUsersFilterCombo']); // * Combo de usuarios para heredar permisos
-Route::get('/user/{id}', [UserController::class, 'show']); // * Este si se utiliza
-Route::put('/user/{id}', [UserController::class, 'update']); // * Este si se utiliza
-Route::put('/user/{id}/delete', [UserController::class, 'destroy']); // * Este si se utiliza
-Route::post('/user', [UserController::class, 'store']); // * Este si se utiliza
 
 // * USER DETAILS (COMPLETADO)
 Route::get('/user-details', [UserDetailsController::class, 'index']); // ! Este NO se utiliza
@@ -78,19 +66,6 @@ Route::put('/unique/{id}', [UniquePermissionController::class, 'update']);
 Route::put('/unique/{id}/delete', [UniquePermissionController::class, 'destroy']);
 // Route::post('/unique', [UniquePermissionController::class, 'store']);
 
-// * MARKETS (COMPLETADO)
-Route::get('/market', [MarketController::class, 'index']);
-Route::get('/market/{id}', [MarketController::class, 'show']);
-Route::put('/market/{id}', [MarketController::class, 'update']);
-Route::put('/market/{id}/delete', [MarketController::class, 'destroy']);
-Route::post('/market', [MarketController::class, 'store']);
-
-// * SUB MARKETS (COMPLETADO)
-Route::get('/submarket', [SubMarketController::class, 'index']);
-Route::get('/submarket/{id}', [SubMarketController::class, 'show']);
-Route::put('/submarket/{id}', [SubMarketController::class, 'update']);
-Route::put('/submarket/{id}/delete', [SubMarketController::class, 'destroy']);
-Route::post('/submarket', [SubMarketController::class, 'store']);
 
 // * AVAILABILITY
 Route::get('/excel-data', [ExcelController::class, 'getData']); // ! Este NO se utiliza
@@ -104,31 +79,36 @@ Route::post('/permissions/update/{userId}', [PermissionController::class, 'updat
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
-/*
- * API's Buildings
- */
-Route::get('/buildings/table', [BuildingsController::class, 'getBuildingsTable']);
-Route::get('/buildings/table/vo-bo', [BuildingsController::class, 'getBuildingsTableVoBo']);
-Route::post('/buildings/save/{tableName}', [BuildingsController::class, 'saveRegister']);
-Route::post('/buildings/delete/{tableName}', [BuildingsController::class, 'deleteRegister']);
-Route::post('/buildings', [BuildingsController::class, 'insertBuilding']);
-Route::post('/buildings/update/{buildingId}', [BuildingsController::class, 'updateBuilding']);
-Route::get('/buildings/{buildingId}', [BuildingsController::class, 'getBuildingById']);
-Route::post('/buildings/docs/{buildingId}', [BuildingsController::class, 'uploadFiles']);
 
-
-/*
- * API's Employees
- */
-Route::post('/employees', [UserController::class, 'newAdminUser']);
-Route::get('/employees', [UserController::class, 'getEmployees']);
-Route::get('/employees/{employeeId}', [UserController::class, 'getEmployeeId']);
-Route::post('/employees/update/{employeeId}', [UserController::class, 'updateEmployee']);
-
-/*
- * 
- * PLATAFORMA MARKETANALYSIS.MX
- *
- */
 
 Route::post('/market/login', [MarketAuthController::class, 'login']);
+
+require_once '_users.php';
+require_once '_buildings_available.php';
+require_once '_buildings_absorption.php';
+require_once '_buildings.php';
+require_once '_industrial_parks.php';
+require_once '_regions.php';
+require_once '_currency.php';
+require_once '_markets.php';
+require_once '_submarkets.php';
+require_once '_roles.php';
+require_once '_permissions.php';
+require_once '_tenants.php';
+require_once '_developers.php';
+require_once '_shelters.php';
+require_once '_brokers.php';
+require_once  '_roles.php';
+require_once  '_permissions.php';
+require_once  '_developers.php';
+require_once  '_industries.php';
+require_once  '_countries.php';
+require_once '_companies.php';
+require_once '_company_contacts.php';
+require_once '_land_absorption.php';
+require_once '_land_available.php';
+require_once '_lands.php';
+require_once '_reits_types.php';
+require_once '_reits.php';
+require_once '_modules.php';
+require_once '_reit_annual.php';

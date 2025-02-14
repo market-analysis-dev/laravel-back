@@ -4,71 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Market;
 use Illuminate\Http\Request;
+use App\Responses\ApiResponse;
 
-class MarketController
+class MarketController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request): ApiResponse
     {
-        $market = Market::where('status', 'Activo')->get();
-        return response()->json($market);
-    }
+        $query = Market::query();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'marketName' => 'required|string|max:255',
-            'status' => 'required|in:Activo,Inactivo',
-        ]);
-
-        return Market::create($request->all());
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        $market = Market::find($id);
-
-        if (!$market) {
-            return response()->json(['message' => 'Market not found'], 404);
+        if ($request->has('region_id')) {
+            $query->where('region_id', $request->input('region_id'));
         }
+        $query->where('status', '=', 'active');
+        $markets = $query->get();
 
-        return response()->json($market);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'marketName' => 'required|string|max:255',
-            'status' => 'required|in:Activo,Inactivo',
-        ]);
-
-        $market = Market::findOrFail($id);
-        $market->update($request->all());
-
-        return response()->json($market);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $market = Market::findOrFail($id);
-
-        $market->status = 'Inactivo';
-        $market->save();
-
-        return response()->json(['message' => 'Mercado eliminado correctamente']);
+        return $this->success(data: $markets);
     }
 }

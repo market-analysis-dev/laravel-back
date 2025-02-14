@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserType query()
+ * @mixin \Eloquent
+ */
 class UserType extends Model
 {
     use HasFactory;

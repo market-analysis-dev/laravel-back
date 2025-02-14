@@ -2,135 +2,170 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCompanyRequest;
+use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Responses\ApiResponse;
+use App\Models\File;
 
-class CompanyController
+class CompanyController extends ApiController
 {
-    // * Método para obtener todos los registros.
-    public function index()
+    /**
+     * @return ApiResponse
+     */
+    public function index(): ApiResponse
     {
-        // $companies = Company::where('status', 'Activo')->get();
-        // return response()->json($companies);
-        $companies = Company::where('status', 'Activo')->get();
-
-        // * Iterar sobre cada compañía y generar la URL completa de la imagen
-        foreach ($companies as $company) {
-            if ($company->logoUrl) {
-                $company->logoUrl = "http://localhost:8000" . Storage::url($company->logoUrl);
-            }
-        }
-
-        return response()->json($companies);
+        $companies = Company::all();
+        return $this->success(data: $companies);
     }
 
-    public function store(Request $request)
+
+    /**
+     * @param $companyId
+     * @return ApiResponse
+     */
+    public function show($companyId): ApiResponse
     {
-        $request->validate([
-            'nameCompany' => 'required|string|max:255',
-            'website' => 'required|string|max:255',
-            'logoUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'status' => 'required|in:Activo,Inactivo',
-            'primaryColor' => 'nullable|string|max:7',
-            'secondaryColor' => 'nullable|string|max:7',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:100',
-            'state' => 'nullable|string|max:100',
-            'postalCode' => 'nullable|string|max:20',
-            'country' => 'nullable|string|max:100',
-        ]);
+        $company = Company::findOrFail($companyId);
 
-        $company = new Company();
-        $company->nameCompany = $request->nameCompany;
-        $company->website = $request->website;
-        $company->primaryColor = $request->primaryColor;
-        $company->secondaryColor = $request->secondaryColor;
-        $company->address = $request->address;
-        $company->postalCode = $request->postalCode;
-        $company->city = $request->city;
-        $company->state = $request->state;
-        $company->country = $request->country;
-
-        if ($request->hasFile('logoUrl')) {
-            $imagePath = $request->file('logoUrl')->store('logos', 'public');
-            $company->logoUrl = $imagePath;
-        }
-
-        $company->save();
-
-        return response()->json(['success' => 'Company added successfully.']);
+        return $this->success(data: $company);
     }
 
-    // * Método para obtener un registro por su ID.
-    public function show($id)
+
+    /**
+     * @param StoreCompanyRequest $request
+     * @return ApiResponse
+     * @throws \Throwable
+     */
+    public function store(StoreCompanyRequest $request): ApiResponse
     {
-        $company = Company::find($id);
+        \DB::beginTransaction();
 
-        if (!$company) {
-            return response()->json(['message' => 'Company not found'], 404);
-        }
+        try {
+            if ($request->hasFile('logo')) {
+                $uploadedFile = $request->file('logo');
+                $filePath = $uploadedFile->store('logos', 'public'); // storage/app/public/logos
 
-        // Genera la URL completa de la imagen
-        if ($company->logoUrl) {
-            $company->logoUrl = "http://localhost:8000" . Storage::url($company->logoUrl);
-        }
+                $file = File::create([
+                    'path' => $filePath,
+                    'mime_type' => $uploadedFile->getClientMimeType(),
+                    'size' => $uploadedFile->getSize(),
+                    'name' => $uploadedFile->hashName(),
+                    'original_name' => $uploadedFile->getClientOriginalName(),
+                    'extension' => $uploadedFile->extension(),
+                ]);
 
-        return response()->json($company);
-    }
-
-    // * Método para editar la información de la empresa por su ID.
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nameCompany' => 'required|string|max:255',
-            'website' => 'required|string|max:255',
-            'logoUrl' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'status' => 'required|string|max:255',
-            'primaryColor' => 'required|string|max:255',
-            'secondaryColor' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'postalCode' => 'required|string|max:10',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-        ]);
-
-        $company = Company::findOrFail($id);
-        $company->nameCompany = $request->all()['nameCompany'];
-        $company->website = $request->all()['website'];
-        $company->primaryColor = $request->all()['primaryColor'];
-        $company->secondaryColor = $request->all()['secondaryColor'];
-        $company->status = $request->all()['status'];
-        $company->address = $request->all()['address'];
-        $company->postalCode = $request->all()['postalCode'];
-        $company->city = $request->all()['city'];
-        $company->state = $request->all()['state'];
-        $company->country = $request->all()['country'];
-
-        if ($request->hasFile('logoUrl')) {
-
-            if ($company->logoUrl) {
-                Storage::disk('public')->delete($company->logoUrl);
+                $validatedData = $request->validated();
+                $validatedData['logo_id'] = $file->id;
+            } else {
+                $validatedData = $request->validated();
             }
 
-            $imagePath = $request->file('logoUrl')->store('logos', 'public');
-            $company->logoUrl = $imagePath;
+            $company = Company::create($validatedData);
+
+            \DB::commit();
+
+            return $this->success('Company created successfully', $company);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+
+            return $this->error($e->getMessage(), ['code' => 500]);
         }
-
-        $company->save();
-
-        return response()->json(['success' => 'Company updated successfully.']);
     }
 
-    // * Método para eliminar una epresa.
-    public function destroy($id)
+    /**
+     * @param UpdateCompanyRequest $request
+     * @param Company $company
+     * @return ApiResponse
+     * @throws \Throwable
+     */
+    public function update(UpdateCompanyRequest $request, Company $company): ApiResponse
     {
+        \DB::beginTransaction();
 
-        $company = Company::findOrFail($id);
-        $company->status = 'Inactivo';
-        $company->save();
+        try {
+            if ($request->hasFile('logo')) {
+                $uploadedFile = $request->file('logo');
+                $filePath = $uploadedFile->store('logos', 'public'); // storage/app/public/logos
 
-        return response()->json(['message' => 'Empresa eliminada correctamente.']);
+                $file = File::create([
+                    'path' => $filePath,
+                    'mime_type' => $uploadedFile->getClientMimeType(),
+                    'size' => $uploadedFile->getSize(),
+                    'name' => $uploadedFile->hashName(),
+                    'original_name' => $uploadedFile->getClientOriginalName(),
+                    'extension' => $uploadedFile->extension(),
+                ]);
+
+                // Delete old logo
+                if ($company->logo_id) {
+                    $oldFile = File::find($company->logo_id);
+
+                    if ($oldFile) {
+                        $company->logo_id = null;
+                        $company->save();
+                        \Storage::disk('public')->delete($oldFile->path);
+                        $oldFile->delete();
+                    }
+                }
+
+
+                $validatedData = $request->validated();
+                $validatedData['logo_id'] = $file->id;
+            } else {
+                $validatedData = $request->validated();
+            }
+
+
+            $company->update($validatedData);
+
+            \DB::commit();
+
+            return $this->success('Company updated successfully', $company);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+
+            return $this->error($e->getMessage(), ['code' => 500]);
+        }
     }
+
+
+    /**
+     * @param Company $company
+     * @return ApiResponse
+     * @throws \Throwable
+     */
+    public function destroy(Company $company): ApiResponse
+    {
+        \DB::beginTransaction();
+
+        try {
+            // Delete logo
+            if ($company->logo_id) {
+                $oldFile = File::find($company->logo_id);
+
+                if ($oldFile) {
+                    $company->logo_id = null;
+                    $company->save();
+                    \Storage::disk('public')->delete($oldFile->path);
+                    $oldFile->delete();
+                }
+            }
+
+            // Delete company
+            $company->delete();
+
+            // end transaction
+            \DB::commit();
+
+            return $this->success('Company deleted successfully', $company);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+
+            return $this->error('Error deleting company: ' . $e->getMessage(), ['code' => 500]);
+        }
+    }
+
 }
