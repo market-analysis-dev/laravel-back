@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreContactRequest extends FormRequest
 {
@@ -24,7 +25,13 @@ class StoreContactRequest extends FormRequest
         return [
             'contact_name' => 'nullable|string|max:255',
             'contact_phone' => 'nullable|string|max:50',
-            'contact_email' => 'nullable|string|email|max:255',
+            'contact_email' => [
+                'nullable',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('contacts', 'contact_email')->whereNull('deleted_at')
+            ],
             'contact_comments' => 'nullable|string|max:255',
             'is_direct_contact' => 'nullable|boolean',
             'is_land_contact' => 'nullable|boolean',

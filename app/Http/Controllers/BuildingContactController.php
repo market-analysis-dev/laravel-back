@@ -49,19 +49,35 @@ class BuildingContactController extends ApiController
     public function store(StoreContactRequest $request, Building $building): ApiResponse
     {
         try {
-            $contact = Contact::create(array_merge(
-                $request->validated(),
-                ['is_buildings_contact' => true]
-            ));
-            $newContactId = $contact->id;
+            $validated = $request->validated();
+
+            $contact = Contact::withTrashed()->where('contact_email', $validated['contact_email'])->first();
+
+            if ($contact) {
+                if ($contact->trashed()) {
+                    $contact->restore();
+                }
+            } else {
+                $contact = Contact::create(array_merge($validated, ['is_buildings_contact' => true]));
+            }
+
+
+            $exists = BuildingContact::where('building_id', $building->id)
+                ->where('contact_id', $contact->id)
+                ->exists();
+
+            if ($exists) {
+                return $this->error('This contact is already linked to the building.', ['errors' => 422]);
+            }
 
             BuildingContact::create([
                 'building_id' => $building->id,
                 'contact_id' => $contact->id,
             ]);
+
             return $this->success('Contact added successfully', $contact);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), ['errors' => 500]);
         }
     }
 
@@ -73,24 +89,23 @@ class BuildingContactController extends ApiController
      */
     public function update(UpdateContactRequest $request, Building $building, Contact $contact): ApiResponse
     {
-        try{
+        try {
             $buildingContact = BuildingContact::where('building_id', $building->id)
                 ->where('contact_id', $contact->id)
                 ->first();
-            if($buildingContact) {
 
-                $contact->update(array_merge(
-                    $request->validated(),
-                    ['is_buildings_contact' => true]
-                ));
+            if ($buildingContact) {
+                if ($contact->trashed()) {
+                    $contact->restore();
+                }
+
+                $contact->update(array_merge($request->validated(), ['is_buildings_contact' => true]));
                 return $this->success('Contact updated successfully', $contact);
-
             } else {
-
-                return $this->error('Building with id '. $building->id . ' does not have contact with id '. $contact->id , ['error' => 404]);
+                return $this->error('Building does not have this contact', ['errors' => 404]);
             }
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), ['error' => 500]);
+            return $this->error($e->getMessage(), ['errors' => 500]);
         }
     }
 
