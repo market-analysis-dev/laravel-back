@@ -15,6 +15,7 @@ Route::group([
     Route::get('/{land}', [LandController::class, 'show'])->name('show');
     Route::put('/{land}', [LandController::class, 'update'])->name('update');
     Route::delete('/{land}', [LandController::class, 'destroy'])->name('destroy');
+    Route::get('/type-buyer', [LandController::class, 'getLandTypeBuyer'])->name('getLandTypeBuyer');
     Route::get('/service-state', [LandController::class, 'getServiceState'])->name('getServiceState');
 });
 
