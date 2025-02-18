@@ -62,6 +62,7 @@ class BuildingService
             'developer',
             'owner',
             'buildingsAvailable',
+            'files',
         ]);
     }
 

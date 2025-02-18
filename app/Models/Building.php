@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Storage;
 
 
 /**
@@ -203,6 +205,8 @@ class Building extends Model
         'deleted_at',
     ];
 
+    protected $appends = ['files_by_type'];
+
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Region::class, 'region_id');
@@ -242,5 +246,24 @@ class Building extends Model
     public function buildingsAvailable(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(BuildingAvailable::class, 'building_id');
+    }
+
+    public function files(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
+    }
+
+
+    public function getFilesByTypeAttribute()
+    {
+        $filesByType = $this->files->groupBy('type');
+
+        $filesByType->each(function ($files) {
+            $files->each(function ($file) {
+                $file->path = env('APP_URL') . Storage::url($file->path);
+            });
+        });
+
+        return $filesByType;
     }
 }
