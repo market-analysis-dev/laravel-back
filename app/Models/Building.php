@@ -63,7 +63,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Developer $builder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingsAvailable
  * @property-read int|null $buildings_available_count
- * @property-read \App\Models\Contact|null $contact
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Developer $developer
  * @property-read \App\Models\IndustrialPark $industrialPark
@@ -86,7 +85,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereClearHeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereConstructionState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereConstructionType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereContactId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCoverage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCreatedBy($value)

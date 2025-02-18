@@ -19,17 +19,15 @@ class FileService
     {
         $result = [];
 
-        // Если $files — это одиночный файл, преобразуем его в массив
         if (!is_array($files)) {
             $files = [$files];
         }
 
         foreach ($files as $file) {
-            // Используем уже существующую логику
             $fileType = $type ?? $this->determineFileType($file->getClientOriginalName());
 
             if (!$fileType) {
-                continue; // Пропускаем недопустимые типы
+                continue;
             }
 
             $path = "public/buildings/{$buildingId}/{$fileType}/";
@@ -134,15 +132,15 @@ class FileService
 
         if (str_contains($name, 'frontpage')) {
             return 'Front Page';
-        } elseif (preg_match('/gallery[1-6]/', $name)) {
+        } elseif (preg_match('/^gallery[1-6]/', $name)) {
             return 'Gallery';
-        } elseif (str_contains($name, 'aerial')) {
+        } elseif (str_starts_with($name, 'aerial')) {
             return 'Aerial';
-        } elseif (str_contains($name, '360')) {
+        } elseif (str_starts_with($name, '360')) {
             return '360';
-        } elseif (str_contains($name, 'layout')) {
+        } elseif (str_starts_with($name, 'layout')) {
             return 'Layout';
-        } elseif (str_contains($name, 'brochure') && str_ends_with($name, '.pdf')) {
+        } elseif (str_starts_with($name, 'brochure') && str_ends_with($name, '.pdf')) {
             return 'Brochure';
         } elseif (str_ends_with($name, '.kmz')) {
             return 'KMZ';
