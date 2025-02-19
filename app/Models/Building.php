@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
