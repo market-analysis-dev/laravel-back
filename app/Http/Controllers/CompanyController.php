@@ -147,6 +147,12 @@ class CompanyController extends ApiController
                     return $this->error('Storage directory is not writable', ['code' => 500]);
                 }
 
+                \Log::info('Uploaded file', [
+                    'original_name' => $uploadedFile->getClientOriginalName(),
+                    'mime_type' => $uploadedFile->getClientMimeType(),
+                    'size' => $uploadedFile->getSize(),
+                ]);
+
                 try {
                     $filePath = $uploadedFile->store('logos', 'public');
                 } catch (\Exception $e) {
