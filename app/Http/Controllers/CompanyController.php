@@ -82,7 +82,7 @@ class CompanyController extends ApiController
      * @return ApiResponse
      * @throws \Throwable
      */
-    public function update(UpdateCompanyRequest $request, Company $company): ApiResponse
+    /*public function update(UpdateCompanyRequest $request, Company $company): ApiResponse
     {
         \DB::beginTransaction();
 
@@ -130,7 +130,81 @@ class CompanyController extends ApiController
 
             return $this->error($e->getMessage(), ['code' => 500]);
         }
+    }*/
+    public function update(UpdateCompanyRequest $request, Company $company): ApiResponse
+    {
+        \DB::beginTransaction();
+
+        try {
+            if ($request->hasFile('logo')) {
+                $uploadedFile = $request->file('logo');
+
+                if (!$uploadedFile->isValid()) {
+                    throw new \Exception('Uploaded file is not valid.');
+                }
+
+                if (!is_writable(storage_path('app/public/logos'))) {
+                    return $this->error('Storage directory is not writable', ['code' => 500]);
+                }
+
+                try {
+                    $filePath = $uploadedFile->store('logos', 'public');
+                } catch (\Exception $e) {
+                    return $this->error('File storage error: ' . $e->getMessage(), ['code' => 500]);
+                }
+
+
+                if (!$filePath) {
+                    throw new \Exception('File storage failed. Path is empty.');
+                }
+
+                $file = File::create([
+                    'path' => $filePath,
+                    'mime_type' => $uploadedFile->getClientMimeType(),
+                    'size' => $uploadedFile->getSize(),
+                    'name' => $uploadedFile->hashName(),
+                    'original_name' => $uploadedFile->getClientOriginalName(),
+                    'extension' => $uploadedFile->extension(),
+                ]);
+
+                // Delete old logo
+                if ($company->logo_id) {
+                    $oldFile = File::find($company->logo_id);
+
+                    if ($oldFile) {
+                        $company->logo_id = null;
+                        $company->save();
+                        \Storage::disk('public')->delete($oldFile->path);
+                        $oldFile->delete();
+                    }
+                }
+
+                $validatedData = $request->validated();
+                $validatedData['logo_id'] = $file->id;
+            } else {
+                $validatedData = $request->validated();
+            }
+
+            $company->update($validatedData);
+
+            \DB::commit();
+
+            return $this->success('Company updated successfully', $company);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+
+            \Log::error('File upload error:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'stack' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+
+            return $this->error('File upload failed: ' . $e->getMessage(), ['code' => 500]);
+        }
     }
+
 
 
     /**
