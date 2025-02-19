@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Developer|null $developer
@@ -41,13 +41,15 @@ class Cam extends Model
         'submarket_id',
         'cam_building_sf',
         'cam_land_sf',
-        'has_gardening_maintenance',
+        'has_cam_services',
         'has_lightning_maintenance',
         'has_park_administration',
         'storm_sewer_maintenance',
         'has_survelliance',
-        'has_management_fee ',
+        'has_management_fee',
         'currency',
+        'latitude',
+        'longitude',
         'created_by',
         'updated_by',
         'deleted_by',

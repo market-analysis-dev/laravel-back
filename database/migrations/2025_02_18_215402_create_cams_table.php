@@ -20,13 +20,15 @@ return new class extends Migration
             $table->foreignId('submarket_id')->constrained('cat_submarkets');
             $table->decimal('cam_building_sf', 5, 2);
             $table->decimal('cam_land_sf', 5, 2);
-            $table->boolean('has_gardening_maintenance')->default(false);
+            $table->boolean('has_cam_services')->default(false);
             $table->boolean('has_lightning_maintenance')->default(false);
             $table->boolean('has_park_administration')->default(false);
             $table->boolean('storm_sewer_maintenance')->default(false);
             $table->boolean('has_survelliance')->default(false);
             $table->boolean('has_management_fee')->default(false);
             $table->enum('currency', ['USD', 'MXP']);
+            $table->string('latitude', 20);
+            $table->string('longitude', 20);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
