@@ -64,7 +64,7 @@ class FileService
                 'extension' => $file->getClientOriginalExtension(),
                 'size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
-                'path' => $uploadedFile['path'],
+                'path' => str_replace('public/', '', $uploadedFile['path']),
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
                 'deleted_by' => null,
@@ -75,7 +75,7 @@ class FileService
                 'building_id' => $buildingId,
                 'type' => $uploadedFile['type'],
                 'file_id' => $fileRecord->id,
-                'path' => $uploadedFile['path'],
+                'path' => str_replace('public/', '', $uploadedFile['path']),
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
                 'deleted_by' => null,
@@ -160,6 +160,8 @@ class FileService
 
         if ($type) {
             $query->where('type', $type);
+        } else {
+            $type = $this->determineFileType($file->getClientOriginalName());
         }
 
         $files = $query->get();
@@ -174,6 +176,47 @@ class FileService
         $deletedFiles = [];
 
         foreach ($files as $file) {
+            Storage::disk('public')->delete($file->path);
+            $deletedFiles[] = [
+                'id' => $file->id,
+                'name' => $file->name,
+                'path' => $file->path,
+                'type' => $file->type,
+            ];
+            $file->delete();
+        }
+
+        return [
+            'message' => 'Files deleted successfully',
+            'deleted_files' => $deletedFiles,
+        ];
+    }
+
+    /**
+     * @param array $files
+     * @param int $buildingId
+     * @return array
+     */
+    public function deleteBuildingFilesByType(array $files, int $buildingId)
+    {
+        $query = BuildingFile::where('building_id', $buildingId);
+        $types = [];
+        foreach ($files as $file) {
+            $type = $this->determineFileType($file->getClientOriginalName());
+            $types[] = $type;
+        }
+        $query->whereIn('type', $types);
+        $result = $query->get();
+        if ($result->isEmpty()) {
+            return [
+                'message' => 'No files found for deletion',
+                'deleted_files' => [],
+            ];
+        }
+
+        $deletedFiles = [];
+
+        foreach ($result as $file) {
             Storage::disk('public')->delete($file->path);
             $deletedFiles[] = [
                 'id' => $file->id,

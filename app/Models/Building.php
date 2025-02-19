@@ -260,7 +260,7 @@ class Building extends Model
 
         $filesByType->each(function ($files) {
             $files->each(function ($file) {
-                $file->path = env('APP_URL') . Storage::url($file->path);
+            $file->path = Storage::disk('public')->url($file->path);
             });
         });
 
