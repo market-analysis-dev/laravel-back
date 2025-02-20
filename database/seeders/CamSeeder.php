@@ -48,7 +48,7 @@ class CamSeeder extends Seeder
                     'developer_id' => $developer->id ?? null,
                     'region_id' => $region->id ?? null,
                     'market_id' => $market->id ?? null,
-                    'submarket_id' => $submarket->id ?? null,
+                    'sub_market_id' => $submarket->id ?? null,
                     'cam_building_sf' => $row[7] ?? null,
                     'cam_land_sf' => $row[8] ?? null,
                     'has_cam_services' => $row[9] ?? null,

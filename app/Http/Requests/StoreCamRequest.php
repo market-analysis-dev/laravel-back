@@ -26,7 +26,7 @@ class StoreCamRequest extends FormRequest
             'developer_id' => ['required', 'exists:cat_developers,id'],
             'region_id' => ['required', 'exists:cat_regions,id'],
             'market_id' => ['required', 'exists:cat_markets,id'],
-            'submarket_id' => ['required', 'exists:cat_submarkets,id'],
+            'sub_market_id' => ['required', 'exists:cat_submarkets,id'],
             'cam_building_sf' => ['required', 'numeric', 'between:0,999.99'],
             'cam_land_sf' => ['required', 'numeric', 'between:0,999.99'],
             'has_cam_services' => ['required', 'boolean'],
