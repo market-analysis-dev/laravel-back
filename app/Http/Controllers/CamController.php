@@ -50,7 +50,7 @@ class CamController extends ApiController
                 return $this->success('Cam updated successfully', $cam);
             }
 
-            return $this->error('Cam update failed', status:423);
+            return $this->error('Cam update failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }
@@ -66,7 +66,7 @@ class CamController extends ApiController
             if ($cam->delete()) {
                 return $this->success('Cam deleted successfully', $cam);
             }
-            return $this->error('Cam delete failed', status:423);
+            return $this->error('Cam delete failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }

@@ -49,7 +49,7 @@ class ReitTypeController extends ApiController
             if($reitType->update($request->validated())) {
                 return $this->success('Reit type updated successfully', $reitType);
             }
-            return  $this->error('Reit type updated field', status: 423);
+            return  $this->error('Reit type updated field', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
@@ -65,7 +65,7 @@ class ReitTypeController extends ApiController
             if($reitType->delete()) {
                 return $this->success('Reit type deleted successfully', $reitType);
             }
-            return $this->error('Reit type deleted filed', status: 423);
+            return $this->error('Reit type deleted filed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }

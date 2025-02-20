@@ -49,7 +49,7 @@ class ReitAnnualController extends ApiController
             if($reitAnnual->update($request->validated())) {
                 return $this->success('Reit annual updated successfully', $reitAnnual);
             }
-            return  $this->error('Reit annual updated field', status: 423);
+            return  $this->error('Reit annual updated field', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
@@ -65,7 +65,7 @@ class ReitAnnualController extends ApiController
             if($reitAnnual->delete()) {
                 return $this->success('Reit annual deleted successfully', $reitAnnual);
             }
-            return $this->error('Reit annual deleted filed', status: 423);
+            return $this->error('Reit annual deleted filed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }

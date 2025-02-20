@@ -116,7 +116,7 @@ class LandAbsorptionController extends ApiController
             if ($landAbsorption->delete()) {
                 return $this->success('Land Absorption deleted successfully', $landAbsorption);
             }
-            return $this->error('Land Absorption delete failed', 423);
+            return $this->error('Land Absorption delete failed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }

@@ -28,10 +28,7 @@ class CamSeeder extends Seeder
         $id = 1;
 
         while (($row = fgetcsv($file)) !== false) {
-
-            if (count($row) !== $expectedColumnCount) {
-                continue;
-            }
+            $row = array_pad($row, $expectedColumnCount, null);
 
             $industrial_park = IndustrialPark::where('name', $row[1])->first();
             $developer = Developer::where('name', $row[2])->first();
@@ -45,7 +42,6 @@ class CamSeeder extends Seeder
                 $currency = 'USD';
             }
 
-            if ($industrial_park && $developer && $region && $market && $submarket && $currency) {
                 $data[] = [
                     'id' => $id++,
                     'industrial_park_id' => $industrial_park->id ?? null,
@@ -53,19 +49,18 @@ class CamSeeder extends Seeder
                     'region_id' => $region->id ?? null,
                     'market_id' => $market->id ?? null,
                     'submarket_id' => $submarket->id ?? null,
-                    'cam_building_sf' => $row[7],
-                    'cam_land_sf' => $row[8],
-                    'has_cam_services' => $row[9],
-                    'has_lightning_maintenance' => $row[10],
-                    'has_park_administration' => $row[11],
-                    'storm_sewer_maintenance' => $row[12],
-                    'has_survelliance' => $row[13],
-                    'has_management_fee' => $row[14],
-                    'currency' => $currency,
-                    'latitude' => $row[15],
-                    'longitude' => $row[16],
+                    'cam_building_sf' => $row[7] ?? null,
+                    'cam_land_sf' => $row[8] ?? null,
+                    'has_cam_services' => $row[9] ?? null,
+                    'has_lightning_maintenance' => $row[10] ?? null,
+                    'has_park_administration' => $row[11] ?? null,
+                    'storm_sewer_maintenance' => $row[12] ?? null,
+                    'has_survelliance' => $row[13] ?? null,
+                    'has_management_fee' => $row[14] ?? null,
+                    'currency' => $currency ?? null,
+                    'latitude' => $row[15] ?? null,
+                    'longitude' => $row[16] ?? null,
                 ];
-            }
         }
 
         fclose($file);

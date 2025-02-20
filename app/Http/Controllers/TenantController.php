@@ -51,7 +51,7 @@ class TenantController extends ApiController
                 return $this->success('Tenant updated successfully', $tenant);
             }
 
-            return $this->error('Tenant update failed', status:423);
+            return $this->error('Tenant update failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }
@@ -68,7 +68,7 @@ class TenantController extends ApiController
             if ($tenant->delete()) {
                 return $this->success('Tenant deleted successfully', $tenant);
             }
-            return $this->error('Tenant delete failed', status:423);
+            return $this->error('Tenant delete failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }

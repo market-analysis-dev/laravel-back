@@ -64,7 +64,7 @@ class LandController extends ApiController
             if($land->update($request->validated())) {
                 return $this->success('Land updated successfully', $land);
             }
-            return $this->error('Land update field', status: 423);
+            return $this->error('Land update field', status: 422);
 
         }catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
@@ -81,7 +81,7 @@ class LandController extends ApiController
             if($land->delete()) {
                 return $this->success('Land deleted successfully', $land);
             }
-            return $this->error('Land delete field', status: 423);
+            return $this->error('Land delete field', status: 422);
 
         }catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);

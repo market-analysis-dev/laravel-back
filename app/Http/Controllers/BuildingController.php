@@ -151,8 +151,8 @@ class BuildingController extends ApiController
             if ($building->delete()) {
                 return $this->success('Building deleted successfully', $building);
             }
-            // return $this->error('Building delete failed', ['error_code' => 423]);
-            return $this->error('Building delete failed', status:423);
+            // return $this->error('Building delete failed', ['error_code' => 422]);
+            return $this->error('Building delete failed', status:422);
         } catch (\Exception $e) {
             // return $this->error($e->getMessage(), ['error_code' => 500]);
             return $this->error($e->getMessage(), status:500);

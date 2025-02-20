@@ -73,7 +73,7 @@ class UserController extends ApiController
             if ($user->delete()) {
                 return $this->success('User deleted successfully');
             }
-            return $this->error('User delete failed', status: 423);
+            return $this->error('User delete failed', status: 422);
 
         } catch (\Exception $e) {
             return $this->error('Error deleting user: ' . $e->getMessage(), status: 500);
