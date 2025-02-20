@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $market_id
- * @property int $submarket_id
+ * @property int $sub_market_id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -50,7 +50,7 @@ class IndustrialPark extends Model
     protected $fillable = [
         'name',
         'market_id',
-        'submarket_id',
+        'sub_market_id',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -66,7 +66,7 @@ class IndustrialPark extends Model
 
     public function subMarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(SubMarket::class, 'submarket_id');
+        return $this->belongsTo(SubMarket::class, 'sub_market_id');
     }
 
     public function createdBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo

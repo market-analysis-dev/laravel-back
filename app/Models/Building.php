@@ -16,7 +16,7 @@ use Storage;
  * @property int $id
  * @property int $region_id
  * @property int $market_id
- * @property int $submarket_id
+ * @property int $sub_market_id
  * @property int $builder_id
  * @property int $industrial_park_id
  * @property int $developer_id
@@ -158,7 +158,7 @@ class Building extends Model
     protected $fillable = [
         'region_id',
         'market_id',
-        'submarket_id',
+        'sub_market_id',
         'builder_id',
         'industrial_park_id',
         'developer_id',
@@ -219,7 +219,7 @@ class Building extends Model
 
     public function subMarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(SubMarket::class, 'submarket_id');
+        return $this->belongsTo(SubMarket::class, 'sub_market_id');
     }
 
     public function builder(): \Illuminate\Database\Eloquent\Relations\BelongsTo

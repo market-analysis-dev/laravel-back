@@ -26,7 +26,7 @@ class IndustrialParkSeeder extends Seeder
             $data[] = [
                 'name' => $row[0],
                 'market_id' => $row[1],
-                'submarket_id' => $row[2]
+                'sub_market_id' => $row[2]
             ];
         }
 

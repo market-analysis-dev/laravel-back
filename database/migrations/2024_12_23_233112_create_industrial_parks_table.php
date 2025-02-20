@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('cat_industrial_parks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('market_id')->constrained('cat_markets');
-            $table->foreignId('submarket_id')->constrained('cat_submarkets');
+            $table->foreignId('sub_market_id')->constrained('cat_submarkets');
             $table->string('name');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

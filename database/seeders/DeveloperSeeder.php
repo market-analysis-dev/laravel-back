@@ -24,20 +24,20 @@ class DeveloperSeeder extends Seeder
         $id = 1;
         while (($row = fgetcsv($file)) !== false) {
             $market_id = null;
-            $submarket_id = null;
+            $sub_market_id = null;
             $market = Market::where('name', $row[4])->first();
             $submarket = SubMarket::where('name', $row[5])->first();
             if($market) {
                 $market_id = $market->id;
             }
             if($submarket) {
-                $submarket_id = $submarket->id;
+                $sub_market_id = $submarket->id;
             }
             $data[] = [
                 'id' => $id++,
                 'name' => $row[0],
                 'market_id' => $market_id,
-                'submarket_id' => $submarket_id,
+                'sub_market_id' => $sub_market_id,
                 'is_developer' => false,
                 'is_owner' => false,
                 'is_builder' => true,

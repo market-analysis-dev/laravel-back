@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
  * @property int $is_user_owner
  * @property int|null $market_id
- * @property int|null $submarket_id
+ * @property int|null $sub_market_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereMarketId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereSubmarketId($value)
  * @property-read \App\Models\Market|null $market
@@ -62,7 +62,7 @@ class Developer extends Model
 
     protected $fillable = [
         'market_id',
-        'submarket_id',
+        'sub_market_id',
         'name',
         'is_developer',
         'is_builder',
@@ -88,7 +88,7 @@ class Developer extends Model
 
     public function submarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Submarket::class, 'submarket_id');
+        return $this->belongsTo(Submarket::class, 'sub_market_id');
     }
 
     public function scopeFilter($query, array $filters)
