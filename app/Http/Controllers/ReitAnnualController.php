@@ -15,8 +15,12 @@ class ReitAnnualController extends ApiController
      */
     public function index(): ApiResponse
     {
-        $reitsAnnual = ReitAnnual::all();
-        return $this->success(data: $reitsAnnual);
+        $reitAnnuals = ReitAnnual::reitId(request('reit_id'))
+            ->year(request('year'))
+            ->quarter(request('quarter'))
+            ->type(request('type'))
+            ->paginate(10);
+        return $this->success(data: $reitAnnuals);
     }
 
     /**
