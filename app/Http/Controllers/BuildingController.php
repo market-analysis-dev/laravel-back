@@ -119,7 +119,7 @@ class BuildingController extends ApiController
             if ($request->hasFile('files')) {
                 $type = $request->input('type');
 
-                $deletedFiles = $this->fileService->deleteBuildingFiles($building->id, $type);
+                $deletedFiles = $this->fileService->deleteBuildingFilesByType($request->file('files'), $building->id);
 
                 $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
             }
