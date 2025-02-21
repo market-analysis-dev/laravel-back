@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('region_id')->constrained('cat_regions');
             $table->foreignId('market_id')->constrained('cat_markets');
-            $table->foreignId('sub_market_id')->constrained('cat_submarkets');
+            $table->foreignId('sub_market_id')->constrained('cat_sub_markets');
             $table->foreignId('builder_id')->constrained('cat_developers');
             $table->foreignId('industrial_park_id')->constrained('cat_industrial_parks');
             $table->foreignId('developer_id')->constrained('cat_developers');

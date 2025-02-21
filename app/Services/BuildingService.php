@@ -132,7 +132,7 @@ class BuildingService
     {
         return Building::query()
             ->leftJoin('cat_markets as market', 'buildings.market_id', '=', 'market.id')
-            ->leftJoin('cat_submarkets as submarket', 'buildings.sub_market_id', '=', 'submarket.id')
+            ->leftJoin('cat_sub_markets as submarket', 'buildings.sub_market_id', '=', 'submarket.id')
             ->leftJoin('cat_industrial_parks as industrial_parks', 'buildings.industrial_park_id', '=', 'industrial_parks.id')
             ->leftJoin('buildings_available as building_av', 'building_av.building_id', '=', 'buildings.id')
             ->select([

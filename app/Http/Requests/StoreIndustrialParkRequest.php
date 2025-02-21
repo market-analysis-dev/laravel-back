@@ -24,7 +24,7 @@ class StoreIndustrialParkRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'market_id' => 'required|exists:cat_markets,id',
-            'sub_market_id' => 'required|exists:cat_submarkets,id',
+            'sub_market_id' => 'required|exists:cat_sub_markets,id',
         ];
     }
 }

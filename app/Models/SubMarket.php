@@ -46,7 +46,7 @@ class SubMarket extends Model
 {
     use HasFactory, BlameableTrait, SoftDeletes;
 
-    protected $table = 'cat_submarkets';
+    protected $table = 'cat_sub_markets';
 
     protected $fillable = [
         'name',

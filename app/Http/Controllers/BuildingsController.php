@@ -70,12 +70,12 @@ class BuildingsController
             'buildings.building_name as name1',
             'buildings.createdAt as registered',
             'cat_markets.marketName as market',
-            'cat_submarkets.subMarketName as subMarket',
+            'cat_sub_markets.subMarketName as subMarket',
             'buildings_cat_states.buildingStateName as status',
             'cat_industrial_park.industrialParkName as industrialPark'
         )
         ->leftJoin('cat_markets', 'buildings.market_id', '=', 'cat_markets.id')
-        ->leftJoin('cat_submarkets', 'buildings.sub_market_id', '=', 'cat_submarkets.id')
+        ->leftJoin('cat_sub_markets', 'buildings.sub_market_id', '=', 'cat_sub_markets.id')
         ->leftJoin('cat_industrial_park', 'buildings.industrial_park_id', '=', 'cat_industrial_park.id')
         ->leftJoin('buildings_cat_states', 'buildings.builder_state_id', '=', 'buildings_cat_states.id')
         ->where('buildings.status', 'Activo')
@@ -92,12 +92,12 @@ class BuildingsController
             'buildings.building_name as name1',
             'buildings.createdAt as registered',
             'cat_markets.marketName as market',
-            'cat_submarkets.subMarketName as subMarket',
+            'cat_sub_markets.subMarketName as subMarket',
             'buildings_cat_states.buildingStateName as status',
             'cat_industrial_park.industrialParkName as industrialPark'
         )
         ->leftJoin('cat_markets', 'buildings.market_id', '=', 'cat_markets.id')
-        ->leftJoin('cat_submarkets', 'buildings.sub_market_id', '=', 'cat_submarkets.id')
+        ->leftJoin('cat_sub_markets', 'buildings.sub_market_id', '=', 'cat_sub_markets.id')
         ->leftJoin('cat_industrial_park', 'buildings.industrial_park_id', '=', 'cat_industrial_park.id')
         ->leftJoin('buildings_cat_states', 'buildings.builder_state_id', '=', 'buildings_cat_states.id')
         ->where('vo_bo', '0')
