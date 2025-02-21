@@ -22,8 +22,8 @@ class IndustrialParkController extends ApiController
             $query->where('market_id', $request->input('market_id'));
         }
 
-        if ($request->has('submarket_id')) {
-            $query->where('submarket_id', $request->input('submarket_id'));
+        if ($request->has('sub_market_id')) {
+            $query->where('sub_market_id', $request->input('sub_market_id'));
         }
 
         $industrialParks = $query->get();

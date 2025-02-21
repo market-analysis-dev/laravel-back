@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cat_developers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('market_id')->nullable()->constrained('cat_markets');
-            $table->foreignId('submarket_id')->nullable()->constrained('cat_submarkets');
+            $table->foreignId('sub_market_id')->nullable()->constrained('cat_sub_markets');
             $table->string('name', 100);
             $table->boolean('is_developer')->default(0);
             $table->boolean('is_builder')->default(0);
