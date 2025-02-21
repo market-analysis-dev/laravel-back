@@ -17,14 +17,14 @@ return new class extends Migration
             $table->foreignId('developer_id')->nullable()->constrained('cat_developers');
             $table->foreignId('region_id')->nullable()->constrained('cat_regions');
             $table->foreignId('market_id')->nullable()->constrained('cat_markets');
-            $table->foreignId('sub_market_id')->nullable()->constrained('cat_submarkets');
+            $table->foreignId('sub_market_id')->nullable()->constrained('cat_sub_markets');
             $table->decimal('cam_building_sf', 5, 2)->nullable();
             $table->decimal('cam_land_sf', 5, 2)->nullable();
             $table->boolean('has_cam_services')->default(false);
             $table->boolean('has_lightning_maintenance')->default(false);
             $table->boolean('has_park_administration')->default(false);
             $table->boolean('storm_sewer_maintenance')->default(false);
-            $table->boolean('has_survelliance')->default(false);
+            $table->boolean('has_surveillance')->default(false);
             $table->boolean('has_management_fee')->default(false);
             $table->enum('currency', ['USD', 'MXP'])->nullable();
             $table->string('latitude', 20)->nullable();

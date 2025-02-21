@@ -55,7 +55,7 @@ class CamSeeder extends Seeder
                     'has_lightning_maintenance' => $row[10] ?? null,
                     'has_park_administration' => $row[11] ?? null,
                     'storm_sewer_maintenance' => $row[12] ?? null,
-                    'has_survelliance' => $row[13] ?? null,
+                    'has_surveillance' => $row[13] ?? null,
                     'has_management_fee' => $row[14] ?? null,
                     'currency' => $currency ?? null,
                     'latitude' => $row[15] ?? null,

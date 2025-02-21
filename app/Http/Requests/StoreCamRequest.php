@@ -33,7 +33,7 @@ class StoreCamRequest extends FormRequest
             'has_lightning_maintenance' => ['required', 'boolean'],
             'has_park_administration' => ['required', 'boolean'],
             'storm_sewer_maintenance' => ['required', 'boolean'],
-            'has_survelliance' => ['required', 'boolean'],
+            'has_surveillance' => ['required', 'boolean'],
             'has_management_fee' => ['required', 'boolean'],
             'currency' => ['required', 'in:USD,MXP'],
             'latitude'=> ['required', 'string', 'max:20'],
