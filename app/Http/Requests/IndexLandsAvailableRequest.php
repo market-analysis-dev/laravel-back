@@ -30,7 +30,7 @@ class IndexLandsAvailableRequest extends FormRequest
             'land_condition' => 'nullable|in:Fully Developed,Undeveloped',
             'avl_size_ha' => 'nullable|integer',
             'avl_broker_id' => 'nullable|integer',
-            'avl_deal' => 'required|in:Lease,Sale',
+            'avl_deal' => 'nullable|in:Lease,Sale',
             'avl_minimum' => 'nullable|integer',
 
             'column' => 'nullable|in:state,land_condition,avl_size_ha,avl_broker_id,avl_deal,avl_minimum',

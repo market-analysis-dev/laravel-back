@@ -88,7 +88,7 @@ class Developer extends Model
 
     public function submarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Submarket::class, 'sub_market_id');
+        return $this->belongsTo(SubMarket::class, 'sub_market_id');
     }
 
     public function scopeFilter($query, array $filters)
