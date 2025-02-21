@@ -163,7 +163,7 @@ class BuildingsAvailableController extends ApiController
             if ($buildingAvailable->delete()) {
                 return $this->success('Building Available deleted successfully', $buildingAvailable);
             }
-            return $this->error('Building Available delete failed', ['error_code' => 423]);
+            return $this->error('Building Available delete failed', ['error_code' => 422]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), ['error_code' => 500]);
         }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cam;
 use App\Models\Role;
 use App\Models\User;
 // use App\Models\User;
@@ -37,6 +38,7 @@ class DatabaseSeeder extends Seeder
             ReitTypeSeeder::class,
             ReitSeeder::class,
             ModuleSeeder::class,
+            CamSeeder::class,
         ]);
     }
 }

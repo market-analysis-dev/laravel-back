@@ -11,7 +11,7 @@ use Storage;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id

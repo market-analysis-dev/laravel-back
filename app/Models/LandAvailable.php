@@ -132,6 +132,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereSewage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereWater($value)
+ * @property-read \App\Models\Industry|null $absIndustry
  * @mixin \Eloquent
  */
 class LandAvailable extends Model

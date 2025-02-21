@@ -216,7 +216,7 @@ class BuildingsAbsorptionController extends ApiController
             if ($buildingAbsorption->delete()) {
                 return $this->success('Building Absorption deleted successfully', $buildingAbsorption);
             }
-            return $this->error('Building Absorption delete failed', 423);
+            return $this->error('Building Absorption delete failed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }

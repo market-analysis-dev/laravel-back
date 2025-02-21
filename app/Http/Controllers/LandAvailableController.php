@@ -121,7 +121,7 @@ class LandAvailableController extends ApiController
             if ($landAvailable->delete()) {
                 return $this->success('Land Available deleted successfully', $landAvailable);
             }
-            return $this->error('Land Available delete failed', 423);
+            return $this->error('Land Available delete failed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }

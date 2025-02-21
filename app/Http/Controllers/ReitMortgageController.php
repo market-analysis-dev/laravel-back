@@ -49,7 +49,7 @@ class ReitMortgageController extends ApiController
             if($reitMortgage->update($request->validated())) {
                 return $this->success('Reit Mortgage updated successfully', $reitMortgage);
             }
-            return $this->error('Reit Mortgage updated field', status: 423);
+            return $this->error('Reit Mortgage updated field', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
@@ -65,7 +65,7 @@ class ReitMortgageController extends ApiController
             if($reitMortgage->delete()) {
                 return $this->success('Reit Mortgage deleted successfully', $reitMortgage);
             }
-            return $this->error('Reit Mortgage deleted field', status: 423);
+            return $this->error('Reit Mortgage deleted field', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
