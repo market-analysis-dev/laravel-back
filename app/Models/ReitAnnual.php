@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $reit_id
@@ -98,4 +98,24 @@ class ReitAnnual extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function scopeReitId($query, $reitId)
+    {
+        return $reitId ? $query->where('reit_id', $reitId) : $query;
+    }
+
+    public function scopeYear($query, $year)
+    {
+        return $year ? $query->where('year', $year) : $query;
+    }
+
+    public function scopeQuarter($query, $quarter)
+    {
+        return $quarter ? $query->where('quarter', $quarter) : $query;
+    }
+
+    public function scopeType($query, $type)
+    {
+        return $type ? $query->where('type', $type) : $query;
+    }
 }
