@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    
+
     public function up()
     {
         Schema::create('submodules', function (Blueprint $table) {
@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('module_id')->constrained('modules');
             $table->foreignId('market_id')->constrained('cat_markets');
-            $table->foreignId('submarket_id')->constrained('cat_submarkets');
+            $table->foreignId('sub_market_id')->constrained('cat_sub_markets');
             $table->integer('year')->nullable();
             $table->string('quarter')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
