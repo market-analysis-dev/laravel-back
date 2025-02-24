@@ -99,6 +99,11 @@ class ReitAnnual extends Model
         'deleted_at',
     ];
 
+    public function reit()
+    {
+        return $this->belongsTo(Reit::class, 'reit_id');
+    }
+
     public function scopeReitId($query, $reitId)
     {
         return $reitId ? $query->where('reit_id', $reitId) : $query;
@@ -117,5 +122,58 @@ class ReitAnnual extends Model
     public function scopeType($query, $type)
     {
         return $type ? $query->where('type', $type) : $query;
+    }
+
+    public function scopeNoi($query, $noi)
+    {
+        return $noi ? $query->where('noi', $noi) : $query;
+    }
+
+    public function scopeCapRate($query, $capRate)
+    {
+        return $capRate ? $query->where('cap_rate', $capRate) : $query;
+    }
+
+    public function scopeOccupancy($query, $occupancy)
+    {
+        return $occupancy ? $query->where('occupancy', $occupancy) : $query;
+    }
+
+    public function scopeSqft($query, $sqft)
+    {
+        return $sqft ? $query->where('sqft', $sqft) : $query;
+    }
+
+    public function scopeReitName($query, $reitName)
+    {
+        return $reitName
+        ? $query->whereHas('reit', function ($query) use ($reitName) {
+                $query->where('name', 'like', "%{$reitName}%");
+            })
+        : $query;
+    }
+
+    public static function filter(array $validated): mixed
+    {
+        $size = $validated['size'] ?? 10;
+        $order = $validated['column'] ?? 'id';
+        $direction = $validated['state'] ?? 'desc';
+
+        return ReitAnnual::with(['reit'])
+        ->leftJoin('cat_reits', 'cat_reits.id', '=', 'reit_annuals.reit_id')
+        ->select('reit_annuals.*', 'cat_reits.name AS reitName')
+        ->reitId(request('reit_id'))
+        ->reitName(request('reitName'))
+        ->year(request('year'))
+        ->quarter(request('quarter'))
+        ->type(request('type'))
+
+        ->noi(request('noi'))
+        ->capRate(request('cap_rate'))
+        ->occupancy(request('occupancy'))
+        ->sqft(request('sqft'))
+
+        ->orderBy($order, $direction)
+        ->paginate($size);
     }
 }

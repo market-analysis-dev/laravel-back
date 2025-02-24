@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexReitAnnualRequest;
 use App\Http\Requests\StoreReitAnnualRequest;
 use App\Http\Requests\UpdateReitAnnualRequest;
 use App\Models\ReitAnnual;
-use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 
 class ReitAnnualController extends ApiController
@@ -13,13 +13,9 @@ class ReitAnnualController extends ApiController
     /**
      * @return ApiResponse
      */
-    public function index(): ApiResponse
+    public function index(IndexReitAnnualRequest $request): ApiResponse
     {
-        $reitAnnuals = ReitAnnual::reitId(request('reit_id'))
-            ->year(request('year'))
-            ->quarter(request('quarter'))
-            ->type(request('type'))
-            ->paginate(10);
+        $reitAnnuals = ReitAnnual::filter($request->validated());
         return $this->success(data: $reitAnnuals);
     }
 

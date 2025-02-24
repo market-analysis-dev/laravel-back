@@ -39,12 +39,6 @@ class BuildingController extends ApiController
     public function index(IndexBuildingRequest $request): ApiResponse
     {
         $buildings = $this->buildingService->filter($request->validated());
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
-        if (!empty($building->above_market_tis)) {
-            $building->above_market_tis = explode(',', $building->above_market_tis);
-        }
         return $this->success(data: $buildings);
     }
 

@@ -7,6 +7,52 @@ use App\Enums\BuildingState;
 
 class BuildingsAvailableService
 {
+    public function filterAbsorption(array $validated, int $buildingId)
+    {
+        $size = $validated['size'] ?? 10;
+        $order = $validated['column'] ?? 'id';
+        $direction = $validated['state'] ?? 'desc';
+
+        return BuildingAvailable::with(['tenant', 'industry'])
+        ->leftJoin('cat_tenants', 'cat_tenants.id', '=', 'buildings_available.abs_tenant_id')
+        ->leftJoin('cat_industries', 'cat_industries.id', '=', 'buildings_available.abs_industry_id')
+        ->select('buildings_available.*', 'cat_tenants.name AS tenantName', 'cat_industries.name AS industryName')
+        ->where('building_id', $buildingId)
+        ->where('building_state', '=', BuildingState::ABSORPTION->value)
+        ->when($validated['search'] ?? false, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('abs_lease_term_month', 'like', "%{$search}%")
+                    ->orWhere('abs_closing_date', 'like', "%{$search}%")
+                    ->orWhere('abs_sale_price', 'like', "%{$search}%")
+                    ->orWhere('abs_final_use', 'like', "%{$search}%");
+            });
+        })
+        ->when($validated['abs_lease_term_month'] ?? false, function ($query, $abs_lease_term_month) {
+            $query->where('abs_lease_term_month', 'like', "%{$abs_lease_term_month}%");
+        })
+        ->when($validated['abs_closing_date'] ?? false, function ($query, $abs_closing_date) {
+            $query->where('abs_closing_date', 'like', "%{$abs_closing_date}%");
+        })
+        ->when($validated['abs_final_use'] ?? false, function ($query, $abs_final_use) {
+            $query->where('abs_final_use', 'like', "%{$abs_final_use}%");
+        })
+        ->when($validated['abs_sale_price'] ?? false, function ($query, $abs_sale_price) {
+            $query->where('abs_sale_price', 'like', "%{$abs_sale_price}%");
+        })
+        ->when($validated['tenantName'] ?? false, function ($query, $tenantName) {
+            $query->whereHas('tenant', function ($query) use ($tenantName) {
+                $query->where('name', 'like', "%{$tenantName}%");
+            });
+        })
+        ->when($validated['industryName'] ?? false, function ($query, $industryName) {
+            $query->whereHas('industry', function ($query) use ($industryName) {
+                $query->where('name', 'like', "%{$industryName}%");
+            });
+        })
+        ->orderBy($order, $direction)
+        ->paginate($size);
+    }
+
     /**
      * Create a new class instance.
      */
