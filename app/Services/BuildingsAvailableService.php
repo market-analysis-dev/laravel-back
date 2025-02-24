@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\BuildingAvailable;
 use App\Enums\BuildingState;
+use App\Enums\BuildingPhase;
 
 class BuildingsAvailableService
 {
@@ -95,6 +96,9 @@ class BuildingsAvailableService
             ];
         }
 
+        $isNegativeAbsorption = $this->isNegativeAbsorption($buildingAvailable->avl_building_phase, $validatedData['abs_building_phase']);
+
+        $validatedData['is_negative_absorption'] = $isNegativeAbsorption;
         $validatedData['building_state'] = 'Absorption';
 
         $buildingAvailable->update($validatedData);
@@ -105,17 +109,33 @@ class BuildingsAvailableService
         ];
     }
 
+    /**
+     * @param array $validated
+     * @return BuildingAvailable
+     */
     public function create(array $validated): BuildingAvailable
     {
+        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_building_phase'] == BuildingPhase::INVENTORY->value) {
+            $validated['is_negative_absorption'] = true;
+    }
         return BuildingAvailable::create($validated);
     }
 
+    /**
+     * @param BuildingAvailable $buildingAvailable
+     * @param array $validated
+     * @return BuildingAvailable
+     */
     public function update(BuildingAvailable $buildingAvailable, array $validated): BuildingAvailable
     {
         $buildingAvailable->update($validated);
         return $buildingAvailable;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function convertMetrics(array $data): array
     {
         if (isset($data['size_sf'])) {
@@ -149,26 +169,55 @@ class BuildingsAvailableService
         return $data;
     }
 
+    /**
+     * @param float $m2
+     * @return int
+     */
     public function convertM2ToSqFt(float $m2): int
     {
         return (int) round($m2 * 10.764);
     }
 
+    /**
+     * @param float $m
+     * @return int
+     */
     public function convertMToFt(float $m): int
     {
         return (int) round($m * 3.281);
     }
 
+    /**
+     * @param float $usdM2
+     * @return int
+     */
     public function convertUsdM2ToUsdSqft(float $usdM2): int
     {
         return (int) round($usdM2 / 10.764);
     }
 
+    /**
+     * @param string $spacing
+     * @return string
+     */
     public function convertColumnsSpacingToFt(string $spacing): string
     {
         $parts = explode('x', $spacing);
         $convertedParts = array_map(fn($value) => $this->convertMToFt((float) $value), $parts);
         return implode('x', $convertedParts);
+    }
+
+    /**
+     * @param string $avlBuildingPhase
+     * @param string $absBuildingPhase
+     * @return bool
+     */
+    public function isNegativeAbsorption(string $avlBuildingPhase, string $absBuildingPhase): bool
+    {
+        if (in_array($avlBuildingPhase, [BuildingPhase::CONSTRUCTION->value, BuildingPhase::EXPIRATION->value]) && $absBuildingPhase == BuildingPhase::INVENTORY->value) {
+            return true;
+        }
+        return false;
     }
 
 
