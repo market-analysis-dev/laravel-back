@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'companies',
-    'as' => 'api.companies',
+    'as' => 'api.companies.',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/', [CompanyController::class, 'index'])->name('index');

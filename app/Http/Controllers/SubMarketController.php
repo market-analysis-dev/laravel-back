@@ -5,9 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\SubMarket;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class SubMarketController extends ApiController
+class SubMarketController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:submarkets.index', only: ['index']),
+        ];
+    }
+
     /**
      * @param Request $request
      * @return ApiResponse

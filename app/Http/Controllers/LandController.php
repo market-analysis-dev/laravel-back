@@ -13,9 +13,26 @@ use App\Enums\LandParcelShape;
 use App\Enums\LandZoning;
 use App\Enums\LandsTypeBuyer;
 use App\Enums\LandsServiceState;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class LandController extends ApiController
+class LandController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:lands.index', only: ['index']),
+            new Middleware('permission:lands.show', only: ['show']),
+            new Middleware('permission:lands.create', only: ['store']),
+            new Middleware('permission:lands.update', only: ['update']),
+            new Middleware('permission:lands.destroy', only: ['destroy']),
+            new Middleware('permission:lands.listParcelShape', only: ['listParcelShape']),
+            new Middleware('permission:lands.listZoning', only: ['listZoning']),
+            new Middleware('permission:lands.getLandTypeBuyer', only: ['getLandTypeBuyer']),
+            new Middleware('permission:lands.getServiceState', only: ['getServiceState']),
+        ];
+    }
+
     private LandService $landService;
 
     public function __construct(LandService $landService)

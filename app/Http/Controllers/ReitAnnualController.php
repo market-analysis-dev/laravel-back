@@ -7,9 +7,22 @@ use App\Http\Requests\UpdateReitAnnualRequest;
 use App\Models\ReitAnnual;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ReitAnnualController extends ApiController
+class ReitAnnualController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:reit-annual.index', only: ['index']),
+            new Middleware('permission:reit-annual.show', only: ['show']),
+            new Middleware('permission:reit-annual.create', only: ['store']),
+            new Middleware('permission:reit-annual.update', only: ['update']),
+            new Middleware('permission:reit-annual.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */

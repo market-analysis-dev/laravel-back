@@ -7,9 +7,22 @@ use App\Http\Requests\UpdateTenantRequest;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Models\Tenant;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TenantController extends ApiController
+class TenantController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:tenants.index', only: ['index']),
+            new Middleware('permission:tenants.show', only: ['show']),
+            new Middleware('permission:tenants.create', only: ['store']),
+            new Middleware('permission:tenants.update', only: ['update']),
+            new Middleware('permission:tenants.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */

@@ -7,9 +7,22 @@ use App\Responses\ApiResponse;
 use App\Models\Broker;
 use App\Http\Requests\StoreBrokerRequest;
 use App\Http\Requests\UpdateBrokerRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BrokerController extends ApiController
+class BrokerController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:brokers.index', only: ['index']),
+            new Middleware('permission:brokers.show', only: ['show']),
+            new Middleware('permission:brokers.create', only: ['store']),
+            new Middleware('permission:brokers.update', only: ['update']),
+            new Middleware('permission:brokers.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
