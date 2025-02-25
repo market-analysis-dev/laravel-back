@@ -29,6 +29,7 @@ class UpdateBuildingRequest extends FormRequest
             'industrial_park_id' => 'required|integer|exists:cat_industrial_parks,id',
             'developer_id' => 'required|integer|exists:cat_developers,id',
             'owner_id' => 'required|integer|exists:cat_developers,id',
+            'building_id' => 'nullable|integer|exists:buildings,id',
             'building_name' => 'required|string|max:255',
             'building_size_sf' => 'required|integer',
             'latitud' => 'required|string|max:45',
@@ -81,7 +82,7 @@ class UpdateBuildingRequest extends FormRequest
                     }
                 }
             ],
-            'status' => 'required|in:Active,Inactive,Pending,Approved',
+            'status' => 'required|in:Active,Inactive,Pending,Draft',
             'columns_spacing_ft' => 'string|max:20',
             'bay_size' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',

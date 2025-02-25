@@ -11,7 +11,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -163,6 +163,7 @@ class Building extends Model
         'industrial_park_id',
         'developer_id',
         'owner_id',
+        'building_id',
         'building_name',
         'building_size_sf',
         'latitud',
@@ -240,6 +241,11 @@ class Building extends Model
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Developer::class, 'owner_id');
+    }
+
+    public function building(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Building::class, 'building_id');
     }
 
 

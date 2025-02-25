@@ -17,6 +17,7 @@ use App\Enums\BuildingCompanyType;
 use App\Enums\BuildingFinalUse;
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\StoreBuildingRequest;
+use App\Http\Requests\UpdateBuildingDraftRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
 use App\Services\BuildingService;
@@ -291,4 +292,81 @@ class BuildingController extends ApiController
             ['Content-Type' => 'application/pdf']
         );
     }
+
+    public function draft(Building $building): ApiResponse
+    {
+        $existingDraft = Building::where('building_id', $building->id)
+            ->where('status', 'Draft')
+            ->first();
+
+        if ($existingDraft) {
+            return $this->error('Draft already exists for this building.', status: 400);
+        }
+
+        $draft = $building->replicate();
+        $draft->status = 'Draft';
+        $draft->building_id = $building->id;
+        $draft->save();
+
+        return $this->success('Draft created successfully.', data: $draft);
+    }
+
+    public function getDraft(Building $building): ApiResponse
+    {
+        $draft = Building::where('building_id', $building->id)
+            ->where('status', 'Draft')
+            ->first();
+        if (!$draft) {
+            return $this->error(message: 'Draft not found.', status: 404);
+        }
+        return $this->success(data: $draft);
+    }
+
+    public function updateDraft(UpdateBuildingDraftRequest $request, Building $building): ApiResponse
+    {
+
+        $draft = Building::where('building_id', $building->id)
+            ->where('status', 'Draft')
+            ->first();
+
+        if (!$draft) {
+            return $this->error('Draft not found.', status: 404);
+        }
+
+        $validated = $request->validated();
+        if ($validated['sqftToM2'] ?? false) {
+            $validated = $this->buildingService->convertMetrics($validated);
+        }
+
+        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+        }
+        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+        }
+
+        if (isset($validated['status']) && $validated['status'] === 'Active') {
+            $building->update($validated);
+            $draft->delete();
+
+            return $this->success(message: 'Draft activated and applied to the original building.', data: $building);
+        }
+
+        $draft->update($validated);
+
+        return $this->success(message: 'Draft updated successfully.', data: $draft);
+    }
+
+    public function deleteDraft(Building $building): ApiResponse
+    {
+        $draft = Building::where('building_id', $building->id)
+            ->where('status', 'Draft')
+            ->first();
+        if (!$draft) {
+            return $this->error(message: 'Draft not found.', status: 404);
+        }
+        $draft->delete();
+        return $this->success(message: 'Draft deleted successfully.', data: $draft);
+    }
+
 }
