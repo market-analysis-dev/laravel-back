@@ -293,8 +293,15 @@ class BuildingController extends ApiController
         );
     }
 
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
     public function draft(Building $building): ApiResponse
     {
+        if ($building->status === 'Draft') {
+            return $this->error('Cannot create a draft from another draft.', status: 400);
+        }
         $existingDraft = Building::where('building_id', $building->id)
             ->where('status', 'Draft')
             ->first();
@@ -311,6 +318,10 @@ class BuildingController extends ApiController
         return $this->success('Draft created successfully.', data: $draft);
     }
 
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
     public function getDraft(Building $building): ApiResponse
     {
         $draft = Building::where('building_id', $building->id)
@@ -322,6 +333,11 @@ class BuildingController extends ApiController
         return $this->success(data: $draft);
     }
 
+    /**
+     * @param UpdateBuildingDraftRequest $request
+     * @param Building $building
+     * @return ApiResponse
+     */
     public function updateDraft(UpdateBuildingDraftRequest $request, Building $building): ApiResponse
     {
 
@@ -349,7 +365,7 @@ class BuildingController extends ApiController
             $building->update($validated);
             $draft->delete();
 
-            return $this->success(message: 'Draft activated and applied to the original building.', data: $building);
+            return $this->success(message: 'Draft deleted and applied to the original building.', data: $building);
         }
 
         $draft->update($validated);
@@ -357,6 +373,10 @@ class BuildingController extends ApiController
         return $this->success(message: 'Draft updated successfully.', data: $draft);
     }
 
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
     public function deleteDraft(Building $building): ApiResponse
     {
         $draft = Building::where('building_id', $building->id)

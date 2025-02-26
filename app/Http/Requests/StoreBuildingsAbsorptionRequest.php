@@ -29,6 +29,7 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
             'broker_id' => 'required|integer|exists:cat_brokers,id',
+            'building_available_id' => 'nullable|integer|exists:buildings_available,id',
             'rams' => 'nullable|integer|min:0',
             'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
@@ -47,6 +48,7 @@ class StoreBuildingsAbsorptionRequest extends FormRequest
             'abs_building_phase' => 'required|in:BTS,Expansion,Inventory',
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
+            'status' => 'in:Active,Inactive,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => [
                 'required',

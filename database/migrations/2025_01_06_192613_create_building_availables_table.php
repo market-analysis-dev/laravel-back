@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('broker_id')->constrained('cat_brokers');
             $table->foreignId('abs_shelter_id')->nullable()->constrained('cat_shelters');
             $table->foreignId('abs_broker_id')->nullable()->constrained('cat_brokers');
+            $table->foreignId('building_available_id')->nullable()->constrained('buildings_available', 'id');
             $table->integer('size_sf')->nullable();
             $table->string('avl_building_dimensions_ft', 45)->nullable();
             $table->integer('avl_minimum_space_sf')->nullable();
@@ -49,6 +50,7 @@ return new class extends Migration
             $table->enum('abs_deal', ['Sale', 'Lease']);
             $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
             $table->set('above_market_tis', ["HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion"])->nullable();
+            $table->enum('status', ['Active', 'Inactive', 'Draft'])->default('Active');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
