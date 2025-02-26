@@ -22,7 +22,7 @@ class StoreCamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'industrial_park_id' => ['required', 'exists:cat_industrial_parks,id'],
+            'industrial_park_id' => ['required', 'exists:industrial_parks,id'],
             'developer_id' => ['required', 'exists:cat_developers,id'],
             'region_id' => ['required', 'exists:cat_regions,id'],
             'market_id' => ['required', 'exists:cat_markets,id'],
