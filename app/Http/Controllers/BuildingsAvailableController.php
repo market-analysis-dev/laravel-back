@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ConvertToAbsorptionRequest;
 use App\Http\Requests\IndexBuildingsAvailableRequest;
 use App\Http\Requests\StoreBuildingsAvailableRequest;
+use App\Http\Requests\UpdateBuildingAvailableDraftRequest;
 use App\Http\Requests\UpdateBuildingsAvailableRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
@@ -117,6 +118,9 @@ class BuildingsAvailableController extends ApiController
         if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
+        if ($buildingAvailable->status == "Draft") {
+            return $this->error('Building must to have status Active', ['error_code' => 403]);
+        }
 
         $validated = $request->validated();
         $validated['building_id'] = $building->id;
@@ -177,6 +181,9 @@ class BuildingsAvailableController extends ApiController
      */
     public function toAbsorption(ConvertToAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
+        if ($buildingAvailable->status === 'Draft') {
+            return $this->error('Cannot convert from one draft.', status: 400);
+        }
         $validated = $request->validated();
         if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
             $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
@@ -196,6 +203,153 @@ class BuildingsAvailableController extends ApiController
         }
 
         return $this->success(data: $result['data']);
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function draft(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+        return $this->error('Invalid building state', ['error_code' => 403]);
+    }
+        if ($buildingAvailable->status === 'Draft') {
+            return $this->error('Cannot create a draft from another draft.', status: 400);
+        }
+
+        $existingDraft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', 'Draft')
+            ->first();
+
+        if ($existingDraft) {
+            return $this->error('Draft already exists for this building.', status: 400);
+        }
+
+        $draft = $buildingAvailable->replicate();
+        $draft->status = 'Draft';
+        $draft->building_available_id = $buildingAvailable->id;
+        $draft->save();
+
+        return $this->success('Draft created successfully.', data: $draft);
+    }
+
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function getDraft(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
+
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+        return $this->error('Invalid building state', ['error_code' => 403]);
+    }
+
+        $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', 'Draft')
+            ->first();
+        if (!$draft) {
+            return $this->error(message: 'Draft not found.', status: 404);
+        }
+        if (!empty($draft->fire_protection_system)) {
+            $draft->fire_protection_system = explode(',', $draft->fire_protection_system);
+        }
+        if (!empty($draft->above_market_tis)) {
+            $draft->above_market_tis = explode(',', $draft->above_market_tis);
+        }
+        return $this->success(data: $draft);
+    }
+
+
+    /**
+     * @param UpdateBuildingAvailableDraftRequest $request
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function updateDraft(UpdateBuildingAvailableDraftRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
+
+        $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', 'Draft')
+            ->first();
+
+        if (!$draft) {
+            return $this->error('Draft not found.', status: 404);
+        }
+
+        $validated = $request->validated();
+        $validated['building_id'] = $building->id;
+        $validated['building_available_id'] = $buildingAvailable->id;
+        $validated['building_state'] = BuildingState::AVAILABILITY;
+        try {
+            if ($validated['sqftToM2'] ?? false) {
+                $validated = $this->buildingAvailableService->convertMetrics($validated);
+            }
+            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+            }
+            if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+                $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+            }
+            if (isset($validated['status']) && $validated['status'] === 'Active') {
+                $buildingAvailable->update($validated);
+                $draft->delete();
+
+                if (!empty($buildingAvailable->fire_protection_system)) {
+                    $buildingAvailable->fire_protection_system = explode(',', $buildingAvailable->fire_protection_system);
+                }
+                if (!empty($buildingAvailable->above_market_tis)) {
+                    $buildingAvailable->above_market_tis = explode(',', $buildingAvailable->above_market_tis);
+                }
+
+                return $this->success(message: 'Draft deleted and applied to the original building.', data: $buildingAvailable);
+            }
+
+            $draft->update($validated);
+
+            return $this->success(message: 'Draft updated successfully.', data: $draft);
+
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
+
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function deleteDraft(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
+
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+        return $this->error('Invalid building state', ['error_code' => 403]);
+    }
+        $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', 'Draft')
+            ->first();
+        if (!$draft) {
+            return $this->error(message: 'Draft not found.', status: 404);
+        }
+        $draft->delete();
+        return $this->success(message: 'Draft deleted successfully.', data: $draft);
     }
 
 

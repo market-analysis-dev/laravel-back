@@ -270,6 +270,9 @@ class BuildingsAbsorptionController extends ApiController
         if ($buildingAbsorption->building_id !== $building->id) {
             return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
         }
+        if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
+        return $this->error('Invalid building state', ['error_code' => 403]);
+    }
         if ($buildingAbsorption->status === 'Draft') {
             return $this->error('Cannot create a draft from another draft.', status: 400);
         }
