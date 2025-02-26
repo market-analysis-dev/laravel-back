@@ -9,9 +9,22 @@ use App\Models\BuildingContact;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BuildingContactController extends ApiController
+class BuildingContactController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:buildings.contacts.index', only: ['index']),
+            new Middleware('permission:buildings.contacts.show', only: ['show']),
+            new Middleware('permission:buildings.contacts.create', only: ['store']),
+            new Middleware('permission:buildings.contacts.update', only: ['update']),
+            new Middleware('permission:buildings.contacts.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @param Building $building
      * @return ApiResponse

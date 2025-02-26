@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'reit-annual',
-    'as' => 'api.reit-annual',
+    'as' => 'api.reit-annual.',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/', [ReitAnnualController::class, 'index'])->name('index');

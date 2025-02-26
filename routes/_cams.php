@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'cams',
-    'as' => 'api.cams',
+    'as' => 'api.cams.',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/', [CamController::class, 'index'])->name('index');

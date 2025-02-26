@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'reits',
-    'as' => 'api.reits',
+    'as' => 'api.reits.',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/', [ReitController::class, 'index'])->name('index');

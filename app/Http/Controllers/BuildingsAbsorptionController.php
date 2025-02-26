@@ -11,10 +11,24 @@ use App\Services\BuildingsAvailableService;
 use App\Responses\ApiResponse;
 use App\Enums\BuildingState;
 use App\Http\Requests\IndexBuildingsAbsorptionRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BuildingsAbsorptionController extends ApiController
+class BuildingsAbsorptionController extends ApiController implements HasMiddleware
 {
     private BuildingsAvailableService $buildingAvailableService;
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:buildings.absorption.index', only: ['index']),
+            new Middleware('permission:buildings.absorption.show', only: ['show']),
+            new Middleware('permission:buildings.absorption.create', only: ['store']),
+            new Middleware('permission:buildings.absorption.update', only: ['update']),
+            new Middleware('permission:buildings.absorption.destroy', only: ['destroy']),
+            new Middleware('permission:buildings.availability.to-available', only: ['toAvailable']),
+        ];
+    }
 
     public function __construct(BuildingsAvailableService $buildingAvailableService)
     {
