@@ -4,9 +4,56 @@ namespace App\Services;
 
 use App\Models\BuildingAvailable;
 use App\Enums\BuildingState;
+use App\Enums\BuildingPhase;
 
 class BuildingsAvailableService
 {
+    public function filterAbsorption(array $validated, int $buildingId)
+    {
+        $size = $validated['size'] ?? 10;
+        $order = $validated['column'] ?? 'id';
+        $direction = $validated['state'] ?? 'desc';
+
+        return BuildingAvailable::with(['tenant', 'industry'])
+        ->leftJoin('cat_tenants', 'cat_tenants.id', '=', 'buildings_available.abs_tenant_id')
+        ->leftJoin('cat_industries', 'cat_industries.id', '=', 'buildings_available.abs_industry_id')
+        ->select('buildings_available.*', 'cat_tenants.name AS tenantName', 'cat_industries.name AS industryName')
+        ->where('building_id', $buildingId)
+        ->where('building_state', '=', BuildingState::ABSORPTION->value)
+        ->when($validated['search'] ?? false, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('abs_lease_term_month', 'like', "%{$search}%")
+                    ->orWhere('abs_closing_date', 'like', "%{$search}%")
+                    ->orWhere('abs_sale_price', 'like', "%{$search}%")
+                    ->orWhere('abs_final_use', 'like', "%{$search}%");
+            });
+        })
+        ->when($validated['abs_lease_term_month'] ?? false, function ($query, $abs_lease_term_month) {
+            $query->where('abs_lease_term_month', 'like', "%{$abs_lease_term_month}%");
+        })
+        ->when($validated['abs_closing_date'] ?? false, function ($query, $abs_closing_date) {
+            $query->where('abs_closing_date', 'like', "%{$abs_closing_date}%");
+        })
+        ->when($validated['abs_final_use'] ?? false, function ($query, $abs_final_use) {
+            $query->where('abs_final_use', 'like', "%{$abs_final_use}%");
+        })
+        ->when($validated['abs_sale_price'] ?? false, function ($query, $abs_sale_price) {
+            $query->where('abs_sale_price', 'like', "%{$abs_sale_price}%");
+        })
+        ->when($validated['tenantName'] ?? false, function ($query, $tenantName) {
+            $query->whereHas('tenant', function ($query) use ($tenantName) {
+                $query->where('name', 'like', "%{$tenantName}%");
+            });
+        })
+        ->when($validated['industryName'] ?? false, function ($query, $industryName) {
+            $query->whereHas('industry', function ($query) use ($industryName) {
+                $query->where('name', 'like', "%{$industryName}%");
+            });
+        })
+        ->orderBy($order, $direction)
+        ->paginate($size);
+    }
+
     /**
      * Create a new class instance.
      */
@@ -95,6 +142,9 @@ class BuildingsAvailableService
             ];
         }
 
+        $isNegativeAbsorption = $this->isNegativeAbsorption($buildingAvailable->avl_building_phase, $validatedData['abs_building_phase']);
+
+        $validatedData['is_negative_absorption'] = $isNegativeAbsorption;
         $validatedData['building_state'] = 'Absorption';
 
         $buildingAvailable->update($validatedData);
@@ -105,17 +155,33 @@ class BuildingsAvailableService
         ];
     }
 
+    /**
+     * @param array $validated
+     * @return BuildingAvailable
+     */
     public function create(array $validated): BuildingAvailable
     {
+        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_building_phase'] == BuildingPhase::INVENTORY->value) {
+            $validated['is_negative_absorption'] = true;
+    }
         return BuildingAvailable::create($validated);
     }
 
+    /**
+     * @param BuildingAvailable $buildingAvailable
+     * @param array $validated
+     * @return BuildingAvailable
+     */
     public function update(BuildingAvailable $buildingAvailable, array $validated): BuildingAvailable
     {
         $buildingAvailable->update($validated);
         return $buildingAvailable;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function convertMetrics(array $data): array
     {
         if (isset($data['size_sf'])) {
@@ -149,26 +215,55 @@ class BuildingsAvailableService
         return $data;
     }
 
+    /**
+     * @param float $m2
+     * @return int
+     */
     public function convertM2ToSqFt(float $m2): int
     {
         return (int) round($m2 * 10.764);
     }
 
+    /**
+     * @param float $m
+     * @return int
+     */
     public function convertMToFt(float $m): int
     {
         return (int) round($m * 3.281);
     }
 
+    /**
+     * @param float $usdM2
+     * @return int
+     */
     public function convertUsdM2ToUsdSqft(float $usdM2): int
     {
         return (int) round($usdM2 / 10.764);
     }
 
+    /**
+     * @param string $spacing
+     * @return string
+     */
     public function convertColumnsSpacingToFt(string $spacing): string
     {
         $parts = explode('x', $spacing);
         $convertedParts = array_map(fn($value) => $this->convertMToFt((float) $value), $parts);
         return implode('x', $convertedParts);
+    }
+
+    /**
+     * @param string $avlBuildingPhase
+     * @param string $absBuildingPhase
+     * @return bool
+     */
+    public function isNegativeAbsorption(string $avlBuildingPhase, string $absBuildingPhase): bool
+    {
+        if (in_array($avlBuildingPhase, [BuildingPhase::CONSTRUCTION->value, BuildingPhase::EXPIRATION->value]) && $absBuildingPhase == BuildingPhase::INVENTORY->value) {
+            return true;
+        }
+        return false;
     }
 
 

@@ -28,7 +28,7 @@ class ReitMortgageController extends ApiController implements HasMiddleware
      */
     public function index(): ApiResponse
     {
-        $reitsMortgage = ReitMortgage::all();
+        $reitsMortgage = ReitMortgage::with('reit')->with('reitType')->get();
         return $this->success(data: $reitsMortgage);
     }
 

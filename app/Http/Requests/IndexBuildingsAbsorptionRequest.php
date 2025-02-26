@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class IndexLandRequest extends FormRequest
+class IndexBuildingsAbsorptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +24,16 @@ class IndexLandRequest extends FormRequest
         return [
             'page' => 'nullable|integer',
             'size' => 'nullable|integer',
-            'search' => 'nullable|string',
-            'status' => 'nullable|string',
-            'land_name' => 'nullable|string',
-            'marketName' => 'nullable|string',
-            'submarketName' => 'nullable|string',
-            'industrialParkName' => 'nullable|string',
-            'column' => 'nullable|in:status,land_name,marketName,submarketName,industrialParkName',
+            'search' => 'nullable',
+
+            'tenantName' => 'nullable',
+            'industryName' => 'nullable',
+            'abs_lease_term_month' => 'nullable',
+            'abs_closing_date' => 'nullable',
+            'abs_final_use' => 'nullable',
+            'abs_sale_price' => 'nullable',
+
+            'column' => 'nullable|in:tenantName,industryName,abs_lease_term_month,abs_closing_date,abs_final_use,abs_sale_price',
             'state' => 'nullable|in:asc,desc',
         ];
     }
