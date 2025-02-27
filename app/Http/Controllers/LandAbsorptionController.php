@@ -10,9 +10,22 @@ use App\Models\LandAvailable;
 use App\Services\LandsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class LandAbsorptionController extends ApiController
+class LandAbsorptionController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:lands.absorption.index', only: ['index']),
+            new Middleware('permission:lands.absorption.show', only: ['show']),
+            new Middleware('permission:lands.absorption.create', only: ['store']),
+            new Middleware('permission:lands.absorption.update', only: ['update']),
+            new Middleware('permission:lands.absorption.destroy', only: ['destroy']),
+        ];
+    }
+
     private LandsAvailableService $landsAvailableService;
 
     public function __construct(LandsAvailableService $landsAvailableService)

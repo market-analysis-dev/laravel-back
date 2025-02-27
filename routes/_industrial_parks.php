@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'industrial-parks',
-    'as' => 'api.industrial-parks',
+    'as' => 'api.industrial-parks.',
     'middleware' => 'auth:sanctum',
 ], function(){
     Route::get('/', [IndustrialParkController::class, 'index'])->name('index');

@@ -7,15 +7,28 @@ use App\Http\Requests\UpdateReitMortgageRequest;
 use App\Models\ReitMortgage;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ReitMortgageController extends ApiController
+class ReitMortgageController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:reit-mortgage.index', only: ['index']),
+            new Middleware('permission:reit-mortgage.show', only: ['show']),
+            new Middleware('permission:reit-mortgage.create', only: ['store']),
+            new Middleware('permission:reit-mortgage.update', only: ['update']),
+            new Middleware('permission:reit-mortgage.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
     public function index(): ApiResponse
     {
-        $reitsMortgage = ReitMortgage::all();
+        $reitsMortgage = ReitMortgage::with('reit')->with('reitType')->get();
         return $this->success(data: $reitsMortgage);
     }
 

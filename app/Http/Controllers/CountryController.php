@@ -5,9 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Models\Country;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CountryController extends ApiController
+class CountryController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:countries.index', only: ['index']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */

@@ -13,18 +13,29 @@ use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Enums\BuildingState;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Enums\BuildingStatus;
 use Illuminate\Support\Arr;
 
-class BuildingsAvailableController extends ApiController
+class BuildingsAvailableController extends ApiController implements HasMiddleware
 {
-    /**
-     * @param Request $request
-     * @param Building $building
-     * @return ApiResponse
-     */
+
 
     private BuildingsAvailableService $buildingAvailableService;
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:buildings.availability.index', only: ['index']),
+            new Middleware('permission:buildings.availability.show', only: ['show']),
+            new Middleware('permission:buildings.availability.create', only: ['store']),
+            new Middleware('permission:buildings.availability.update', only: ['update']),
+            new Middleware('permission:buildings.availability.destroy', only: ['destroy']),
+            new Middleware('permission:buildings.availability.to-absorption', only: ['toAbsorption']),
+        ];
+    }
+
 
     public function __construct(BuildingsAvailableService $buildingAvailableService)
     {

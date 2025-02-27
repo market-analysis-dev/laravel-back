@@ -10,9 +10,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Responses\ApiResponse;
 use App\Models\File;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CompanyController extends ApiController
+class CompanyController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:companies.index', only: ['index']),
+            new Middleware('permission:companies.show', only: ['show']),
+            new Middleware('permission:companies.create', only: ['store']),
+            new Middleware('permission:companies.update', only: ['update']),
+            new Middleware('permission:companies.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */

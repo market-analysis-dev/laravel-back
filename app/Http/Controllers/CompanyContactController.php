@@ -10,9 +10,22 @@ use App\Models\CompanyContact;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CompanyContactController extends ApiController
+class CompanyContactController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:companies.contact.index', only: ['index']),
+            new Middleware('permission:companies.contact.show', only: ['show']),
+            new Middleware('permission:companies.contact.create', only: ['store']),
+            new Middleware('permission:companies.contact.update', only: ['update']),
+            new Middleware('permission:companies.contact.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @param Company $company
      * @return ApiResponse

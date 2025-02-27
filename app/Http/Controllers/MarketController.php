@@ -5,9 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Market;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class MarketController extends ApiController
+class MarketController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:markets.index', only: ['index']),
+        ];
+    }
+
     public function index(Request $request): ApiResponse
     {
         $query = Market::query();

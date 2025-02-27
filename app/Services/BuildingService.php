@@ -22,6 +22,10 @@ class BuildingService
         $direction = $validated['state'] ?? 'desc';
 
         return Building::with(['market', 'subMarket', 'industrialPark'])
+            ->leftJoin('cat_markets', 'cat_markets.id', '=', 'buildings.market_id')
+            ->leftJoin('cat_sub_markets', 'cat_sub_markets.id', '=', 'buildings.sub_market_id')
+            ->leftJoin('cat_industrial_parks', 'cat_industrial_parks.id', '=', 'buildings.industrial_park_id')
+            ->select('buildings.*', 'cat_markets.name AS marketName', 'cat_sub_markets.name AS submarketName', 'cat_industrial_parks.name AS industrialParkName')
             ->when($validated['search'] ?? false, function ($query, $search) {
                 $query->where(function ($query) use ($search){
                     $query->where('status', 'like', "%{$search}%")

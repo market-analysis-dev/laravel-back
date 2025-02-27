@@ -7,9 +7,22 @@ use App\Http\Requests\UpdateIndustrialParkRequest;
 use App\Models\IndustrialPark;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class IndustrialParkController extends ApiController
+class IndustrialParkController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:industrial-parks.index', only: ['index']),
+            new Middleware('permission:industrial-parks.show', only: ['show']),
+            new Middleware('permission:industrial-parks.create', only: ['store']),
+            new Middleware('permission:industrial-parks.update', only: ['update']),
+            new Middleware('permission:industrial-parks.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @param Request $request
      * @return \App\Responses\ApiResponse

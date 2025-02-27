@@ -7,9 +7,22 @@ use App\Responses\ApiResponse;
 use App\Models\ReitType;
 use App\Http\Requests\StoreReitTypeRequest;
 use App\Http\Requests\UpdateReitTypeRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ReitTypeController extends ApiController
+class ReitTypeController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:reit-types.index', only: ['index']),
+            new Middleware('permission:reit-types.show', only: ['show']),
+            new Middleware('permission:reit-types.create', only: ['store']),
+            new Middleware('permission:reit-types.update', only: ['update']),
+            new Middleware('permission:reit-types.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */

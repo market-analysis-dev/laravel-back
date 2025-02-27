@@ -191,6 +191,7 @@ class BuildingAvailable extends Model
         'abs_deal',
         'currency',
         'fire_protection_system',
+        'is_negative_absorption',
         'status',
         'created_by',
         'updated_by',
