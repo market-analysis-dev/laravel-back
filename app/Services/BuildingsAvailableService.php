@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Building;
 use App\Models\BuildingAvailable;
 use App\Enums\BuildingState;
+use App\Enums\BuildingStatus;
+use Illuminate\Support\Arr;
 
 class BuildingsAvailableService
 {
@@ -171,5 +174,150 @@ class BuildingsAvailableService
         return implode('x', $convertedParts);
     }
 
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @param string $state
+     * @return array
+     */
+    public function createDraft(Building $building, BuildingAvailable $buildingAvailable, string $state):array
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return ['error' => 'Building Available not found for this Building', 'status' => 404];
+        }
+        if ($buildingAvailable->building_state !== $state) {
+        return ['error' => 'Invalid building state', 'status' => 403];
+        }
+        if ($buildingAvailable->status === BuildingStatus::DRAFT->value) {
+        return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
+        }
+        $existingDraft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+
+        if ($existingDraft) {
+            return ['error' => 'Draft already exists for this building.', 'status' => 400];
+            }
+        $draft = $buildingAvailable->replicate();
+        $draft->status = BuildingStatus::DRAFT->value;
+        $draft->building_available_id = $buildingAvailable->id;
+        $draft->save();
+
+        return ['success' => 'Draft created successfully.', 'data' => $draft];
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @param string $state
+     * @return array
+     */
+    public function getDraft(Building $building, BuildingAvailable $buildingAvailable, string $state): array
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return ['error' => 'Building Available not found for this Building', 'status' => 404];
+        }
+
+        if ($buildingAvailable->building_state !== $state) {
+            return ['error' => 'Invalid building state', 'status' => 403];
+        }
+
+        $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+        if (!$draft) {
+            return ['error' => 'Draft not found', 'status' => 404];
+        }
+        if (!empty($draft->fire_protection_system)) {
+            $draft->fire_protection_system = explode(',', $draft->fire_protection_system);
+        }
+        if (!empty($draft->above_market_tis)) {
+            $draft->above_market_tis = explode(',', $draft->above_market_tis);
+        }
+        return ['success' => 'success', 'data' => $draft];
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @param array $validated
+     * @param string $state
+     * @return array
+     */
+    public function updateDraft(Building $building, BuildingAvailable $buildingAvailable, array $validated, string $state): array
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return ['error' => 'Building Available not found for this Building', 'status' => 404];
+        }
+
+        $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+
+        if (!$draft) {
+            return ['error' => 'Draft not found', 'status' => 404];
+        }
+
+        $validated['building_id'] = $building->id;
+        $validated['building_available_id'] = $buildingAvailable->id;
+        $validated['building_state'] = $state;
+        try {
+            if ($validated['sqftToM2'] ?? false) {
+                $validated = $this->convertMetrics($validated);
+            }
+            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+            }
+            if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+                $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+            }
+            if (isset($validated['status']) && $validated['status'] === BuildingStatus::ACTIVE->value) {
+                $updateData = Arr::except($validated, ['status']);
+                $buildingAvailable->update($updateData);
+                $draft->delete();
+
+                if (!empty($buildingAvailable->fire_protection_system)) {
+                    $buildingAvailable->fire_protection_system = explode(',', $buildingAvailable->fire_protection_system);
+                }
+                if (!empty($buildingAvailable->above_market_tis)) {
+                    $buildingAvailable->above_market_tis = explode(',', $buildingAvailable->above_market_tis);
+                }
+                return ['success' => 'Draft deleted and applied to the original building.', 'data' => $buildingAvailable];
+            }
+
+            $draft->update($validated);
+            return ['success' => 'Draft updated successfully', 'data' => $draft];
+
+
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage(), 'status' => 500];
+        }
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @param string $state
+     * @return array
+     */
+    public function deleteDraft(Building $building, BuildingAvailable $buildingAvailable, string $state): array
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return ['error' => 'Building Available not found for this Building', 'status' => 404];
+        }
+
+        if ($buildingAvailable->building_state !== $state) {
+            return ['error' => 'Invalid building state', 'status' => 403];
+    }
+        $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+
+        if (!$draft) {
+            return ['error' => 'Draft not found', 'status' => 404];
+        }
+        $draft->delete();
+        return ['success' => 'Draft deleted successfully.', 'data' => $draft];
+    }
 
 }

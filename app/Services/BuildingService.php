@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Building;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\BuildingStatus;
 
 class BuildingService
 {
@@ -223,4 +225,94 @@ class BuildingService
         $pdf = Pdf::loadView('buildings.layout-design', compact('building', 'user', 'logoPath', 'images'));
         return $pdf->stream('layout-design.pdf');
     }
+
+    /**
+     * @param Building $building
+     * @return array
+     */
+    public function createDraft(Building $building): array
+    {
+        if ($building->status === BuildingStatus::DRAFT->value) {
+        return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
+    }
+
+        $existingDraft = Building::where('building_id', $building->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+
+        if ($existingDraft) {
+            return ['error' => 'Draft already exists for this building.', 'status' => 400];
+        }
+
+        $draft = $building->replicate();
+        $draft->status = BuildingStatus::DRAFT->value;
+        $draft->building_id = $building->id;
+        $draft->save();
+
+        return ['success' => 'Draft created successfully.', 'data' => $draft];
+    }
+
+    /**
+     * @param Building $building
+     * @return Building|null
+     */
+    public function getDraft(Building $building): ?Building
+    {
+        return Building::where('building_id', $building->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+    }
+
+    /**
+     * @param Building $building
+     * @param array $validated
+     * @return Building|null
+     */
+    public function updateDraft(Building $building, array $validated): ?Building
+    {
+        $draft = $this->getDraft($building);
+
+        if (!$draft) {
+            return null;
+        }
+
+        if ($validated['sqftToM2'] ?? false) {
+            $validated = $this->convertMetrics($validated);
+        }
+
+        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+        }
+
+        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+        }
+
+        if (isset($validated['status']) && $validated['status'] === BuildingStatus::ACTIVE->value) {
+        $updateData = Arr::except($validated, ['status']);
+        $building->update($updateData);
+        $draft->delete();
+        return $building;
+    }
+
+        $draft->update($validated);
+        return $draft;
+    }
+
+    /**
+     * @param Building $building
+     * @return array
+     */
+    public function deleteDraft(Building $building): array
+    {
+        $draft = Building::where('building_id', $building->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+        if (!$draft) {
+            return ['error' => 'Draft not found.', 'status' => 404];
+        }
+        $draft->delete();
+        return ['success' => 'Draft deleted successfully.', 'data' => $draft];
+    }
+
 }

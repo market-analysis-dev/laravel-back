@@ -24,6 +24,7 @@ use App\Services\BuildingService;
 use App\Responses\ApiResponse;
 use App\Services\FileService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use PDF;
 
 class BuildingController extends ApiController
@@ -299,23 +300,13 @@ class BuildingController extends ApiController
      */
     public function draft(Building $building): ApiResponse
     {
-        if ($building->status === 'Draft') {
-            return $this->error('Cannot create a draft from another draft.', status: 400);
-        }
-        $existingDraft = Building::where('building_id', $building->id)
-            ->where('status', 'Draft')
-            ->first();
+        $result = $this->buildingService->createDraft($building);
 
-        if ($existingDraft) {
-            return $this->error('Draft already exists for this building.', status: 400);
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
         }
 
-        $draft = $building->replicate();
-        $draft->status = 'Draft';
-        $draft->building_id = $building->id;
-        $draft->save();
-
-        return $this->success('Draft created successfully.', data: $draft);
+        return $this->success($result['success'], data: $result['data']);
     }
 
     /**
@@ -324,12 +315,12 @@ class BuildingController extends ApiController
      */
     public function getDraft(Building $building): ApiResponse
     {
-        $draft = Building::where('building_id', $building->id)
-            ->where('status', 'Draft')
-            ->first();
+        $draft = $this->buildingService->getDraft($building);
+
         if (!$draft) {
             return $this->error(message: 'Draft not found.', status: 404);
         }
+
         return $this->success(data: $draft);
     }
 
@@ -341,36 +332,18 @@ class BuildingController extends ApiController
     public function updateDraft(UpdateBuildingDraftRequest $request, Building $building): ApiResponse
     {
 
-        $draft = Building::where('building_id', $building->id)
-            ->where('status', 'Draft')
-            ->first();
+        $validated = $request->validated();
+        $result = $this->buildingService->updateDraft($building, $validated);
 
-        if (!$draft) {
+        if (!$result) {
             return $this->error('Draft not found.', status: 404);
         }
 
-        $validated = $request->validated();
-        if ($validated['sqftToM2'] ?? false) {
-            $validated = $this->buildingService->convertMetrics($validated);
-        }
+        $message = ($result->status === BuildingStatus::DRAFT->value)
+            ? 'Draft updated successfully.'
+            : 'Draft deleted and applied to the original building.';
 
-        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-        }
-        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
-            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
-        }
-
-        if (isset($validated['status']) && $validated['status'] === 'Active') {
-            $building->update($validated);
-            $draft->delete();
-
-            return $this->success(message: 'Draft deleted and applied to the original building.', data: $building);
-        }
-
-        $draft->update($validated);
-
-        return $this->success(message: 'Draft updated successfully.', data: $draft);
+        return $this->success(message: $message, data: $result);
     }
 
     /**
@@ -379,14 +352,11 @@ class BuildingController extends ApiController
      */
     public function deleteDraft(Building $building): ApiResponse
     {
-        $draft = Building::where('building_id', $building->id)
-            ->where('status', 'Draft')
-            ->first();
-        if (!$draft) {
-            return $this->error(message: 'Draft not found.', status: 404);
+        $result = $this->buildingService->deleteDraft($building);
+        if(isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
         }
-        $draft->delete();
-        return $this->success(message: 'Draft deleted successfully.', data: $draft);
+        return $this->success($result['success'], data: $result['data']);
     }
 
 }
