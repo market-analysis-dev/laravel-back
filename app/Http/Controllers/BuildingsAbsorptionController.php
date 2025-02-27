@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ConvertToAvailableRequest;
 use App\Http\Requests\StoreBuildingsAbsorptionRequest;
+use App\Http\Requests\UpdateBuildingAbsorptionDraftRequest;
 use App\Http\Requests\UpdateBuildingsAbsorptionRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
@@ -13,6 +14,8 @@ use App\Enums\BuildingState;
 use App\Http\Requests\IndexBuildingsAbsorptionRequest;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Enums\BuildingStatus;
+use Illuminate\Support\Arr;
 
 class BuildingsAbsorptionController extends ApiController implements HasMiddleware
 {
@@ -130,6 +133,9 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
         if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
             return $this->error('Invalid building state', ['error_code' => 403]);
         }
+        if ($buildingAbsorption->status == BuildingStatus::DRAFT->value) {
+        return $this->error('Building must to have status Active', ['error_code' => 403]);
+    }
 
         $validated = $request->validated();
         $validated['building_id'] = $building->id;
@@ -192,6 +198,9 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
      */
     public function toAvailable(ConvertToAvailableRequest $request, Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
     {
+        if ($buildingAbsorption->status === BuildingStatus::DRAFT->value) {
+            return $this->error('Cannot convert from one draft.', status: 400);
+        }
         $validated = $request->validated();
         if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
             $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
@@ -215,7 +224,69 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
 
     }
 
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAbsorption
+     * @return ApiResponse
+     */
+    public function draft(Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    {
+        $result = $this->buildingAvailableService->createDraft($building, $buildingAbsorption, BuildingState::ABSORPTION->value);
 
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
 
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAbsorption
+     * @return ApiResponse
+     */
+    public function getDraft(Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    {
+        $result = $this->buildingAvailableService->getDraft( $building, $buildingAbsorption, BuildingState::ABSORPTION->value);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+    /**
+     * @param UpdateBuildingAbsorptionDraftRequest $request
+     * @param Building $building
+     * @param BuildingAvailable $buildingAbsorption
+     * @return ApiResponse
+     */
+    public function updateDraft(UpdateBuildingAbsorptionDraftRequest $request, Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    {
+        $validated = $request->validated();
+        $result = $this->buildingAvailableService->updateDraft($building, $buildingAbsorption, $validated, BuildingState::ABSORPTION->value);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAbsorption
+     * @return ApiResponse
+     */
+    public function deleteDraft(Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    {
+        $result = $this->buildingAvailableService->deleteDraft($building, $buildingAbsorption, BuildingState::ABSORPTION->value);
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+        return $this->success($result['success'], data: $result['data']);
+    }
 
 }

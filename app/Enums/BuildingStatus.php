@@ -11,5 +11,5 @@ enum BuildingStatus: string
     case ACTIVE = 'Active';
     case INACTIVE = 'Inactive';
     case PENDING = 'Pending';
-    case APPROVED = 'Approved';
+    case DRAFT = 'Draft';
 }
