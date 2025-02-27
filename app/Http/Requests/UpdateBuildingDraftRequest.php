@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBuildingRequest extends FormRequest
+class UpdateBuildingDraftRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -82,7 +82,7 @@ class StoreBuildingRequest extends FormRequest
                     }
                 }
             ],
-            'status' => 'required|in:Active,Inactive,Pending,Draft',
+            'status' => 'required|in:Active,Draft',
             'columns_spacing_ft' => 'string|max:20',
             'bay_size' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',
@@ -93,6 +93,5 @@ class StoreBuildingRequest extends FormRequest
             'files.*' => 'file|max:10240',
             'type' => 'nullable|string',
         ];
-
     }
 }

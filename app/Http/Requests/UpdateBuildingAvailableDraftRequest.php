@@ -6,7 +6,7 @@ use App\Models\Building;
 use App\Models\BuildingAvailable;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBuildingsAvailableRequest extends FormRequest
+class UpdateBuildingAvailableDraftRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -42,7 +42,7 @@ class StoreBuildingsAvailableRequest extends FormRequest
             'created_by' => 'nullable|integer|exists:users,id',
             'updated_by' => 'nullable|integer|exists:users,id',
             'avl_building_phase' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
-            'status' => 'in:Active,Inactive,Draft',
+            'status' => 'in:Active,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => [
                 'required',
@@ -77,10 +77,12 @@ class StoreBuildingsAvailableRequest extends FormRequest
                 'min:0',
                 function ($attribute, $value, $fail) {
                     $buildingId = $this->route('building')->id ?? null;
+                    $buildingAvailableId = $this->route('buildingAvailable')->id ?? null;
 
                     if (!$buildingId) {
                         return $fail(__('Building ID is required.'));
                     }
+
                     $building = Building::find($buildingId);
 
                     if (!$building) {
@@ -91,10 +93,14 @@ class StoreBuildingsAvailableRequest extends FormRequest
                         return $fail(__('The size_sf of buildings_available must be less than or equal to the building_size_sf of buildings.'));
                     }
 
-                    $totalAbsorbed = BuildingAvailable::where('building_id', $buildingId)->sum('size_sf');
+                    $totalAbsorbed = BuildingAvailable::where('building_id', $buildingId)
+                        ->sum('size_sf');
 
-                    if (($totalAbsorbed + $value) > $building->building_size_sf) {
-                        return $fail(__('The total sum of size_sf for all availability records must be less than or equal to the building_size_sf of buildings.'));
+
+                    $currentSizeSf = BuildingAvailable::where('id', $buildingAvailableId)->value('size_sf') ?? 0;
+
+                    if (($totalAbsorbed - $currentSizeSf + $value) > $building->building_size_sf) {
+                        return $fail(__('The total sum of size_sf for all availability/absorption records must be less than or equal to the building_size_sf of buildings.'));
                     }
                 },
             ],

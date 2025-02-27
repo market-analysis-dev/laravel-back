@@ -31,5 +31,9 @@ Route::group([
     Route::post('/{building}/files', [BuildingFileController::class, 'uploadFiles'])->name('uploadFiles');
 
     Route::get('/{building}/layout-design', [BuildingController::class, 'layoutDesign'])->name('layoutDesign');
+    Route::post('/{building}/draft', [BuildingController::class, 'draft'])->name('draft');
+    Route::get('/{building}/draft', [BuildingController::class, 'getDraft'])->name('getDraft');
+    Route::put('/{building}/draft', [BuildingController::class, 'updateDraft'])->name('updateDraft');
+    Route::delete('/{building}/draft', [BuildingController::class, 'deleteDraft'])->name('deleteDraft');
 });
 

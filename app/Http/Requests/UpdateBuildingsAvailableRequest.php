@@ -25,7 +25,7 @@ class UpdateBuildingsAvailableRequest extends FormRequest
     {
         return [
             'broker_id' => 'required|integer|exists:cat_brokers,id',
-            'size_sf' => 'required|integer|min:0',
+            'building_available_id' => 'nullable|integer|exists:buildings_available,id',
             'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'nullable|integer|min:0',
             'dock_doors' => 'nullable|integer|min:0',
@@ -42,6 +42,7 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'created_by' => 'nullable|integer|exists:users,id',
             'updated_by' => 'nullable|integer|exists:users,id',
             'avl_building_phase' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
+            'status' => 'in:Active,Inactive,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => [
                 'required',

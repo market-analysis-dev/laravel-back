@@ -17,12 +17,14 @@ use App\Enums\BuildingCompanyType;
 use App\Enums\BuildingFinalUse;
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\StoreBuildingRequest;
+use App\Http\Requests\UpdateBuildingDraftRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
 use App\Services\BuildingService;
 use App\Responses\ApiResponse;
 use App\Services\FileService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use PDF;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -314,4 +316,70 @@ class BuildingController extends ApiController implements HasMiddleware
             ['Content-Type' => 'application/pdf']
         );
     }
+
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function draft(Building $building): ApiResponse
+    {
+        $result = $this->buildingService->createDraft($building);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function getDraft(Building $building): ApiResponse
+    {
+        $draft = $this->buildingService->getDraft($building);
+
+        if (!$draft) {
+            return $this->error(message: 'Draft not found.', status: 404);
+        }
+
+        return $this->success(data: $draft);
+    }
+
+    /**
+     * @param UpdateBuildingDraftRequest $request
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function updateDraft(UpdateBuildingDraftRequest $request, Building $building): ApiResponse
+    {
+
+        $validated = $request->validated();
+        $result = $this->buildingService->updateDraft($building, $validated);
+
+        if (!$result) {
+            return $this->error('Draft not found.', status: 404);
+        }
+
+        $message = ($result->status === BuildingStatus::DRAFT->value)
+            ? 'Draft updated successfully.'
+            : 'Draft deleted and applied to the original building.';
+
+        return $this->success(message: $message, data: $result);
+    }
+
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function deleteDraft(Building $building): ApiResponse
+    {
+        $result = $this->buildingService->deleteDraft($building);
+        if(isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+        return $this->success($result['success'], data: $result['data']);
+    }
+
 }

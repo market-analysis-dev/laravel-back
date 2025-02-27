@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('industrial_park_id')->constrained('cat_industrial_parks');
             $table->foreignId('developer_id')->constrained('cat_developers');
             $table->foreignId('owner_id')->constrained('cat_developers');
+            $table->foreignId('building_id')->nullable()->constrained('buildings', 'id');
             $table->string('building_name', 255);
             $table->integer('building_size_sf');
             $table->string('latitud', 45);
@@ -51,7 +52,7 @@ return new class extends Migration
             $table->enum('lightning', ['LED', 'T5', 'Metal Halide'])->nullable();
             $table->enum('deal', ['Sale', 'Lease']);
             $table->enum('loading_door', ['Crossdock', 'Back Loading', 'Front Loading'])->nullable();
-            $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
+            $table->enum('status', ['Active', 'Inactive', 'Pending', 'Draft']);
             $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
             $table->set('above_market_tis', ["HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion"])->nullable();
             $table->integer('created_by')->nullable();
