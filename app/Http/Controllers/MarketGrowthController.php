@@ -7,9 +7,21 @@ use App\Http\Requests\UpdateMarketGrowthRequest;
 use App\Models\MarketGrowth;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class MarketGrowthController extends ApiController
+class MarketGrowthController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:market-growths.index', only: ['index']),
+            new Middleware('permission:market-growths.show', only: ['show']),
+            new Middleware('permission:market-growths.create', only: ['store']),
+            new Middleware('permission:market-growths.update', only: ['update']),
+            new Middleware('permission:market-growths.destroy', only: ['destroy']),
+        ];
+    }
     /**
      * @return ApiResponse
      */
