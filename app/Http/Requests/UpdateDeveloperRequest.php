@@ -32,6 +32,8 @@ class UpdateDeveloperRequest extends FormRequest
             'is_developer' => 'required|boolean',
             'is_builder' => 'required|boolean',
             'is_owner' => 'required|boolean',
+            'market_id' => 'required|integer|exists:cat_markets,id',
+            'sub_market_id' => 'required|integer|exists:cat_sub_markets,id',
         ];
     }
 }
