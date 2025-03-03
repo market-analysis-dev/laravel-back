@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $reit_id
@@ -71,6 +71,13 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage whereYear($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage quarter($quarter)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage reitId($reitId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage reitName($reitName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage reitTypeName($reitTypeName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage whereDividedYield($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage whereReturnOnEnquity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage year($year)
  * @mixin \Eloquent
  */
 class ReitMortgage extends Model

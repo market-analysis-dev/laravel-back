@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $reit_id
@@ -66,6 +66,16 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual whereYear($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual withoutTrashed()
+ * @property-read \App\Models\Reit $reit
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual capRate($capRate)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual noi($noi)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual occupancy($occupancy)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual quarter($quarter)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual reitId($reitId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual reitName($reitName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual sqft($sqft)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual type($type)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitAnnual year($year)
  * @mixin \Eloquent
  */
 class ReitAnnual extends Model
