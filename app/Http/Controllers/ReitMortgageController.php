@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexReitMortgageRequest;
 use App\Http\Requests\StoreReitMortgageRequest;
 use App\Http\Requests\UpdateReitMortgageRequest;
 use App\Models\ReitMortgage;
@@ -26,9 +27,9 @@ class ReitMortgageController extends ApiController implements HasMiddleware
     /**
      * @return ApiResponse
      */
-    public function index(): ApiResponse
+    public function index(IndexReitMortgageRequest $request): ApiResponse
     {
-        $reitsMortgage = ReitMortgage::with('reit')->with('reitType')->get();
+        $reitsMortgage = ReitMortgage::filter($request->validated());
         return $this->success(data: $reitsMortgage);
     }
 
@@ -48,6 +49,7 @@ class ReitMortgageController extends ApiController implements HasMiddleware
      */
     public function show(ReitMortgage $reitMortgage): ApiResponse
     {
+        $reitMortgage->load(['reit', 'reitType']);
         return $this->success(data: $reitMortgage);
     }
 
