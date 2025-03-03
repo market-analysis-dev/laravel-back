@@ -15,6 +15,7 @@ use App\Http\Controllers\UserTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
+Route::get('/auth/me', [AuthController::class, 'me'])->middleware('auth:sanctum')->name('me');
 
 
 // * USER DETAILS (COMPLETADO)

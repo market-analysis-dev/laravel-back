@@ -40,9 +40,10 @@ class UserController extends ApiController implements HasMiddleware
             $validatedData = $request->validated();
             $validatedData['password'] = Hash::make($validatedData['password']);
             $user = User::create($validatedData);
-
+            if (!empty($validatedData['role_id'])) {
+                $user->syncRoles($validatedData['role_id']);
+            }
             return $this->success('User created successfully', $user);
-
         } catch (\Exception $e) {
             return $this->error('Error creating user: ' . $e->getMessage(), status: 500);
         }
@@ -74,6 +75,9 @@ class UserController extends ApiController implements HasMiddleware
 
         // Actualizar el usuario con los datos ajustados
         $user->update($validatedData);
+        if (!empty($validatedData['role_id'])) {
+            $user->syncRoles($validatedData['role_id']);
+        }
         return response()->json($user);
     }
 
