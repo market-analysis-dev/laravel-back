@@ -45,7 +45,7 @@ class IndustrialPark extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'cat_industrial_parks';
+    protected $table = 'industrial_parks';
 
     protected $fillable = [
         'name',

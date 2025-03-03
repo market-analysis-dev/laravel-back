@@ -33,7 +33,7 @@ class IndustrialParkSeeder extends Seeder
         fclose($file);
 
         foreach (array_chunk($data, 500) as $chunk) {
-            DB::table('cat_industrial_parks')->insert($chunk);
+            DB::table('industrial_parks')->insert($chunk);
         }
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('industrial_park_id')->nullable()->constrained('cat_industrial_parks');
+            $table->foreignId('industrial_park_id')->nullable()->constrained('industrial_parks');
             $table->foreignId('developer_id')->nullable()->constrained('cat_developers');
             $table->foreignId('region_id')->nullable()->constrained('cat_regions');
             $table->foreignId('market_id')->nullable()->constrained('cat_markets');

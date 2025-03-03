@@ -26,7 +26,7 @@ class UpdateBuildingRequest extends FormRequest
             'market_id' => 'required|integer|exists:cat_markets,id',
             'sub_market_id' => 'required|integer|exists:cat_sub_markets,id',
             'builder_id' => 'required|integer|exists:cat_developers,id',
-            'industrial_park_id' => 'required|integer|exists:cat_industrial_parks,id',
+            'industrial_park_id' => 'required|integer|exists:industrial_parks,id',
             'developer_id' => 'required|integer|exists:cat_developers,id',
             'owner_id' => 'required|integer|exists:cat_developers,id',
             'building_id' => 'nullable|integer|exists:buildings,id',
