@@ -45,12 +45,27 @@ class IndustrialPark extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'cat_industrial_parks';
+    protected $table = 'industrial_parks';
 
     protected $fillable = [
         'name',
         'market_id',
         'sub_market_id',
+        'owner_id',
+        'region_id',
+        'total_land_ha',
+        'available_land_ha',
+        'building_number',
+        'land_condition',
+        'year_built',
+        'has_rail_spur',
+        'has_natural_gas',
+        'has_sewage',
+        'has_water',
+        'has_electric',
+        'latitude',
+        'longitude',
+        'comments',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -67,6 +82,16 @@ class IndustrialPark extends Model
     public function subMarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(SubMarket::class, 'sub_market_id');
+    }
+
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Developer::class, 'owner_id');
+    }
+
+    public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id');
     }
 
     public function createdBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
