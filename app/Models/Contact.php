@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * 
+ *
  *
  * @property int $id
- * @property string|null $contact_name
- * @property string|null $contact_phone
- * @property string|null $contact_email
- * @property string|null $contact_comments
+ * @property string|null $name
+ * @property string|null $phone
+ * @property string|null $email
+ * @property string|null $comments
  * @property int $is_direct_contact
  * @property int $is_land_contact
  * @property int $is_buildings_contact
@@ -82,10 +82,10 @@ class Contact extends Model
     protected $table = 'contacts';
 
     protected $fillable = [
-        'contact_name',
-        'contact_phone',
-        'contact_email',
-        'contact_comments',
+        'name',
+        'phone',
+        'email',
+        'comments',
         'is_direct_contact',
         'is_land_contact',
         'is_buildings_contact',
