@@ -23,18 +23,18 @@ class UpdateContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'contact_name' => 'nullable|string|max:255',
-            'contact_phone' => 'nullable|string|max:50',
-            'contact_email' => [
+            'name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:50',
+            'email' => [
                 'nullable',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('contacts', 'contact_email')
+                Rule::unique('contacts', 'email')
                     ->whereNull('deleted_at')
                 ->ignore($this->contact->id)
             ],
-            'contact_comments' => 'nullable|string|max:255',
+            'comments' => 'nullable|string|max:255',
             'is_direct_contact' => 'nullable|boolean',
             'is_land_contact' => 'nullable|boolean',
             'is_buildings_contact' => 'nullable|boolean',

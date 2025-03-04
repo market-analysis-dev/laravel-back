@@ -65,7 +65,7 @@ class CompanyContactController extends ApiController implements HasMiddleware
         try {
             $validated = $request->validated();
 
-            $contact = Contact::withTrashed()->where('contact_email', $validated['contact_email'])->first();
+            $contact = Contact::withTrashed()->where('email', $validated['email'])->first();
 
             if ($contact) {
                 if ($contact->trashed()) {
