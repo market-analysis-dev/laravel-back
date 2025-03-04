@@ -7,6 +7,8 @@ use App\Models\BuildingAvailable;
 use App\Enums\BuildingState;
 use App\Enums\BuildingPhase;
 use App\Enums\BuildingStatus;
+use App\Models\BuildingAvailableLog;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 class BuildingsAvailableService
@@ -177,6 +179,9 @@ class BuildingsAvailableService
      */
     public function update(BuildingAvailable $buildingAvailable, array $validated): BuildingAvailable
     {
+        if (($validated['status'] ?? BuildingStatus::ACTIVE->value) === BuildingStatus::ACTIVE->value) {
+            $this->makeBuildingAvailableLogRecord($buildingAvailable);
+         }
         $buildingAvailable->update($validated);
         return $buildingAvailable;
     }
@@ -368,6 +373,7 @@ class BuildingsAvailableService
             }
             if (isset($validated['status']) && $validated['status'] === BuildingStatus::ACTIVE->value) {
                 $updateData = Arr::except($validated, ['status']);
+                $this->makeBuildingAvailableLogRecord($buildingAvailable);
                 $buildingAvailable->update($updateData);
                 $draft->delete();
 
@@ -413,6 +419,16 @@ class BuildingsAvailableService
         }
         $draft->delete();
         return ['success' => 'Draft deleted successfully.', 'data' => $draft];
+    }
+
+    /**
+     * @param BuildingAvailable $buildingAvailable
+     */
+    private function makeBuildingAvailableLogRecord(BuildingAvailable $buildingAvailable):void
+    {
+        $logRecord = new BuildingAvailableLog($buildingAvailable->toArray());
+        $logRecord['building_available_id'] = $buildingAvailable->id;
+        $logRecord->save();
     }
 
 }

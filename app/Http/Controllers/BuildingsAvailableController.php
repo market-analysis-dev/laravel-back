@@ -157,7 +157,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             }
             return $this->success('Building Available updated successfully', $buildingAvailable);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 

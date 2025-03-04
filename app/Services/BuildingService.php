@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BuildingLog;
 use Illuminate\Http\Request;
 use App\Models\Building;
 use App\Models\User;
@@ -79,6 +80,9 @@ class BuildingService
 
     public function update(Building $building, array $validated): Building
     {
+        if($validated['status'] === BuildingStatus::ACTIVE->value) {
+            $this->makeBuildingLogRecord($building);
+        }
         $building->update($validated);
         return $building;
     }
@@ -294,6 +298,7 @@ class BuildingService
 
         if (isset($validated['status']) && $validated['status'] === BuildingStatus::ACTIVE->value) {
         $updateData = Arr::except($validated, ['status']);
+        $this->makeBuildingLogRecord($building);
         $building->update($updateData);
         $draft->delete();
         return $building;
@@ -317,6 +322,16 @@ class BuildingService
         }
         $draft->delete();
         return ['success' => 'Draft deleted successfully.', 'data' => $draft];
+    }
+
+    /**
+     * @param Building $building
+     */
+    private function makeBuildingLogRecord(Building $building):void
+    {
+        $logRecord = new BuildingLog($building->toArray());
+        $logRecord['building_id'] = $building->id;
+        $logRecord->save();
     }
 
 }

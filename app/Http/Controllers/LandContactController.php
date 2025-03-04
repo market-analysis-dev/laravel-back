@@ -2,37 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
-use App\Models\Company;
-use App\Models\CompanyContact;
 use App\Models\Contact;
+use App\Models\Land;
+use App\Models\LandContact;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class CompanyContactController extends ApiController implements HasMiddleware
+class LandContactController extends ApiController implements HasMiddleware
 {
+
     public static function middleware()
     {
-        return [
-            new Middleware('permission:companies.contact.index', only: ['index']),
-            new Middleware('permission:companies.contact.show', only: ['show']),
-            new Middleware('permission:companies.contact.create', only: ['store']),
-            new Middleware('permission:companies.contact.update', only: ['update']),
-            new Middleware('permission:companies.contact.destroy', only: ['destroy']),
-        ];
+        // TODO: Implement middleware() method.
     }
 
     /**
-     * @param Company $company
+     * @param Land $land
      * @return ApiResponse
      */
-    public function index(Company $company): ApiResponse
+    public function index(Land $land): ApiResponse
     {
-        $contacts = CompanyContact::where('company_id', $company->id)
+        $contacts = LandContact::where('land_id', $land->id)
             ->with('contact')
             ->get()
             ->pluck('contact');
@@ -41,13 +35,13 @@ class CompanyContactController extends ApiController implements HasMiddleware
     }
 
     /**
-     * @param Company $company
+     * @param Land $land
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function show(Company $company, Contact $contact): ApiResponse
+    public function show(Land $land, Contact $contact): ApiResponse
     {
-        $contact = CompanyContact::where('company_id', $company->id)
+        $contact = LandContact::where('land_id', $land->id)
             ->where('contact_id', $contact->id)
             ->with('contact')
             ->get()
@@ -57,10 +51,10 @@ class CompanyContactController extends ApiController implements HasMiddleware
 
     /**
      * @param StoreContactRequest $request
-     * @param Company $company
+     * @param Land $land
      * @return ApiResponse
      */
-    public function store(StoreContactRequest $request, Company $company): ApiResponse
+    public function store(StoreContactRequest $request, Land $land): ApiResponse
     {
         try {
             $validated = $request->validated();
@@ -72,19 +66,19 @@ class CompanyContactController extends ApiController implements HasMiddleware
                     $contact->restore();
                 }
             } else {
-                $contact = Contact::create(array_merge($validated, ['is_company_contact' => true]));
+                $contact = Contact::create(array_merge($validated, ['is_land_contact' => true]));
             }
 
-            $exists = CompanyContact::where('company_id', $company->id)
+            $exists = LandContact::where('land_id', $land->id)
                 ->where('contact_id', $contact->id)
                 ->exists();
 
             if ($exists) {
-                return $this->error('This contact is already linked to the company.', ['errors' => 422]);
+                return $this->error('This contact is already linked to the land.', ['errors' => 422]);
             }
 
-            CompanyContact::create([
-                'company_id' => $company->id,
+            LandContact::create([
+                'land_id' => $land->id,
                 'contact_id' => $contact->id,
             ]);
 
@@ -97,29 +91,29 @@ class CompanyContactController extends ApiController implements HasMiddleware
 
     /**
      * @param UpdateContactRequest $request
-     * @param Company $company
+     * @param Land $land
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function update(UpdateContactRequest $request, Company $company, Contact $contact): ApiResponse
+    public function update(UpdateContactRequest $request, Land $land, Contact $contact): ApiResponse
     {
         try{
-            $companyContact = CompanyContact::where('company_id', $company->id)
+            $landContact = LandContact::where('land_id', $land->id)
                 ->where('contact_id', $contact->id)
                 ->first();
-            if($companyContact) {
+            if($landContact) {
                 if ($contact->trashed()) {
                     $contact->restore();
                 }
 
                 $contact->update(array_merge(
                     $request->validated(),
-                    ['is_company_contact' => true]
+                    ['is_land_contact' => true]
                 ));
                 return $this->success('Contact updated successfully', $contact);
 
             } else {
-                return $this->error('Company with id '. $company->id . ' does not have contact with id '. $contact->id , ['error' => 404]);
+                return $this->error('Land with id '. $land->id . ' does not have contact with id '. $contact->id , ['error' => 404]);
             }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), ['error' => 500]);
@@ -127,24 +121,27 @@ class CompanyContactController extends ApiController implements HasMiddleware
     }
 
     /**
-     * @param Company $company
+     * @param Land $land
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function destroy(Company $company, Contact $contact): ApiResponse
+    public function destroy(Land $land, Contact $contact): ApiResponse
     {
         try{
-            $companyContact = CompanyContact::where('company_id', $company->id)
+            $landContact = LandContact::where('land_id', $land->id)
                 ->where('contact_id', $contact->id)
                 ->first();
-            if($companyContact) {
+            if($landContact) {
 
-                $contact->delete();
+                $landContact->delete();
+                $contact->update([
+                   'is_land_contact' => false,
+                ]);
                 return $this->success('Contact deleted successfully', $contact);
 
             } else {
 
-                return $this->error('Company with id '. $company->id . ' does not have contact with id '. $contact->id , status: 404);
+                return $this->error('Land with id '. $land->id . ' does not have contact with id '. $contact->id , status: 404);
             }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
