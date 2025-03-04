@@ -11,7 +11,7 @@ use Storage;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -147,6 +147,13 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThicknessIn($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOfficesSpaceSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTotalLandSf($value)
+ * @property int|null $building_id
+ * @property-read Building|null $building
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingFile> $files
+ * @property-read int|null $files_count
+ * @property-read mixed $files_by_type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @mixin \Eloquent
  */
 class Building extends Model

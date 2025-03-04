@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Market|null $market
  * @property-read \App\Models\SubMarket|null $submarket
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer filter(array $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereSubMarketId($value)
  * @mixin \Eloquent
  */
 class Developer extends Model

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Developer|null $developer
@@ -25,6 +25,52 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam updatedBy($userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam withoutTrashed()
+ * @property int $id
+ * @property int|null $industrial_park_id
+ * @property int|null $developer_id
+ * @property int|null $region_id
+ * @property int|null $market_id
+ * @property int|null $sub_market_id
+ * @property string|null $cam_building_sf
+ * @property string|null $cam_land_sf
+ * @property int $has_cam_services
+ * @property int $has_lightning_maintenance
+ * @property int $has_park_administration
+ * @property int $storm_sewer_maintenance
+ * @property int $has_surveillance
+ * @property int $has_management_fee
+ * @property string|null $currency
+ * @property string|null $latitude
+ * @property string|null $longitude
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property int|null $deleted_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereCamBuildingSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereCamLandSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereDeveloperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereHasCamServices($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereHasLightningMaintenance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereHasManagementFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereHasParkAdministration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereHasSurveillance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereIndustrialParkId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereLatitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereLongitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereRegionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereStormSewerMaintenance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereSubMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Cam whereUpdatedBy($value)
  * @mixin \Eloquent
  */
 class Cam extends Model

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $market_id
@@ -39,6 +39,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark withoutTrashed()
+ * @property int|null $owner_id
+ * @property int|null $region_id
+ * @property string $total_land_ha
+ * @property string $available_land_ha
+ * @property int $building_number
+ * @property string|null $land_condition
+ * @property int $year_built
+ * @property int $has_rail_spur
+ * @property int $has_natural_gas
+ * @property int $has_sewage
+ * @property int $has_water
+ * @property int $has_electric
+ * @property string|null $latitude
+ * @property string|null $longitude
+ * @property string|null $comments
+ * @property-read \App\Models\Developer|null $owner
+ * @property-read \App\Models\Region|null $region
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereAvailableLandHa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereBuildingNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereHasElectric($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereHasNaturalGas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereHasRailSpur($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereHasSewage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereHasWater($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereLandCondition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereLatitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereLongitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereRegionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereSubMarketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereTotalLandHa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereYearBuilt($value)
  * @mixin \Eloquent
  */
 class IndustrialPark extends Model
