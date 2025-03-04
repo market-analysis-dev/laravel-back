@@ -34,4 +34,11 @@ class AuthController extends ApiController
 
         return $this->success('Login successful', $user, ['access_token' => $token]);
     }
+
+    public function me()
+    {
+        $user = Auth::user();
+        $permissions = $user->getAllPermissions()->pluck('name');
+        return $this->success('I am', compact('user', 'permissions'));
+    }
 }

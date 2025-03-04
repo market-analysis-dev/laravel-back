@@ -71,6 +71,13 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage whereYear($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage quarter($quarter)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage reitId($reitId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage reitName($reitName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage reitTypeName($reitTypeName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage whereDividedYield($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage whereReturnOnEnquity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitMortgage year($year)
  * @mixin \Eloquent
  */
 class ReitMortgage extends Model
@@ -113,6 +120,59 @@ class ReitMortgage extends Model
     public function reitType(): BelongsTo
     {
         return $this->belongsTo(ReitType::class, 'reit_type_id');
+    }
+
+    public function scopeReitId($query, $reitId)
+    {
+        return $reitId ? $query->where('reit_id', $reitId) : $query;
+    }
+
+    public function scopeYear($query, $year)
+    {
+        return $year ? $query->where('year', $year) : $query;
+    }
+
+    public function scopeQuarter($query, $quarter)
+    {
+        return $quarter ? $query->where('quarter', $quarter) : $query;
+    }
+
+    public function scopeReitName($query, $reitName)
+    {
+        return $reitName
+        ? $query->whereHas('reit', function ($query) use ($reitName) {
+                $query->where('name', 'like', "%{$reitName}%");
+            })
+        : $query;
+    }
+
+    public function scopeReitTypeName($query, $reitTypeName)
+    {
+        return $reitTypeName
+        ? $query->whereHas('reitType', function ($query) use ($reitTypeName) {
+                $query->where('name', 'like', "%{$reitTypeName}%");
+            })
+        : $query;
+    }
+
+    public static function filter(array $validated): mixed
+    {
+        $size = $validated['size'] ?? 10;
+        $order = $validated['column'] ?? 'id';
+        $direction = $validated['state'] ?? 'desc';
+
+        return self::with(['reit', 'reitType'])
+        ->leftJoin('cat_reits', 'cat_reits.id', '=', 'reit_mortgages.reit_id')
+        ->leftJoin('cat_reit_types', 'cat_reit_types.id', '=', 'reit_mortgages.reit_type_id')
+        ->select('reit_mortgages.*', 'cat_reits.name AS reitName', 'cat_reit_types.name AS reitTypeName')
+        ->reitId(request('reit_id'))
+        ->reitName(request('reitName'))
+        ->year(request('year'))
+        ->quarter(request('quarter'))
+        ->reitTypeName(request('reitTypeName'))
+
+        ->orderBy($order, $direction)
+        ->paginate($size);
     }
 
 }
