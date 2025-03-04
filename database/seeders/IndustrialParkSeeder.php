@@ -164,6 +164,7 @@ class IndustrialParkSeeder extends Seeder
                     $record
                 );
             }
+            DB::table('industrial_parks')->insert($chunk);
         }
     }
 }
