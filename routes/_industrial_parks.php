@@ -13,4 +13,5 @@ Route::group([
     Route::get('/{industrialPark}', [IndustrialParkController::class, 'show'])->name('show');
     Route::put('/{industrialPark}', [IndustrialParkController::class, 'update'])->name('update');
     Route::delete('/{industrialPark}', [IndustrialParkController::class, 'destroy'])->name('destroy');
+    Route::get('/{industrialPark}/tenants', [IndustrialParkController::class, 'getTenantsByPark'])->name('getTenantsByPark');
 });

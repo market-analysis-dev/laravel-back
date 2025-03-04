@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('available_land_ha', 5,2)->default(0);
             $table->unsignedSmallInteger('building_number')->default(0);
             $table->enum('land_condition', ['Fully Developed','Undeveloped'])->nullable();
+            $table->enum('park_type', ['Pocket','Industrial Park','Mega Park'])->default('Pocket');
             $table->unsignedSmallInteger('year_built')->default(0);
             $table->boolean('has_rail_spur')->default(false);
             $table->boolean('has_natural_gas')->default(false);
