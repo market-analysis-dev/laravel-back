@@ -31,6 +31,7 @@ class UpdateIndustrialParkRequest extends FormRequest
             'available_land_ha' => 'nullable|numeric|min:0|max:999.99',
             'building_number' => 'nullable|integer|min:0|max:65535',
             'land_condition' => 'nullable|in:Fully Developed,Undeveloped',
+            'park_type' => 'in:Pocket,Industrial Park,Mega Park|nullable',
             'year_built' => 'nullable|integer|min:0|max:65535',
             'has_rail_spur' => 'boolean',
             'has_natural_gas' => 'boolean',

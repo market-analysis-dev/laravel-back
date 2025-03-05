@@ -99,6 +99,7 @@ class IndustrialPark extends Model
         'latitude',
         'longitude',
         'comments',
+        'park_type',
         'created_by',
         'updated_by',
         'deleted_by',

@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreIndustrialParkRequest;
 use App\Http\Requests\UpdateIndustrialParkRequest;
+use App\Http\Resources\TenantsByParkResource;
+use App\Models\BuildingAvailable;
 use App\Models\IndustrialPark;
+use App\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Enums\BuildingState;
 
 class IndustrialParkController extends ApiController implements HasMiddleware
 {
@@ -96,5 +100,20 @@ class IndustrialParkController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return $this->error('Error deleting industrial park: ' . $e->getMessage(), status: 500);
         }
+    }
+
+    /**
+     * @param IndustrialPark $industrialPark
+     * @return ApiResponse
+     */
+    public function getTenantsByPark(IndustrialPark $industrialPark): ApiResponse
+    {
+       $tenantsByPark =  BuildingAvailable::select()->with('building', 'tenant')
+            ->whereHas('building', function ($query) use ($industrialPark) {
+                $query->where('industrial_park_id', $industrialPark->id);
+            })
+        ->where('building_state', BuildingState::ABSORPTION->value)
+       ->get();
+       return $this->success(data: TenantsByParkResource::collection($tenantsByPark));
     }
 }
