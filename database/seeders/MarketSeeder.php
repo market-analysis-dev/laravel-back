@@ -31,10 +31,10 @@ class MarketSeeder extends Seeder
             ['id' => 15, 'name' => 'Nuevo Laredo', 'status' => 'active', 'region_id' => 4],
             ['id' => 16, 'name' => 'Aguascalientes', 'status' => 'active', 'region_id' => 1],
             ['id' => 17, 'name' => 'Hidalgo', 'status' => 'active', 'region_id' => 2],
-            ['id' => 18, 'name' => 'Toluca', 'status' => 'active', 'region_id' => 2],
+            // ['id' => 18, 'name' => 'Toluca', 'status' => 'active', 'region_id' => 2],
+            ['id' => 18, 'name' => 'Hermosillo', 'status' => 'active', 'region_id' => 5],
             ['id' => 19, 'name' => 'La Laguna', 'status' => 'active', 'region_id' => 4],
-            ['id' => 20, 'name' => 'Hermosillo', 'status' => 'active', 'region_id' => 5],
-            ['id' => 21, 'name' => 'Merida', 'status' => 'active', 'region_id' => 6],
+            ['id' => 20, 'name' => 'Merida', 'status' => 'active', 'region_id' => 6],
         ];
 
             Market::insert($data);
