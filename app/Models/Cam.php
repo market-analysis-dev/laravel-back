@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Developer|null $developer
@@ -123,6 +123,6 @@ class Cam extends Model
 
     public function subMarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(SubMarket::class, 'submarket_id');
+        return $this->belongsTo(SubMarket::class, 'sub_market_id');
     }
 }

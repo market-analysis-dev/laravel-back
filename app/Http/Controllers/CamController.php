@@ -28,7 +28,13 @@ class CamController extends ApiController implements HasMiddleware
      */
     public function index(): ApiResponse
     {
-        $cams = Cam::all();
+        $cams = Cam::with([
+            'industrialPark',
+            'developer',
+            'region',
+            'market',
+            'subMarket'
+        ])->get();
         return $this->success(data: $cams);
     }
 
