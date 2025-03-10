@@ -135,6 +135,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'lands.available.update'],
             ['name' => 'lands.available.destroy'],
 
+            ['name' => 'lands.contacts.index'],
+            ['name' => 'lands.contacts.show'],
+            ['name' => 'lands.contacts.create'],
+            ['name' => 'lands.contacts.update'],
+            ['name' => 'lands.contacts.destroy'],
+            ['name' => 'lands.contacts.addContact'],
+
             ['name' => 'lands.index'],
             ['name' => 'lands.show'],
             ['name' => 'lands.create'],
