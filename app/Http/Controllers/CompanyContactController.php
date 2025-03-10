@@ -23,6 +23,7 @@ class CompanyContactController extends ApiController implements HasMiddleware
             new Middleware('permission:companies.contact.create', only: ['store']),
             new Middleware('permission:companies.contact.update', only: ['update']),
             new Middleware('permission:companies.contact.destroy', only: ['destroy']),
+            new Middleware('permission:companies.contact.addContact', only: ['addContact']),
         ];
     }
 
@@ -150,4 +151,36 @@ class CompanyContactController extends ApiController implements HasMiddleware
             return $this->error($e->getMessage(), status: 500);
         }
     }
+
+    /**
+     * @param Company $company
+     * @param Contact $contact
+     * @return ApiResponse
+     */
+    public function addContact(Company $company, Contact $contact): ApiResponse
+    {
+        try {
+            $exists = CompanyContact::where('company_id', $company->id)
+                ->where('contact_id', $contact->id)
+                ->exists();
+
+            if ($exists) {
+                return $this->error('Company already has this contact', status: 422);
+            }
+
+            CompanyContact::create([
+                'company_id' => $company->id,
+                'contact_id' => $contact->id,
+            ]);
+
+            if (!$contact->is_company_contact) {
+                $contact->update(['is_company_contact' => true]);
+            }
+
+            return $this->success('The contact has been successfully added to the company.', $contact);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), status: 500);
+        }
+    }
+
 }

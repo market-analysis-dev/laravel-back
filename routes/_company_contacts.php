@@ -13,4 +13,5 @@ Route::group([
     Route::get('/{contact}', [CompanyContactController::class, 'show'])->name('show');
     Route::put('/{contact}', [CompanyContactController::class, 'update'])->name('update');
     Route::delete('/{contact}', [CompanyContactController::class, 'destroy'])->name('destroy');
+    Route::post('/add/{contact}', [CompanyContactController::class, 'addContact'])->name('addContact');
 });
