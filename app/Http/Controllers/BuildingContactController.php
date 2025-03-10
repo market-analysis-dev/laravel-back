@@ -22,6 +22,7 @@ class BuildingContactController extends ApiController implements HasMiddleware
             new Middleware('permission:buildings.contacts.create', only: ['store']),
             new Middleware('permission:buildings.contacts.update', only: ['update']),
             new Middleware('permission:buildings.contacts.destroy', only: ['destroy']),
+            new Middleware('permission:buildings.contacts.addContact', only: ['addContact']),
         ];
     }
 

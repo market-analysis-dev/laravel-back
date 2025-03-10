@@ -66,6 +66,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'buildings.contacts.create'],
             ['name' => 'buildings.contacts.update'],
             ['name' => 'buildings.contacts.destroy'],
+            ['name' => 'buildings.contacts.addContact'],
 
             ['name' => 'industrial-parks.index'],
             ['name' => 'industrial-parks.show'],
