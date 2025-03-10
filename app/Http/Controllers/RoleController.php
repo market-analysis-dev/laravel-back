@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -60,10 +61,13 @@ class RoleController extends ApiController implements HasMiddleware
         return $this->response('Role successfully obtained', $role);
     }
 
+
     /**
-     * Update the specified resource in storage.
+     * @param Request $request
+     * @param $roleId
+     * @return \App\Responses\ApiResponse
      */
-    public function update(Request $request, $roleId)
+    public function update(Request $request, $roleId): ApiResponse
     {
         $role = Role::findOrFail($roleId);
 
@@ -78,11 +82,37 @@ class RoleController extends ApiController implements HasMiddleware
         }
 
         $role->update(['name' => $validated['name'], 'guard_name' => 'web']);
+
         if (!empty($validated['permissions'])) {
-            $role->syncPermissions($validated['permissions']);
+            $permissions = \Spatie\Permission\Models\Permission::whereIn('id', $validated['permissions'])->pluck('name', 'id')->toArray();
+
+            $role->syncPermissions(array_keys($permissions));
+
+            $firstPermission = reset($permissions);
+            [$module] = explode('.', $firstPermission);
+
+
+            $hasUpdate = in_array("$module.update", $permissions);
+            $hasShow = in_array("$module.show", $permissions);
+
+
+            if ($hasUpdate && !$hasShow) {
+                $showPermissionId = \Spatie\Permission\Models\Permission::where('name', "$module.show")->value('id');
+                if ($showPermissionId) {
+                    $role->givePermissionTo($showPermissionId);
+                }
+            }
+
+
+            if (!$hasUpdate && $hasShow) {
+                $role->revokePermissionTo("$module.show");
+            }
         }
+
         return $this->response('Role updated successfully', $role);
     }
+
+
 
     /**
      * Remove the specified resource from storage.
