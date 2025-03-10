@@ -148,4 +148,35 @@ class BuildingContactController extends ApiController implements HasMiddleware
             return $this->error($e->getMessage(), 500);
         }
     }
+
+    /**
+     * @param Building $building
+     * @param Contact $contact
+     * @return ApiResponse
+     */
+    public function addContact(Building $building, Contact $contact): ApiResponse
+    {
+        try {
+            $exists = BuildingContact::where('building_id', $building->id)
+                ->where('contact_id', $contact->id)
+                ->exists();
+
+            if ($exists) {
+                return $this->error('Building already has this contact', status: 422);
+            }
+
+            BuildingContact::create([
+                'building_id' => $building->id,
+                'contact_id' => $contact->id,
+            ]);
+
+            if (!$contact->is_buildings_contact) {
+                $contact->update(['is_buildings_contact' => true]);
+            }
+
+            return $this->success('The contact has been successfully added to the building.', $contact);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), status: 500);
+        }
+    }
 }
