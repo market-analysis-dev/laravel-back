@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddBuildingContactRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Building;
@@ -155,17 +156,9 @@ class BuildingContactController extends ApiController implements HasMiddleware
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function addContact(Building $building, Contact $contact): ApiResponse
+    public function addContact(AddBuildingContactRequest $request, Building $building, Contact $contact): ApiResponse
     {
         try {
-            $exists = BuildingContact::where('building_id', $building->id)
-                ->where('contact_id', $contact->id)
-                ->exists();
-
-            if ($exists) {
-                return $this->error('Building already has this contact', status: 422);
-            }
-
             BuildingContact::create([
                 'building_id' => $building->id,
                 'contact_id' => $contact->id,
