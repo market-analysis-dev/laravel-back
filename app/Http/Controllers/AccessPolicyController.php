@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\AccessPolicy;
 use App\Http\Resources\AccessPolicyResource;
@@ -65,7 +66,7 @@ class AccessPolicyController extends ApiController
     public function destroy($id): ApiResponse
     {
         $policy = AccessPolicy::findOrFail($id);
-        
+
         try{
 
             if($policy) {
