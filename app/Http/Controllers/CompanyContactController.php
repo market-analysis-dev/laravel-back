@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddCompanyContactRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
@@ -23,6 +24,7 @@ class CompanyContactController extends ApiController implements HasMiddleware
             new Middleware('permission:companies.contact.create', only: ['store']),
             new Middleware('permission:companies.contact.update', only: ['update']),
             new Middleware('permission:companies.contact.destroy', only: ['destroy']),
+            new Middleware('permission:companies.contact.addContact', only: ['addContact']),
         ];
     }
 
@@ -150,4 +152,30 @@ class CompanyContactController extends ApiController implements HasMiddleware
             return $this->error($e->getMessage(), status: 500);
         }
     }
+
+    /**
+     * @param AddCompanyContactRequest $request
+     * @param Company $company
+     * @param Contact $contact
+     * @return ApiResponse
+     */
+    public function addContact(AddCompanyContactRequest $request, Company $company, Contact $contact): ApiResponse
+    {
+        try {
+            CompanyContact::create([
+                'company_id' => $company->id,
+                'contact_id' => $contact->id,
+            ]);
+
+            if (!$contact->is_company_contact) {
+                $contact->update(['is_company_contact' => true]);
+            }
+
+            return $this->success('The contact has been successfully added to the company.', $contact);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), status: 500);
+        }
+
+    }
+
 }

@@ -123,6 +123,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'companies.contact.create'],
             ['name' => 'companies.contact.update'],
             ['name' => 'companies.contact.destroy'],
+            ['name' => 'companies.contact.addContact'],
 
             ['name' => 'lands.absorption.index'],
             ['name' => 'lands.absorption.show'],
