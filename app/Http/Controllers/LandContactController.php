@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddLandContactRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
@@ -156,21 +157,14 @@ class LandContactController extends ApiController implements HasMiddleware
     }
 
     /**
+     * @param AddLandContactRequest $request
      * @param Land $land
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function addContact(Land $land, Contact $contact): ApiResponse
+    public function addContact(AddLandContactRequest $request, Land $land, Contact $contact): ApiResponse
     {
         try {
-            $exists = LandContact::where('land_id', $land->id)
-                ->where('contact_id', $contact->id)
-                ->exists();
-
-            if ($exists) {
-                return $this->error('Land already has this contact', status: 422);
-            }
-
             LandContact::create([
                 'land_id' => $land->id,
                 'contact_id' => $contact->id,
@@ -184,6 +178,7 @@ class LandContactController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
+
     }
 
 }
