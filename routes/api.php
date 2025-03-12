@@ -93,4 +93,5 @@ require_once '_reit_mortgages.php';
 require_once '_cams.php';
 require_once '_land_contacts.php';
 require_once '_market_growths.php';
+require_once '_reits_timeline.php';
 require_once '_contacts.php';

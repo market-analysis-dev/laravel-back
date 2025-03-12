@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Developer|null $developer
