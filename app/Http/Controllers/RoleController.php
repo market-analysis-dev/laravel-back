@@ -44,11 +44,34 @@ class RoleController extends ApiController implements HasMiddleware
             return $this->error('The role name already exists in the system');
         }
 
+        $role = Role::create([
+            'name' => $validated['name'],
+            'guard_name' => 'web'
+        ]);
 
-        $role = Role::create(['name' => $validated['name'], 'guard_name' => 'web']);
         if (!empty($validated['permissions'])) {
-            $role->syncPermissions($validated['permissions']);
+            $permissions = \Spatie\Permission\Models\Permission::whereIn('id', $validated['permissions'])->pluck('name', 'id')->toArray();
+
+            $role->syncPermissions(array_keys($permissions));
+
+            $firstPermission = reset($permissions);
+            [$module] = explode('.', $firstPermission);
+
+            $hasUpdate = in_array("$module.update", $permissions);
+            $hasShow = in_array("$module.show", $permissions);
+
+            if ($hasUpdate && !$hasShow) {
+                $showPermissionId = \Spatie\Permission\Models\Permission::where('name', "$module.show")->value('id');
+                if ($showPermissionId) {
+                    $role->givePermissionTo($showPermissionId);
+                }
+            }
+
+            if (!$hasUpdate && $hasShow) {
+                $role->revokePermissionTo("$module.show");
+            }
         }
+
         return $this->response('Role created successfully', $role);
     }
 
