@@ -13,4 +13,5 @@ Route::group([
     Route::get('/{contact}', [LandContactController::class, 'show'])->name('show');
     Route::put('/{contact}', [LandContactController::class, 'update'])->name('update');
     Route::delete('/{contact}', [LandContactController::class, 'destroy'])->name('destroy');
+    Route::post('/add/{contact}', [LandContactController::class, 'addContact'])->name('addContact');
 });

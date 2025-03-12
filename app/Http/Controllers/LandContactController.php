@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddLandContactRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
@@ -17,7 +18,14 @@ class LandContactController extends ApiController implements HasMiddleware
 
     public static function middleware()
     {
-        // TODO: Implement middleware() method.
+        return [
+            new Middleware('permission:lands.contacts.index', only: ['index']),
+            new Middleware('permission:lands.contacts.show', only: ['show']),
+            new Middleware('permission:lands.contacts.create', only: ['store']),
+            new Middleware('permission:lands.contacts.update', only: ['update']),
+            new Middleware('permission:lands.contacts.destroy', only: ['destroy']),
+            new Middleware('permission:lands.contacts.addContact', only: ['addContact']),
+        ];
     }
 
     /**
@@ -147,4 +155,30 @@ class LandContactController extends ApiController implements HasMiddleware
             return $this->error($e->getMessage(), status: 500);
         }
     }
+
+    /**
+     * @param AddLandContactRequest $request
+     * @param Land $land
+     * @param Contact $contact
+     * @return ApiResponse
+     */
+    public function addContact(AddLandContactRequest $request, Land $land, Contact $contact): ApiResponse
+    {
+        try {
+            LandContact::create([
+                'land_id' => $land->id,
+                'contact_id' => $contact->id,
+            ]);
+
+            if (!$contact->is_land_contact) {
+                $contact->update(['is_land_contact' => true]);
+            }
+
+            return $this->success('The contact has been successfully added to the land.', $contact);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), status: 500);
+        }
+
+    }
+
 }
