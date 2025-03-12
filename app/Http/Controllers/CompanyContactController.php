@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddCompanyContactRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
@@ -153,21 +154,14 @@ class CompanyContactController extends ApiController implements HasMiddleware
     }
 
     /**
+     * @param AddCompanyContactRequest $request
      * @param Company $company
      * @param Contact $contact
      * @return ApiResponse
      */
-    public function addContact(Company $company, Contact $contact): ApiResponse
+    public function addContact(AddCompanyContactRequest $request, Company $company, Contact $contact): ApiResponse
     {
         try {
-            $exists = CompanyContact::where('company_id', $company->id)
-                ->where('contact_id', $contact->id)
-                ->exists();
-
-            if ($exists) {
-                return $this->error('Company already has this contact', status: 422);
-            }
-
             CompanyContact::create([
                 'company_id' => $company->id,
                 'contact_id' => $contact->id,
@@ -181,6 +175,7 @@ class CompanyContactController extends ApiController implements HasMiddleware
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
+
     }
 
 }
