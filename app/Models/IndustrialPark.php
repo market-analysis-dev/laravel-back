@@ -72,6 +72,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereSubMarketId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereTotalLandHa($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereYearBuilt($value)
+ * @property string $park_type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereParkType($value)
  * @mixin \Eloquent
  */
 class IndustrialPark extends Model

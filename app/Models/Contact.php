@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string|null $name
@@ -73,6 +73,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereHasLand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact wherePhone($value)
+ * @property string|null $contact_name
+ * @property string|null $contact_phone
+ * @property string|null $contact_email
+ * @property string|null $contact_comments
  * @mixin \Eloquent
  */
 class Contact extends Model
