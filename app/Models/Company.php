@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\File;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int|null $logo_id
@@ -68,5 +69,10 @@ class Company extends Model
     public function logo()
     {
         return $this->belongsTo(File::class, 'logo_id', 'id');
+    }
+
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'company_contacts', 'company_id', 'contact_id');
     }
 }

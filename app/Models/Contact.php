@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
 
 /**
  *
@@ -97,4 +97,93 @@ class Contact extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    public function buildings(): BelongsToMany
+    {
+        return $this->belongsToMany(Building::class, 'building_contacts', 'contact_id', 'building_id');
+    }
+
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_contacts', 'contact_id', 'company_id');
+    }
+
+    public function lands(): BelongsToMany
+    {
+        return $this->belongsToMany(Land::class, 'land_contacts', 'contact_id', 'land_id');
+    }
+
+    public function scopeName($query, $name)
+    {
+        return $name ? $query->where('name', $name) : $query;
+    }
+
+    public function scopePhone($query, $phone)
+    {
+        return $phone ? $query->where('phone', $phone) : $query;
+    }
+
+    public function scopeEmail($query, $email)
+    {
+        return $email ? $query->where('email', $email) : $query;
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return ($search
+            ? $query->where('name', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('comments', 'like', "%{$search}%")
+            : $query
+        );
+    }
+
+    public function scopeComments($query, $comments)
+    {
+        return $comments ? $query->where('comments', $comments) : $query;
+    }
+
+    public function scopeIsBoolPropContact($query, $boolProp, $value)
+    {
+        if (!in_array($boolProp, ['is_direct_contact', 'is_land_contact', 'is_buildings_contact', 'is_broker_contact', 'is_developer_contact', 'is_owner_contact', 'is_company_contact'])) return $query;
+        return is_bool($value) ? $query->where($boolProp, $value) : $query;
+    }
+
+    public function scopeNotBuilding($query, $building_id)
+    {
+        return $building_id ? $query->whereDoesntHave('buildings', function ($query) use ($building_id) {
+            $query->where('buildings.id', $building_id);
+        }) : $query;
+    }
+
+    public function scopeNotLand($query, $land_id)
+    {
+        return $land_id ? $query->whereDoesntHave('lands', function ($query) use ($land_id) {
+            $query->where('lands.id', $land_id);
+        }) : $query;
+    }
+
+    public function scopeNotCompany($query, $company_id)
+    {
+        return $company_id ? $query->whereDoesntHave('companies', function ($query) use ($company_id) {
+            $query->where('companies.id', $company_id);
+        }) : $query;
+    }
+
+    public function scopeFilter($query, array $dataValidated)
+    {
+        foreach ($dataValidated as $key => $value) {
+            if (in_array($key, ['is_direct_contact', 'is_land_contact', 'is_buildings_contact', 'is_broker_contact', 'is_developer_contact', 'is_owner_contact', 'is_company_contact'])) {
+                $query->isBoolPropContact($key, filter_var($value, FILTER_VALIDATE_BOOLEAN));
+            } elseif (in_array($key, ['name', 'phone', 'email', 'comments'])) {
+                $query->{$key}($value ?? null);
+            }
+        }
+        $query->search($dataValidated['search'] ?? null);
+        $query->notBuilding($dataValidated['not_building_id'] ?? null);
+        $query->notLand($dataValidated['not_land_id'] ?? null);
+        $query->notCompany($dataValidated['not_company_id'] ?? null);
+        return $query;
+    }
 }

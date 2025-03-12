@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -266,6 +267,10 @@ class Building extends Model
         return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
     }
 
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'building_contacts', 'building_id', 'contact_id');
+    }
 
     public function getFilesByTypeAttribute()
     {

@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -140,5 +141,10 @@ class Land extends Model
     public function industrialPark(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(IndustrialPark::class, 'industrial_park_id');
+    }
+
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'land_contacts', 'land_id', 'contact_id');
     }
 }
