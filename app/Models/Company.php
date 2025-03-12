@@ -10,7 +10,7 @@ use App\Models\File;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int|null $logo_id
@@ -47,6 +47,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereWebsite($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Company withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Company withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
+ * @property-read int|null $contacts_count
  * @mixin \Eloquent
  */
 class Company extends Model

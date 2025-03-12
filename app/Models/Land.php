@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -75,6 +75,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereZoning($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
+ * @property-read int|null $contacts_count
  * @mixin \Eloquent
  */
 class Land extends Model

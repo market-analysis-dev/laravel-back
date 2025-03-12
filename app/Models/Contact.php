@@ -9,7 +9,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string|null $name
@@ -57,10 +57,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact withoutTrashed()
- * @property string $name
- * @property string $phone
- * @property string $email
- * @property string|null $comments
  * @property int $has_building
  * @property int $has_land
  * @property int $has_broker
@@ -77,6 +73,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $contact_phone
  * @property string|null $contact_email
  * @property string|null $contact_comments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Building> $buildings
+ * @property-read int|null $buildings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Company> $companies
+ * @property-read int|null $companies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Land> $lands
+ * @property-read int|null $lands_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact comments($comments)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact email($email)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact filter(array $dataValidated)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact isBoolPropContact($boolProp, $value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact name($name)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact notBuilding($building_id)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact notCompany($company_id)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact notLand($land_id)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact phone($phone)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contact search($search)
  * @mixin \Eloquent
  */
 class Contact extends Model
