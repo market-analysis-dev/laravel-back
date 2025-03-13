@@ -34,7 +34,7 @@ class BuildingService
                 });
             })
             ->when($validated['status'] ?? false, function ($query, $status) {
-                $query->where('status', $status);
+                $query->where('buildings.status', $status);
             })
             ->when($validated['building_name'] ??  false, function ($query, $building_name){
                 $query->where('building_name', 'like', "%{$building_name}%");
