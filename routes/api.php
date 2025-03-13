@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\MarketAuthController;
+use App\Http\Controllers\MarketController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ModulesColumnController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\SubMarketController;
 use App\Http\Controllers\UniquePermissionController;
 use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\UserTypeController;
@@ -62,6 +67,10 @@ Route::post('/permissions/update/{userId}', [PermissionController::class, 'updat
 Route::post('/permissions/clone/{userId}', [PermissionController::class, 'clonePermissions']);
 Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class, 'cloneMultipleUsers']);
 
+
+
+// Route::post('/market/login', [MarketAuthController::class, 'login']);
+
 require_once '_users.php';
 require_once '_buildings_available.php';
 require_once '_buildings_absorption.php';
@@ -95,3 +104,4 @@ require_once '_land_contacts.php';
 require_once '_market_growths.php';
 require_once '_reits_timeline.php';
 require_once '_contacts.php';
+require_once '_reit_instruments.php';

@@ -197,6 +197,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'reits-timeline.create'],
             ['name' => 'reits-timeline.update'],
             ['name' => 'reits-timeline.destroy'],
+
+            ['name' => 'reit-instruments.index'],
+            ['name' => 'reit-instruments.show'],
+            ['name' => 'reit-instruments.create'],
+            ['name' => 'reit-instruments.update'],
+            ['name' => 'reit-instruments.destroy'],
         ];
         foreach ($permissions as $permission) {
             Permission::create($permission);
