@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -154,6 +155,8 @@ use Storage;
  * @property-read mixed $files_by_type
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
+ * @property-read int|null $contacts_count
  * @mixin \Eloquent
  */
 class Building extends Model
@@ -266,6 +269,10 @@ class Building extends Model
         return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
     }
 
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'building_contacts', 'building_id', 'contact_id');
+    }
 
     public function getFilesByTypeAttribute()
     {
