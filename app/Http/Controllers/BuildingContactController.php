@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddBuildingContactRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Building;
@@ -22,6 +23,7 @@ class BuildingContactController extends ApiController implements HasMiddleware
             new Middleware('permission:buildings.contacts.create', only: ['store']),
             new Middleware('permission:buildings.contacts.update', only: ['update']),
             new Middleware('permission:buildings.contacts.destroy', only: ['destroy']),
+            new Middleware('permission:buildings.contacts.addContact', only: ['addContact']),
         ];
     }
 
@@ -146,6 +148,29 @@ class BuildingContactController extends ApiController implements HasMiddleware
             }
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @param Building $building
+     * @param Contact $contact
+     * @return ApiResponse
+     */
+    public function addContact(AddBuildingContactRequest $request, Building $building, Contact $contact): ApiResponse
+    {
+        try {
+            BuildingContact::create([
+                'building_id' => $building->id,
+                'contact_id' => $contact->id,
+            ]);
+
+            if (!$contact->is_buildings_contact) {
+                $contact->update(['is_buildings_contact' => true]);
+            }
+
+            return $this->success('The contact has been successfully added to the building.', $contact);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 }

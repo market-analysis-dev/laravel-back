@@ -13,6 +13,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline query()
+ * @property int $id
+ * @property int $reit_id
+ * @property string $name
+ * @property string $type
+ * @property int $property
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereProperty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereReitId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReitsTimeline whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ReitsTimeline extends Model

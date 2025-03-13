@@ -66,6 +66,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'buildings.contacts.create'],
             ['name' => 'buildings.contacts.update'],
             ['name' => 'buildings.contacts.destroy'],
+            ['name' => 'buildings.contacts.addContact'],
 
             ['name' => 'industrial-parks.index'],
             ['name' => 'industrial-parks.show'],
@@ -122,6 +123,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'companies.contact.create'],
             ['name' => 'companies.contact.update'],
             ['name' => 'companies.contact.destroy'],
+            ['name' => 'companies.contact.addContact'],
 
             ['name' => 'lands.absorption.index'],
             ['name' => 'lands.absorption.show'],
@@ -134,6 +136,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'lands.available.create'],
             ['name' => 'lands.available.update'],
             ['name' => 'lands.available.destroy'],
+
+            ['name' => 'lands.contacts.index'],
+            ['name' => 'lands.contacts.show'],
+            ['name' => 'lands.contacts.create'],
+            ['name' => 'lands.contacts.update'],
+            ['name' => 'lands.contacts.destroy'],
+            ['name' => 'lands.contacts.addContact'],
 
             ['name' => 'lands.index'],
             ['name' => 'lands.show'],

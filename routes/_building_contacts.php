@@ -13,4 +13,5 @@ Route::group([
     Route::get('/{contact}', [BuildingContactController::class, 'show'])->name('show');
     Route::put('/{contact}', [BuildingContactController::class, 'update'])->name('update');
     Route::delete('/{contact}', [BuildingContactController::class, 'destroy'])->name('destroy');
+    Route::post('/add/{contact}', [BuildingContactController::class, 'addContact'])->name('addContact');
 });

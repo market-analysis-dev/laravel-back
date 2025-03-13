@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -74,6 +75,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land whereZoning($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Land withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
+ * @property-read int|null $contacts_count
  * @mixin \Eloquent
  */
 class Land extends Model
@@ -140,5 +143,10 @@ class Land extends Model
     public function industrialPark(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(IndustrialPark::class, 'industrial_park_id');
+    }
+
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'land_contacts', 'land_id', 'contact_id');
     }
 }
