@@ -27,7 +27,7 @@ class MarketGrowthController extends ApiController implements HasMiddleware
      */
     public function index(): ApiResponse
     {
-        $marketGrowths = MarketGrowth::all();
+        $marketGrowths = MarketGrowth::with('building', 'owner', 'developer', 'builder', 'industrialPark', 'region', 'market', 'subMarket')->get();
         return $this->success(data: $marketGrowths);
     }
 
