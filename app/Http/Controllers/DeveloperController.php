@@ -29,7 +29,7 @@ class DeveloperController extends ApiController implements HasMiddleware
 
     public function index(Request $request): \App\Responses\ApiResponse
     {
-        $filters = $request->only(['is_owner', 'is_builder', 'is_developer', 'market', 'submarket']);
+        $filters = $request->only(['is_owner', 'is_builder', 'is_developer']);
         $developers = Developer::query()->filter($filters)->get();
         return $this->success(data: DeveloperResource::collection($developers));
     }

@@ -17,8 +17,6 @@ class DeveloperResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'market_id' => $this->market_id,
-            'sub_market_id' => $this->sub_market_id,
             'is_developer' => $this->is_developer,
             'is_builder' => $this->is_builder,
             'is_owner' => $this->is_owner,
