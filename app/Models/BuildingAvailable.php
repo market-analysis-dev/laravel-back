@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -42,8 +42,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $abs_month
  * @property string|null $abs_sale_price
  * @property string $building_state
- * @property string|null $avl_building_phase
- * @property string|null $abs_building_phase
+ * @property string|null $avl_type
+ * @property string|null $abs_type
  * @property string|null $abs_final_use
  * @property string|null $abs_company_type
  * @property int|null $created_by
@@ -113,7 +113,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
  * @property-read \App\Models\Contact $broker
  * @property int|null $abs_shelter_id
- * @property int|null $abs_broker_id
  * @property int|null $size_sf
  * @property int|null $rams
  * @property int|null $trailer_parking_space
@@ -146,7 +145,7 @@ class BuildingAvailable extends Model
 
     protected $fillable = [
         'building_id',
-        'rams',
+        'ramps',
         'trailer_parking_space',
         'above_market_tis',
         'abs_tenant_id',
@@ -158,8 +157,8 @@ class BuildingAvailable extends Model
         'building_state',
         'size_sf',
         'avl_building_dimensions_ft',
-        'avl_building_phase',
-        'abs_building_phase',
+        'avl_type',
+        'abs_type',
         'avl_minimum_space_sf',
         'avl_expansion_up_to_sf',
         'dock_doors',
@@ -186,7 +185,6 @@ class BuildingAvailable extends Model
         'abs_company_type',
         'abs_sale_price',
         'abs_shelter_id',
-        'abs_broker_id',
         'has_expansion_land',
         'has_crane',
         'has_hvac',
@@ -199,6 +197,7 @@ class BuildingAvailable extends Model
         'fire_protection_system',
         'is_negative_absorption',
         'status',
+        'offices_space_sf',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -234,8 +233,4 @@ class BuildingAvailable extends Model
         return $this->belongsTo(Shelter::class, 'abs_shelter_id');
     }
 
-    public function absBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Broker::class, 'abs_broker_id');
-    }
 }

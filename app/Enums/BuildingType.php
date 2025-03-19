@@ -5,7 +5,7 @@ namespace App\Enums;
 use App\Interfaces\Enums\HasTranslation;
 use App\Traits\EnumHelper;
 
-enum BuildingPhase: string
+enum BuildingType: string
 {
     use EnumHelper;
 

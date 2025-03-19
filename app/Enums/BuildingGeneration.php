@@ -4,7 +4,7 @@ namespace App\Enums;
 
 use App\Traits\EnumHelper;
 
-enum BuildingTypeGeneration: string
+enum BuildingGeneration: string
 {
     use EnumHelper;
 

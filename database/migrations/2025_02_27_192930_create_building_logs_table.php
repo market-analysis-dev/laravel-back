@@ -37,7 +37,7 @@ return new class extends Migration
             $table->string('roof_system', 45)->nullable();
             $table->string('skylights_sf', 45)->nullable();
             $table->string('coverage', 45)->nullable();
-            $table->string('kvas', 20)->nullable();
+            $table->string('transformer_capacity', 20)->nullable();
             $table->integer('expansion_land');
             $table->string('columns_spacing_ft', 20);
             $table->string('bay_size', 20);
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('floor_resistance', 255);
             $table->integer('expansion_up_to_sf');
             $table->enum('class', ['A', 'B', 'C']);
-            $table->enum('type_generation', ['1st Generation', '2nd Generation']);
+            $table->enum('generation', ['1st Generation', '2nd Generation']);
             $table->enum('currency', ['USD', 'MXP']);
             $table->enum('tenancy', ['Single', 'Multitenant']);
             $table->enum('construction_type', ['TILT_UP', 'Precast', 'Block & Sheet Metal', 'Sheet Metal'])->nullable();

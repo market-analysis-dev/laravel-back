@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -29,14 +29,10 @@ use Storage;
  * @property int|null $year_built
  * @property int|null $clear_height_ft
  * @property int|null $total_land_sf
- * @property int|null $offices_space_sf
  * @property int $has_expansion_land
- * @property int $has_crane
  * @property int $has_hvac
- * @property int $has_rail_spur
  * @property int $has_sprinklers
  * @property int $has_office
- * @property int $has_leed
  * @property string|null $hvac_production_area
  * @property string|null $ventilation
  * @property string|null $transformer_capacity
@@ -47,7 +43,7 @@ use Storage;
  * @property string|null $kvas
  * @property int $expansion_land
  * @property string $class
- * @property string $type_generation
+ * @property string $generation
  * @property string $currency
  * @property string $tenancy
  * @property string|null $construction_type
@@ -55,7 +51,6 @@ use Storage;
  * @property string $fire_protection_system
  * @property string $deal
  * @property string|null $loading_door
- * @property string|null $above_market_tis
  * @property string $status
  * @property int|null $created_by
  * @property int|null $updated_by
@@ -181,19 +176,15 @@ class Building extends Model
         'year_built',
         'clear_height_ft',
         'total_land_sf',
-        'offices_space_sf',
-        'has_crane',
-        'has_rail_spur',
-        'has_leed',
         'hvac_production_area',
         'ventilation',
         'roof_system',
         'skylights_sf',
         'coverage',
-        'kvas',
+        'transformer_capacity',
         'expansion_land',
         'class',
-        'type_generation',
+        'generation',
         'currency',
         'tenancy',
         'construction_type',
@@ -201,8 +192,9 @@ class Building extends Model
         'fire_protection_system',
         'deal',
         'loading_door',
-        'above_market_tis',
         'status',
+        'building_type',
+        'certifications',
         'columns_spacing_ft',
         'floor_thickness_in',
         'floor_resistance',
