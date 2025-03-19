@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
@@ -45,14 +45,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
  * @property int $is_user_owner
- * @property int|null $market_id
- * @property int|null $sub_market_id
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereMarketId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereSubmarketId($value)
- * @property-read \App\Models\Market|null $market
- * @property-read \App\Models\SubMarket|null $submarket
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer filter(array $filters)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereSubMarketId($value)
  * @mixin \Eloquent
  */
 class Developer extends Model
@@ -62,8 +55,6 @@ class Developer extends Model
     protected $table = 'cat_developers';
 
     protected $fillable = [
-        'market_id',
-        'sub_market_id',
         'name',
         'is_developer',
         'is_builder',
@@ -82,29 +73,11 @@ class Developer extends Model
         'deleted_at',
     ];
 
-    public function market(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Market::class, 'market_id');
-    }
-
-    public function submarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(SubMarket::class, 'sub_market_id');
-    }
-
     public function scopeFilter($query, array $filters)
     {
         foreach ($filters as $key => $value) {
             if (in_array($key, ['is_owner', 'is_builder', 'is_developer'])) {
                 $query->where($key, filter_var($value, FILTER_VALIDATE_BOOLEAN));
-            } elseif ($key === 'market' && !empty($value)) {
-                $query->whereHas('market', function ($q) use ($value) {
-                    $q->where('id', $value);
-                });
-            } elseif ($key === 'submarket' && !empty($value)) {
-                $query->whereHas('submarket', function ($q) use ($value) {
-                    $q->where('id', $value);
-                });
             }
         }
 
