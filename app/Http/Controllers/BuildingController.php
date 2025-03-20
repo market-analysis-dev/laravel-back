@@ -37,6 +37,7 @@ class BuildingController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:buildings.index', only: ['index']),
             new Middleware('permission:buildings.show', only: ['show']),
             new Middleware('permission:buildings.create', only: ['store']),
             new Middleware('permission:buildings.update', only: ['update']),

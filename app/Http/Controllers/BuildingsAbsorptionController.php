@@ -24,6 +24,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
     public static function middleware()
     {
         return [
+            new Middleware('permission:buildings.absorption.index', only: ['index']),
             new Middleware('permission:buildings.absorption.show', only: ['show']),
             new Middleware('permission:buildings.absorption.create', only: ['store']),
             new Middleware('permission:buildings.absorption.update', only: ['update']),

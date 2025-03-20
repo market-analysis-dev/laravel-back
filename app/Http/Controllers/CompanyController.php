@@ -18,6 +18,7 @@ class CompanyController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:companies.index', only: ['index']),
             new Middleware('permission:companies.show', only: ['show']),
             new Middleware('permission:companies.create', only: ['store']),
             new Middleware('permission:companies.update', only: ['update']),

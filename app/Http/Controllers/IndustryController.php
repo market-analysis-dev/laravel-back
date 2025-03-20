@@ -15,6 +15,7 @@ class IndustryController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:industries.index', only: ['index']),
             new Middleware('permission:industries.show', only: ['show']),
             new Middleware('permission:industries.create', only: ['store']),
             new Middleware('permission:industries.update', only: ['update']),

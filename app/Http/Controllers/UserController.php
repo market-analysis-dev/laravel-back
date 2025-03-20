@@ -14,6 +14,7 @@ class UserController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:users.index', only: ['index']),
             new Middleware('permission:users.show', only: ['show']),
             new Middleware('permission:users.create', only: ['store']),
             new Middleware('permission:users.update', only: ['update']),

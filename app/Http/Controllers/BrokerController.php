@@ -15,6 +15,7 @@ class BrokerController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:brokers.index', only: ['index']),
             new Middleware('permission:brokers.show', only: ['show']),
             new Middleware('permission:brokers.create', only: ['store']),
             new Middleware('permission:brokers.update', only: ['update']),

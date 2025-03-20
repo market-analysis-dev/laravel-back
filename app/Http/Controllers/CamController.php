@@ -15,6 +15,7 @@ class CamController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:cams.index', only: ['index']),
             new Middleware('permission:cams.show', only: ['show']),
             new Middleware('permission:cams.create', only: ['store']),
             new Middleware('permission:cams.update', only: ['update']),

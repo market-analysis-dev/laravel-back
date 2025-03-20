@@ -18,6 +18,7 @@ class BuildingContactController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:buildings.contacts.index', only: ['index']),
             new Middleware('permission:buildings.contacts.show', only: ['show']),
             new Middleware('permission:buildings.contacts.create', only: ['store']),
             new Middleware('permission:buildings.contacts.update', only: ['update']),

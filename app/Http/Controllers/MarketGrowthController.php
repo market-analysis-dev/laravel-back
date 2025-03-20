@@ -15,6 +15,7 @@ class MarketGrowthController extends ApiController implements HasMiddleware
     public static function middleware()
     {
         return [
+            new Middleware('permission:market-growths.index', only: ['index']),
             new Middleware('permission:market-growths.show', only: ['show']),
             new Middleware('permission:market-growths.create', only: ['store']),
             new Middleware('permission:market-growths.update', only: ['update']),
