@@ -68,6 +68,8 @@ class UpdateBuildingRequest extends FormRequest
             'status' => 'required|in:Active,Inactive,Pending,Draft',
             'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
             'certifications' => 'required|in:No,LEED,EDGE,BOMA',
+            'owner_type' => 'required|in:Investor,REITS,Developer,User Owner,Builder,Private Owner',
+            'stage' => 'required|in:Availability,Construction,Leased,Sold',
             'columns_spacing_ft' => 'string|max:20',
             'bay_size' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',

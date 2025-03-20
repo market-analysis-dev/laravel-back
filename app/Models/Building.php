@@ -200,6 +200,8 @@ class Building extends Model
         'floor_resistance',
         'expansion_up_to_sf',
         'bay_size',
+        'owner_type',
+        'stage',
         'created_by',
         'updated_by',
         'deleted_by',

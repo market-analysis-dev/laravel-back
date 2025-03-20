@@ -177,6 +177,8 @@ class BuildingAvailable extends Model
         'parking_space',
         'avl_min_lease',
         'avl_max_lease',
+        'abs_min_lease',
+        'abs_max_lease',
         'abs_closing_rate',
         'abs_closing_date',
         'abs_lease_up',

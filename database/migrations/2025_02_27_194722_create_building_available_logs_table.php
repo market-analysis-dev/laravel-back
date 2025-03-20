@@ -43,7 +43,7 @@ return new class extends Migration
             $table->decimal('abs_sale_price', 18, 2)->nullable();
             $table->enum('building_state', ['Availability', 'Absorption']);
             $table->enum('avl_type', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory'])->nullable();
-            $table->enum('abs_type', ['BTS', 'Expansion', 'Inventory'])->nullable();
+            $table->enum('abs_type', ['BTS', 'Expansion', 'Inventory', 'BTS Expansion'])->nullable();
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
             $table->enum('abs_deal', ['Sale', 'Lease']);

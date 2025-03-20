@@ -51,6 +51,8 @@ return new class extends Migration
             $table->enum('status', ['Active', 'Inactive', 'Pending', 'Draft']);
             $table->enum('building_type', ['Spec', 'BTS', 'BTS Expansion', 'Expansion']);
             $table->enum('certifications', ['No', 'LEED', 'EDGE', 'BOMA']);
+            $table->enum('owner_type', ['Investor', 'REITS', 'Developer', 'User Owner', 'Builder', 'Private Owner']);
+            $table->enum('stage', ['Availability', 'Construction', 'Leased', 'Sold']);
             $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

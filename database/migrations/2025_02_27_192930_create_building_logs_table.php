@@ -28,10 +28,6 @@ return new class extends Migration
             $table->integer('year_built')->nullable();
             $table->integer('clear_height_ft')->nullable();
             $table->integer('total_land_sf')->nullable();
-            $table->integer('offices_space_sf')->nullable();
-            $table->boolean('has_crane');
-            $table->boolean('has_rail_spur');
-            $table->boolean('has_leed');
             $table->string('hvac_production_area', 45)->nullable();
             $table->string('ventilation', 45)->nullable();
             $table->string('roof_system', 45)->nullable();
@@ -52,9 +48,12 @@ return new class extends Migration
             $table->enum('lightning', ['LED', 'T5', 'Metal Halide'])->nullable();
             $table->enum('deal', ['Sale', 'Lease']);
             $table->enum('loading_door', ['Crossdock', 'Back Loading', 'Front Loading'])->nullable();
-            $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
+            $table->enum('status', ['Active', 'Inactive', 'Pending', 'Draft']);
+            $table->enum('building_type', ['Spec', 'BTS', 'BTS Expansion', 'Expansion']);
+            $table->enum('certifications', ['No', 'LEED', 'EDGE', 'BOMA']);
+            $table->enum('owner_type', ['Investor', 'REITS', 'Developer', 'User Owner', 'Builder', 'Private Owner']);
+            $table->enum('stage', ['Availability', 'Construction', 'Leased', 'Sold']);
             $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
-            $table->set('above_market_tis', ["HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion"])->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();

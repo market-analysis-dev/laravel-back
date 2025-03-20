@@ -17,6 +17,8 @@ use App\Enums\BuildingCompanyType;
 use App\Enums\BuildingFinalUse;
 use App\Enums\BuildingBuildingType;
 use App\Enums\BuildingCertifications;
+use App\Enums\BuildingOwnerType;
+use App\Enums\BuildingStage;
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingDraftRequest;
@@ -225,6 +227,7 @@ class BuildingController extends ApiController implements HasMiddleware
                     BuildingType::BTS->value,
                     BuildingType::EXPANSION->value,
                     BuildingType::INVENTORY->value,
+                    BuildingType::BTS_EXPANSION->value,
             ]));
         });
 
@@ -320,6 +323,16 @@ class BuildingController extends ApiController implements HasMiddleware
     public function listBuildingCertifications(): ApiResponse
     {
         return $this->success(data: BuildingCertifications::array());
+    }
+
+    public function listBuildingOwnerTypes(): ApiResponse
+    {
+        return $this->success(data: BuildingOwnerType::array());
+    }
+
+    public function listBuildingStages(): ApiResponse
+    {
+        return $this->success(data: BuildingStage::array());
     }
 
     public function layoutDesign($buildingId)

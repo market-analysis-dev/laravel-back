@@ -16,5 +16,6 @@ enum BuildingType: string
     case PLANNED = 'Planned';
     case SUBLEASE = 'Sublease';
     case EXPIRATION = 'Expiration';
+    case BTS_EXPANSION = 'BTS Expansion';
 
 }
