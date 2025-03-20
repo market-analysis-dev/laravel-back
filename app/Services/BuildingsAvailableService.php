@@ -230,6 +230,14 @@ class BuildingsAvailableService
             $data['abs_closing_rate'] = $this->convertUsdM2ToUsdSqft($data['abs_closing_rate'], $sqftToM2, $yrToMo);
         }
 
+        if (isset($data['abs_max_lease'])) {
+            $data['abs_max_lease'] = $this->convertUsdM2ToUsdSqft($data['abs_max_lease'], $sqftToM2, $yrToMo);
+        }
+
+        if (isset($data['abs_min_lease'])) {
+            $data['abs_min_lease'] = $this->convertUsdM2ToUsdSqft($data['abs_min_lease'], $sqftToM2, $yrToMo);
+        }
+
         return $data;
     }
 
