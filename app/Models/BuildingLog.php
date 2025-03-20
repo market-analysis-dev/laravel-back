@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -43,7 +43,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @property string $floor_resistance
  * @property int $expansion_up_to_sf
  * @property string $class
- * @property string $type_generation
+ * @property string $generation
  * @property string $currency
  * @property string $tenancy
  * @property string|null $construction_type
@@ -143,6 +143,7 @@ class BuildingLog extends Model
         'industrial_park_id',
         'developer_id',
         'owner_id',
+        'building_id',
         'building_name',
         'building_size_sf',
         'latitud',
@@ -150,19 +151,15 @@ class BuildingLog extends Model
         'year_built',
         'clear_height_ft',
         'total_land_sf',
-        'offices_space_sf',
-        'has_crane',
-        'has_rail_spur',
-        'has_leed',
         'hvac_production_area',
         'ventilation',
         'roof_system',
         'skylights_sf',
         'coverage',
-        'kvas',
+        'transformer_capacity',
         'expansion_land',
         'class',
-        'type_generation',
+        'generation',
         'currency',
         'tenancy',
         'construction_type',
@@ -170,13 +167,16 @@ class BuildingLog extends Model
         'fire_protection_system',
         'deal',
         'loading_door',
-        'above_market_tis',
         'status',
+        'building_type',
+        'certifications',
         'columns_spacing_ft',
         'floor_thickness_in',
         'floor_resistance',
         'expansion_up_to_sf',
         'bay_size',
+        'owner_type',
+        'stage',
         'created_by',
         'updated_by',
         'deleted_by',
