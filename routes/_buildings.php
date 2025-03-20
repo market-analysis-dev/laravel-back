@@ -11,10 +11,14 @@ Route::group([
 ], function () {
     Route::get('/classes', [BuildingController::class, 'listClasses'])->name('listClasses');
     Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoors'])->name('listLoadingDoors');
-    Route::get('/phases', [BuildingController::class, 'listPhases'])->name('listPhases');
+    Route::get('/types', [BuildingController::class, 'listPhases'])->name('listPhases');
+    Route::get('/building-types', [BuildingController::class, 'listBuildingTypes'])->name('listBuildingTypes');
+    Route::get('/certifications', [BuildingController::class, 'listBuildingCertifications'])->name('listBuildingCertifications');
+    Route::get('/owner-types', [BuildingController::class, 'listBuildingOwnerTypes'])->name('listBuildingOwnerTypes');
+    Route::get('/stages', [BuildingController::class, 'listBuildingStages'])->name('listBuildingStages');
     Route::get('/tenancies', [BuildingController::class, 'listTenancies'])->name('listTenancies');
     Route::get('/lightnings', [BuildingController::class, 'listLightnings'])->name('listLightnings');
-    Route::get('/types-generation', [BuildingController::class, 'listTypeGenerations'])->name('listTypeGenerations');
+    Route::get('/generation', [BuildingController::class, 'listTypeGenerations'])->name('listTypeGenerations');
     Route::get('/types-construction', [BuildingController::class, 'listTypeConstructions'])->name('listTypeConstructions');
     Route::get('/fire-protection-systems', [BuildingController::class, 'listFireProtectionSystems'])->name('listFireProtectionSystems');
     Route::get('/deals', [BuildingController::class, 'listDeals'])->name('listDeals');

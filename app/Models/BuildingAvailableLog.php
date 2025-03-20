@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_available_id
@@ -18,7 +18,6 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @property int|null $abs_country_id
  * @property int $broker_id
  * @property int|null $abs_shelter_id
- * @property int|null $abs_broker_id
  * @property int|null $size_sf
  * @property string|null $avl_building_dimensions_ft
  * @property int|null $avl_minimum_space_sf
@@ -41,8 +40,8 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @property string|null $abs_month
  * @property string|null $abs_sale_price
  * @property string $building_state
- * @property string|null $avl_building_phase
- * @property string|null $abs_building_phase
+ * @property string|null $avl_type
+ * @property string|null $abs_type
  * @property string|null $abs_final_use
  * @property string|null $abs_company_type
  * @property string $abs_deal
@@ -129,7 +128,7 @@ class BuildingAvailableLog extends Model
     protected $fillable = [
         'building_available_id',
         'building_id',
-        'rams',
+        'ramps',
         'trailer_parking_space',
         'above_market_tis',
         'abs_tenant_id',
@@ -140,8 +139,8 @@ class BuildingAvailableLog extends Model
         'building_state',
         'size_sf',
         'avl_building_dimensions_ft',
-        'avl_building_phase',
-        'abs_building_phase',
+        'avl_type',
+        'abs_type',
         'avl_minimum_space_sf',
         'avl_expansion_up_to_sf',
         'dock_doors',
@@ -168,7 +167,6 @@ class BuildingAvailableLog extends Model
         'abs_company_type',
         'abs_sale_price',
         'abs_shelter_id',
-        'abs_broker_id',
         'has_expansion_land',
         'has_crane',
         'has_hvac',
@@ -220,8 +218,4 @@ class BuildingAvailableLog extends Model
         return $this->belongsTo(Shelter::class, 'abs_shelter_id');
     }
 
-    public function absBroker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Broker::class, 'abs_broker_id');
-    }
 }

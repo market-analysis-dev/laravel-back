@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
 use App\Enums\BuildingState;
-use App\Enums\BuildingPhase;
+use App\Enums\BuildingType;
 use App\Enums\BuildingStatus;
 use App\Models\BuildingAvailableLog;
 use Illuminate\Database\Eloquent\Model;
@@ -147,7 +147,7 @@ class BuildingsAvailableService
             ];
         }
 
-        $isNegativeAbsorption = $this->isNegativeAbsorption($buildingAvailable->avl_building_phase, $validatedData['abs_building_phase']);
+        $isNegativeAbsorption = $this->isNegativeAbsorption($buildingAvailable->avl_type, $validatedData['abs_type']);
 
         $validatedData['is_negative_absorption'] = $isNegativeAbsorption;
         $validatedData['building_state'] = 'Absorption';
@@ -166,7 +166,7 @@ class BuildingsAvailableService
      */
     public function create(array $validated): BuildingAvailable
     {
-        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_building_phase'] == BuildingPhase::INVENTORY->value) {
+        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_type'] == BuildingType::INVENTORY->value) {
             $validated['is_negative_absorption'] = true;
     }
         return BuildingAvailable::create($validated);
@@ -283,7 +283,7 @@ class BuildingsAvailableService
      */
     public function isNegativeAbsorption(string $avlBuildingPhase, string $absBuildingPhase): bool
     {
-        if (in_array($avlBuildingPhase, [BuildingPhase::CONSTRUCTION->value, BuildingPhase::EXPIRATION->value]) && $absBuildingPhase == BuildingPhase::INVENTORY->value) {
+        if (in_array($avlBuildingPhase, [BuildingType::CONSTRUCTION->value, BuildingType::EXPIRATION->value]) && $absBuildingPhase == BuildingType::INVENTORY->value) {
             return true;
         }
         return false;

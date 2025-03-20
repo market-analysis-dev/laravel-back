@@ -9,7 +9,7 @@ enum BuildingFinalUse: string
 {
     use EnumHelper;
 
-    case LOGISTIC = 'Logistic';
+    case LOGISTIC = 'Logistics';
     case MANUFACTURING = 'Manufacturing';
     case TBD = 'TBD';
 }
