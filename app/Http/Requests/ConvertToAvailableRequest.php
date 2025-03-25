@@ -26,7 +26,7 @@ class ConvertToAvailableRequest extends FormRequest
         return [
             'broker_id' => 'required|integer|exists:cat_brokers,id',
             'dock_doors' => 'nullable|integer|min:0',
-            'rams' => 'nullable|integer|min:0',
+            'ramps' => 'nullable|integer|min:0',
             'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
             'new_construction' => 'nullable|boolean',
@@ -65,7 +65,7 @@ class ConvertToAvailableRequest extends FormRequest
             'avl_date' => 'nullable|date',
             'avl_min_lease' => 'required|numeric|min:0',
             'avl_max_lease' => 'required|numeric|min:0',
-            'avl_building_phase' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
+            'avl_type' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
             'size_sf' => [
                 'required',
                 'integer',

@@ -5,7 +5,7 @@ namespace App\Enums;
 use App\Interfaces\Enums\HasTranslation;
 use App\Traits\EnumHelper;
 
-enum BuildingPhase: string
+enum BuildingType: string
 {
     use EnumHelper;
 
@@ -16,5 +16,6 @@ enum BuildingPhase: string
     case PLANNED = 'Planned';
     case SUBLEASE = 'Sublease';
     case EXPIRATION = 'Expiration';
+    case BTS_EXPANSION = 'BTS Expansion';
 
 }

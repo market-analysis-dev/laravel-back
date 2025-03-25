@@ -37,19 +37,15 @@ class UpdateBuildingRequest extends FormRequest
             'year_built' => 'nullable|integer',
             'clear_height_ft' => 'nullable|integer|max:99',
             'total_land_sf' => 'nullable|numeric|min:0|max:999999999999999999',
-            'offices_space_sf' => 'nullable|integer',
-            'has_crane' => 'required|boolean',
-            'has_rail_spur' => 'required|boolean',
-            'has_leed' => 'required|boolean',
             'hvac_production_area' => 'nullable|string|max:45',
             'ventilation' => 'nullable|string|max:45',
             'roof_system' => 'nullable|string|max:45',
             'skylights_sf' => 'nullable|string|max:45',
             'coverage' => 'nullable|string|max:45',
-            'kvas' => 'nullable|string|max:20',
+            'transformer_capacity' => 'nullable|string|max:20',
             'expansion_land' => 'integer',
             'class' => 'required|in:A,B,C',
-            'type_generation' => 'required|in:1st Generation,2nd Generation',
+            'generation' => 'required|in:1st Generation,2nd Generation',
             'currency' => 'required|in:USD,MXP',
             'tenancy' => 'required|in:Single,Multitenant',
             'construction_type' => 'nullable|in:TILT_UP,Precast,Block & Sheet Metal,Sheet Metal',
@@ -69,20 +65,11 @@ class UpdateBuildingRequest extends FormRequest
             ],
             'deal' => 'required|in:Sale,Lease',
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
-            'above_market_tis' => [
-                'nullable',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
-
-                    foreach ($value as $item) {
-                        if (!in_array($item, $allowedValues)) {
-                            return $fail(__('Invalid value in above_market_tis.'));
-                        }
-                    }
-                }
-            ],
             'status' => 'required|in:Enabled,Disabled,Pending,Draft',
+            'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
+            'certifications' => 'required|in:No,LEED,EDGE,BOMA',
+            'owner_type' => 'required|in:Investor,REITS,Developer,User Owner,Builder,Private Owner',
+            'stage' => 'required|in:Availability,Construction,Leased,Sold',
             'columns_spacing_ft' => 'string|max:20',
             'bay_size' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',

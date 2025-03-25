@@ -26,7 +26,7 @@ class ConvertToAbsorptionRequest extends FormRequest
         return [
             'broker_id' => 'required|integer|exists:cat_brokers,id',
             'dock_doors' => 'nullable|integer|min:0',
-            'rams' => 'nullable|integer|min:0',
+            'ramps' => 'nullable|integer|min:0',
             'truck_court_ft' => 'nullable|integer|min:0',
             'shared_truck' => 'nullable|boolean',
             'new_construction' => 'nullable|boolean',
@@ -34,6 +34,9 @@ class ConvertToAbsorptionRequest extends FormRequest
             'bay_size' => 'nullable|string|max:45',
             'parking_space' => 'nullable|integer|min:0',
             'trailer_parking_space' => 'nullable|integer|min:0',
+            'avl_date' => 'nullable|date',
+            'abs_min_lease' => 'required|numeric|min:0',
+            'abs_max_lease' => 'required|numeric|min:0',
             'fire_protection_system' => [
                 'required',
                 'array',
@@ -68,11 +71,10 @@ class ConvertToAbsorptionRequest extends FormRequest
             'abs_closing_date' => 'nullable|date',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
             'abs_lease_up' => 'nullable|date',
-            'abs_month' => 'nullable|date',
+            'abs_month' => 'nullable|string',
             'abs_sale_price' => 'nullable|numeric|min:0',
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
-            'abs_building_phase' => 'required|in:BTS,Expansion,Inventory',
-            'abs_broker_id' => 'nullable|exists:cat_brokers,id',
+            'abs_type' => 'required|in:BTS,Expansion,Inventory,BTS Expansion',
             'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
             'size_sf' => [
                 'required',

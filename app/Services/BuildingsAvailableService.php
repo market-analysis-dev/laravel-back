@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
 use App\Enums\BuildingState;
-use App\Enums\BuildingPhase;
+use App\Enums\BuildingType;
 use App\Enums\BuildingStatus;
 use App\Models\BuildingAvailableLog;
 use Illuminate\Database\Eloquent\Model;
@@ -147,7 +147,7 @@ class BuildingsAvailableService
             ];
         }
 
-        $isNegativeAbsorption = $this->isNegativeAbsorption($buildingAvailable->avl_building_phase, $validatedData['abs_building_phase']);
+        $isNegativeAbsorption = $this->isNegativeAbsorption($buildingAvailable->avl_type, $validatedData['abs_type']);
 
         $validatedData['is_negative_absorption'] = $isNegativeAbsorption;
         $validatedData['building_state'] = 'Absorption';
@@ -166,7 +166,7 @@ class BuildingsAvailableService
      */
     public function create(array $validated): BuildingAvailable
     {
-        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_building_phase'] == BuildingPhase::INVENTORY->value) {
+        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_type'] == BuildingType::INVENTORY->value) {
             $validated['is_negative_absorption'] = true;
     }
         return BuildingAvailable::create($validated);
@@ -192,32 +192,50 @@ class BuildingsAvailableService
      */
     public function convertMetrics(array $data): array
     {
-        if (isset($data['size_sf'])) {
-            $data['size_sf'] = $this->convertM2ToSqFt($data['size_sf']);
-        }
+        $sqftToM2 = $data['sqftToM2'] ?? false;
+        $yrToMo = $data['yrToMo'] ?? false;
 
-        if (isset($data['truck_court_ft'])) {
-            $data['truck_court_ft'] = $this->convertMToFt($data['truck_court_ft']);
-        }
 
-        if (isset($data['avl_minimum_space_sf'])) {
-            $data['avl_minimum_space_sf'] = $this->convertM2ToSqFt($data['avl_minimum_space_sf']);
-        }
+        if($sqftToM2) {
+            if (isset($data['size_sf'])) {
+                $data['size_sf'] = $this->convertM2ToSqFt($data['size_sf']);
+            }
 
-        if (isset($data['avl_building_dimensions_ft'])) {
-            $data['avl_building_dimensions_ft'] = $this->convertColumnsSpacingToFt($data['avl_building_dimensions_ft']);
+            if (isset($data['truck_court_ft'])) {
+                $data['truck_court_ft'] = $this->convertMToFt($data['truck_court_ft']);
+            }
+
+            if (isset($data['avl_minimum_space_sf'])) {
+                $data['avl_minimum_space_sf'] = $this->convertM2ToSqFt($data['avl_minimum_space_sf']);
+            }
+
+            if (isset($data['avl_building_dimensions_ft'])) {
+                $data['avl_building_dimensions_ft'] = $this->convertColumnsSpacingToFt($data['avl_building_dimensions_ft']);
+            }
         }
 
         if (isset($data['avl_min_lease'])) {
-            $data['avl_min_lease'] = $this->convertUsdM2ToUsdSqft($data['avl_min_lease']);
+            $data['avl_min_lease'] = $this->convertUsdM2ToUsdSqft($data['avl_min_lease'], $sqftToM2, $yrToMo);
         }
 
         if (isset($data['avl_max_lease'])) {
-            $data['avl_max_lease'] = $this->convertUsdM2ToUsdSqft($data['avl_max_lease']);
+            $data['avl_max_lease'] = $this->convertUsdM2ToUsdSqft($data['avl_max_lease'], $sqftToM2, $yrToMo);
+        }
+
+        if (isset($data['abs_sale_price'])) {
+            $data['abs_sale_price'] = $this->convertUsdM2ToUsdSqft($data['abs_sale_price'], $sqftToM2, $yrToMo);
         }
 
         if (isset($data['abs_closing_rate'])) {
-            $data['abs_closing_rate'] = $this->convertUsdM2ToUsdSqft($data['abs_closing_rate']);
+            $data['abs_closing_rate'] = $this->convertUsdM2ToUsdSqft($data['abs_closing_rate'], $sqftToM2, $yrToMo);
+        }
+
+        if (isset($data['abs_max_lease'])) {
+            $data['abs_max_lease'] = $this->convertUsdM2ToUsdSqft($data['abs_max_lease'], $sqftToM2, $yrToMo);
+        }
+
+        if (isset($data['abs_min_lease'])) {
+            $data['abs_min_lease'] = $this->convertUsdM2ToUsdSqft($data['abs_min_lease'], $sqftToM2, $yrToMo);
         }
 
         return $data;
@@ -245,8 +263,13 @@ class BuildingsAvailableService
      * @param float $usdM2
      * @return int
      */
-    public function convertUsdM2ToUsdSqft(float $usdM2): int
+    public function convertUsdM2ToUsdSqft(float $usdM2, bool $sqftToM2 = false, bool $yrToMo = false): int
     {
+        if($sqftToM2 && $yrToMo) {
+            return (int) round($usdM2 / (10.764 * 12));
+        } elseif ($yrToMo) {
+            return (int) round($usdM2 / 12);
+        }
         return (int) round($usdM2 / 10.764);
     }
 
@@ -268,7 +291,7 @@ class BuildingsAvailableService
      */
     public function isNegativeAbsorption(string $avlBuildingPhase, string $absBuildingPhase): bool
     {
-        if (in_array($avlBuildingPhase, [BuildingPhase::CONSTRUCTION->value, BuildingPhase::EXPIRATION->value]) && $absBuildingPhase == BuildingPhase::INVENTORY->value) {
+        if (in_array($avlBuildingPhase, [BuildingType::CONSTRUCTION->value, BuildingType::EXPIRATION->value]) && $absBuildingPhase == BuildingType::INVENTORY->value) {
             return true;
         }
         return false;

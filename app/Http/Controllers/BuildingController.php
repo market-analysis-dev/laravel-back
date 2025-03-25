@@ -7,14 +7,18 @@ use App\Enums\BuildingDeal;
 use App\Enums\BuildingFireProtectionSystem;
 use App\Enums\BuildingLightning;
 use App\Enums\BuildingLoadingDoor;
-use App\Enums\BuildingPhase;
+use App\Enums\BuildingType;
 use App\Enums\BuildingTenancy;
 use App\Enums\BuildingTypeConstruction;
-use App\Enums\BuildingTypeGeneration;
+use App\Enums\BuildingGeneration;
 use App\Enums\TechnicalImprovements;
 use App\Enums\BuildingStatus;
 use App\Enums\BuildingCompanyType;
 use App\Enums\BuildingFinalUse;
+use App\Enums\BuildingBuildingType;
+use App\Enums\BuildingCertifications;
+use App\Enums\BuildingOwnerType;
+use App\Enums\BuildingStage;
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingDraftRequest;
@@ -43,19 +47,6 @@ class BuildingController extends ApiController implements HasMiddleware
             new Middleware('permission:buildings.update', only: ['update']),
             new Middleware('permission:buildings.approve', only: ['approve']),
             new Middleware('permission:buildings.draft', only: ['draft']),
-            new Middleware('permission:buildings.listClasses', only: ['listClasses']),
-            new Middleware('permission:buildings.listLoadingDoors', only: ['listLoadingDoors']),
-            new Middleware('permission:buildings.listPhases', only: ['listPhases']),
-            new Middleware('permission:buildings.listTenancies', only: ['listTenancies']),
-            new Middleware('permission:buildings.listLightnings', only: ['listLightnings']),
-            new Middleware('permission:buildings.listTypeGenerations', only: ['listTypeGenerations']),
-            new Middleware('permission:buildings.listTypeConstructions', only: ['listTypeConstructions']),
-            new Middleware('permission:buildings.listFireProtectionSystems', only: ['listFireProtectionSystems']),
-            new Middleware('permission:buildings.listTechnicalImprovements', only: ['listTechnicalImprovements']),
-            new Middleware('permission:buildings.listBuildingsCompanyTypes', only: ['listBuildingsCompanyTypes']),
-            new Middleware('permission:buildings.listFinalUses', only: ['listFinalUses']),
-            new Middleware('permission:buildings.listBuildingsStatus', only: ['listBuildingsStatus']),
-            new Middleware('permission:buildings.listDeals', only: ['listDeals']),
             new Middleware('permission:buildings.uploadFiles', only: ['uploadFiles']),
             new Middleware('permission:buildings.layoutDesign', only: ['layoutDesign']),
         ];
@@ -206,21 +197,24 @@ class BuildingController extends ApiController implements HasMiddleware
      */
     public function listPhases(): ApiResponse
     {
-        $phases = BuildingPhase::array();
+        $phases = BuildingType::array();
 
         $filteredPhases = collect($phases)
             ->when(request()->boolean('availability'), function ($collection) {
                 return $collection->filter(fn($phase) => in_array($phase, [
-                    BuildingPhase::CONSTRUCTION->value,
-                    BuildingPhase::PLANNED->value,
-                BuildingPhase::SUBLEASE->value,
-                BuildingPhase::EXPIRATION->value,
+                    BuildingType::CONSTRUCTION->value,
+                    BuildingType::PLANNED->value,
+                BuildingType::SUBLEASE->value,
+                BuildingType::EXPIRATION->value,
+                BuildingType::INVENTORY->value,
             ]));
         })
             ->when(request()->boolean('absorption'), function ($collection) {
                 return $collection->filter(fn($phase) => in_array($phase, [
-                    BuildingPhase::BTS->value,
-                    BuildingPhase::EXPANSION->value,
+                    BuildingType::BTS->value,
+                    BuildingType::EXPANSION->value,
+                    BuildingType::INVENTORY->value,
+                    BuildingType::BTS_EXPANSION->value,
             ]));
         });
 
@@ -265,7 +259,7 @@ class BuildingController extends ApiController implements HasMiddleware
      */
     public function listTypeGenerations(): ApiResponse
     {
-        return $this->success(data: BuildingTypeGeneration::array());
+        return $this->success(data: BuildingGeneration::array());
     }
 
     /**
@@ -306,6 +300,26 @@ class BuildingController extends ApiController implements HasMiddleware
     public function listFinalUses(): ApiResponse
     {
         return $this->success(data: BuildingFinalUse::array());
+    }
+
+    public function listBuildingTypes(): ApiResponse
+    {
+        return $this->success(data: BuildingBuildingType::array());
+    }
+
+    public function listBuildingCertifications(): ApiResponse
+    {
+        return $this->success(data: BuildingCertifications::array());
+    }
+
+    public function listBuildingOwnerTypes(): ApiResponse
+    {
+        return $this->success(data: BuildingOwnerType::array());
+    }
+
+    public function listBuildingStages(): ApiResponse
+    {
+        return $this->success(data: BuildingStage::array());
     }
 
     public function layoutDesign($buildingId)

@@ -26,10 +26,6 @@ class LandController extends ApiController implements HasMiddleware
             new Middleware('permission:lands.create', only: ['store']),
             new Middleware('permission:lands.update', only: ['update']),
             new Middleware('permission:lands.destroy', only: ['destroy']),
-            new Middleware('permission:lands.listParcelShape', only: ['listParcelShape']),
-            new Middleware('permission:lands.listZoning', only: ['listZoning']),
-            new Middleware('permission:lands.getLandTypeBuyer', only: ['getLandTypeBuyer']),
-            new Middleware('permission:lands.getServiceState', only: ['getServiceState']),
         ];
     }
 
