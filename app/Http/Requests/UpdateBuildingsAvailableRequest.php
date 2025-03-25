@@ -43,7 +43,7 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'updated_by' => 'nullable|integer|exists:users,id',
             'offices_space_sf' => 'required|integer',
             'avl_type' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
-            'status' => 'in:Active,Inactive,Draft',
+            'status' => 'in:Enabled,Disabled,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => [
                 'required',

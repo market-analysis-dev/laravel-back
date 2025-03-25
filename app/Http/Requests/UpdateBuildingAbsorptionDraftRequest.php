@@ -49,7 +49,7 @@ class UpdateBuildingAbsorptionDraftRequest extends FormRequest
             'abs_type' => 'required|in:BTS,Expansion,Inventory,BTS Expansion',
             'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
-            'status' => 'in:Active,Draft',
+            'status' => 'in:Enabled,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'avl_date' => 'nullable|date',
             'abs_min_lease' => 'required|numeric|min:0',

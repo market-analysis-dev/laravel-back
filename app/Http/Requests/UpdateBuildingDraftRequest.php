@@ -65,7 +65,7 @@ class UpdateBuildingDraftRequest extends FormRequest
             ],
             'deal' => 'required|in:Sale,Lease',
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
-            'status' => 'required|in:Active,Draft',
+            'status' => 'required|in:Enabled,Draft',
             'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
             'certifications' => 'required|in:No,LEED,EDGE,BOMA',
             'columns_spacing_ft' => 'string|max:20',
