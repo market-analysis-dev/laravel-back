@@ -178,6 +178,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'reit-cetes.create'],
             ['name' => 'reit-cetes.update'],
             ['name' => 'reit-cetes.destroy'],
+
+            ['name' => 'markets.index'],
+            ['name' => 'markets.show'],
+            ['name' => 'markets.create'],
+            ['name' => 'markets.update'],
+            ['name' => 'markets.destroy'],
         ];
         foreach ($permissions as $permission) {
             Permission::create($permission);
