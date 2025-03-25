@@ -83,6 +83,7 @@ class UpdateBuildingAbsorptionDraftRequest extends FormRequest
             'abs_deal' =>'required|in:Sale,Lease',
             'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
             'sqftToM2' => 'boolean',
+            'yrToMo' => 'boolean',
             'size_sf' => [
                 'required',
                 'integer',
