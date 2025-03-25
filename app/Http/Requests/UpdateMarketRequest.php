@@ -22,7 +22,7 @@ class UpdateMarketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'region_id' => ['required', 'exists:cat_regions,id'], // Регион должен существовать
+            'region_id' => ['required', 'exists:cat_regions,id'],
             'name' => [
                 'required',
                 'string',
