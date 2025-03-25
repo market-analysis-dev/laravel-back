@@ -30,19 +30,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'buildings.destroy'],
             ['name' => 'buildings.approve'],
             ['name' => 'buildings.draft'],
-            ['name' => 'buildings.listClasses'],
-            ['name' => 'buildings.listLoadingDoors'],
-            ['name' => 'buildings.listPhases'],
-            ['name' => 'buildings.listTenancies'],
-            ['name' => 'buildings.listLightnings'],
-            ['name' => 'buildings.listTypeGenerations'],
-            ['name' => 'buildings.listTypeConstructions'],
-            ['name' => 'buildings.listFireProtectionSystems'],
-            ['name' => 'buildings.listTechnicalImprovements'],
-            ['name' => 'buildings.listBuildingsCompanyTypes'],
-            ['name' => 'buildings.listFinalUses'],
-            ['name' => 'buildings.listBuildingsStatus'],
-            ['name' => 'buildings.listDeals'],
+
             ['name' => 'buildings.uploadFiles'],
             ['name' => 'buildings.layoutDesign'],
 
@@ -74,16 +62,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'industrial-parks.update'],
             ['name' => 'industrial-parks.destroy'],
 
-            ['name' => 'regions.index'],
-
-            ['name' => 'currencies.index'],
-
-            ['name' => 'markets.index'],
-
-            ['name' => 'submarkets.index'],
-
-            ['name' => 'permissions.index'],
-
             ['name' => 'tenants.index'],
             ['name' => 'tenants.show'],
             ['name' => 'tenants.create'],
@@ -95,8 +73,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'developers.create'],
             ['name' => 'developers.update'],
             ['name' => 'developers.destroy'],
-
-            ['name' => 'shelters.index'],
 
             ['name' => 'brokers.index'],
             ['name' => 'brokers.show'],
@@ -116,8 +92,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'companies.update'],
             ['name' => 'companies.destroy'],
 
-            ['name' => 'countries.index'],
-
             ['name' => 'companies.contact.index'],
             ['name' => 'companies.contact.show'],
             ['name' => 'companies.contact.create'],
@@ -130,6 +104,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'lands.absorption.create'],
             ['name' => 'lands.absorption.update'],
             ['name' => 'lands.absorption.destroy'],
+
 
             ['name' => 'lands.available.index'],
             ['name' => 'lands.available.show'],
@@ -149,10 +124,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'lands.create'],
             ['name' => 'lands.update'],
             ['name' => 'lands.destroy'],
-            ['name' => 'lands.listParcelShape'],
-            ['name' => 'lands.listZoning'],
-            ['name' => 'lands.getLandTypeBuyer'],
-            ['name' => 'lands.getServiceState'],
 
             ['name' => 'reit-types.index'],
             ['name' => 'reit-types.show'],
@@ -165,8 +136,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'reits.create'],
             ['name' => 'reits.update'],
             ['name' => 'reits.destroy'],
-
-            ['name' => 'modules.index'],
 
             ['name' => 'reit-annual.index'],
             ['name' => 'reit-annual.show'],
