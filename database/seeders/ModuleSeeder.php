@@ -14,20 +14,13 @@ class ModuleSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['name' => 'Availability'],
-            ['name' => 'Absorption'],
-            ['name' => 'Bi Charts'],
-            ['name' => 'Overview'],
-            ['name' => 'Land Available'],
-            ['name' => 'Land Absorption'],
-            ['name' => 'CAM'],
-            ['name' => 'Negative Absorption'],
-            ['name' => 'Analytics Availability'],
-            ['name' => 'Analytics Absorption'],
+            ['name' => 'Home'],
             ['name' => 'Market Report'],
-            ['name' => 'Market Size'],
-            ['name' => 'Industrial Park'],
-            ['name' => 'Fibers'],
+            ['name' => 'Analytics'],
+            ['name' => 'Bi Charts'],
+            ['name' => 'Market Overview'],
+            ['name' => 'Fibras'],
+            ['name' => 'Parks'],
         ];
 
         Module::insert($data);

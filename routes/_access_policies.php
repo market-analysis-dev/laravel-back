@@ -8,7 +8,7 @@ Route::group([
     'as' => 'api.access-policies.',
     'middleware' => 'auth:sanctum'
 ], function () {
-    Route::get('/', [AccessPolicyController::class, 'index'])->name('index');
+    // Route::get('/', [AccessPolicyController::class, 'index'])->name('index');
     Route::post('/', [AccessPolicyController::class, 'store'])->name('store');
     Route::get('/{id}', [AccessPolicyController::class, 'show'])->name('show');
     Route::put('/{id}', [AccessPolicyController::class, 'update'])->name('update');

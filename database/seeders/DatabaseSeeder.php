@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             ReitTypeSeeder::class,
             ReitSeeder::class,
             ModuleSeeder::class,
+            SubModulesSeeder::class,
             CamSeeder::class,
         ]);
     }

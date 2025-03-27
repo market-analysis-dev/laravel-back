@@ -10,7 +10,7 @@ return new class extends Migration {
     {
         Schema::create('submodules', function (Blueprint $table) {
             $table->id();
-            $table->string('submodule_name');
+            $table->string('name');
             $table->foreignId('module_id')->constrained('modules');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
@@ -33,10 +33,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('access_policy_id')->constrained('access_policies');
             $table->foreignId('module_id')->constrained('modules');
-            $table->foreignId('market_id')->constrained('cat_markets');
-            $table->foreignId('sub_market_id')->constrained('cat_sub_markets');
-            $table->integer('year')->nullable();
-            $table->string('quarter')->nullable();
+            // $table->foreignId('market_id')->constrained('cat_markets');
+            // $table->foreignId('sub_market_id')->constrained('cat_sub_markets');
+            // $table->integer('year')->nullable();
+            // $table->string('quarter')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
@@ -59,6 +59,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('access_policy_id')->constrained('access_policies');
             $table->foreignId('submodule_id')->constrained('submodules');
+            $table->foreignId('market_id')->constrained('cat_markets');
+            $table->foreignId('sub_market_id')->constrained('cat_sub_markets');
+            $table->integer('year')->nullable();
+            $table->string('quarter')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
