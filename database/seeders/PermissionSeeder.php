@@ -179,6 +179,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'reit-cetes.update'],
             ['name' => 'reit-cetes.destroy'],
 
+            ['name' => 'markets.index'],
+            ['name' => 'markets.show'],
+            ['name' => 'markets.create'],
+            ['name' => 'markets.update'],
+            ['name' => 'markets.destroy'],
+
             ['name' => 'submarkets.index'],
             ['name' => 'submarkets.show'],
             ['name' => 'submarkets.create'],
