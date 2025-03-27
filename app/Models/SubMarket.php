@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\File;
 
 /**
- * 
+ *
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newQuery()
@@ -52,6 +53,8 @@ class SubMarket extends Model
         'name',
         'market_id',
         'status',
+        'latitude',
+        'longitude',
         'created_by',
         'updated_by',
         'deleted_by',

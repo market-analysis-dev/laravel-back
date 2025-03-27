@@ -1,0 +1,79 @@
+id,Submarket,Latitud,Longitud,Market
+,West,"25,914","-97,583",Matamoros
+,East,"25,834","-97,441",Matamoros
+,West,"21,783","-102,289",Aguascalientes
+,East,"21,995","-102,298",Aguascalientes
+,West,"28,684","-106,123",Chihuahua
+,East,"28,671","-105,974",Chihuahua
+,Celaya,"20,624","-100,691",Guanajuato
+,Salamanca,"20,528","-101,209",Guanajuato
+,Silao,"20,951","-101,429",Guanajuato
+,Leon,"21,051","-101,695",Guanajuato
+,Irapuato,"20,744","-101,319",Guanajuato
+,Lagos de Moreno,"21,376","-101,925",Guanajuato
+,Pachuca,"20,076","-98,757",Hidalgo
+,Tepeji de Río,"19,915","-99,342",Hidalgo
+,Jilotepec,"19,98","-99,525",Hidalgo
+,North,"31,735","-106,436",Juarez
+,Central,"31,692","-106,438",Juarez
+,Southeast,"31,588","-106,386",Juarez
+,South,"31,628","-106,428",Juarez
+,East,"31,653","-106,361",Juarez
+,North,"32,646","-115,406",Mexicali
+,Central,"32,608","-115,42",Mexicali
+,South,"32,558","-115,382",Mexicali
+,East,"32,619","-115,318",Mexicali
+,Atizapan,"19,564","-99,275",Mexico City
+,Vallejo,"19,502","-99,157",Mexico City
+,Naucalpan,"19,461","-99,258",Mexico City
+,Tepotzotlan,"19,727","-99,215",Mexico City
+,Cuautitlan,"19,663","-99,197",Mexico City
+,Tultepec,"19,664","-99,145",Mexico City
+,Tultitlan,"19,629","-99,146",Mexico City
+,Tlalnepantla,"19,544","-99,201",Mexico City
+,Toluca,"19,317","-99,57",Mexico City
+,Huehuetoca - Zumpango,"19,753","-99,076",Mexico City
+,Apodaca,"25,773","-100,178",Monterrey
+,Cienega de Flores,"25,925","-100,261",Monterrey
+,Escobedo,"25,786","-100,356",Monterrey
+,Guadalupe,"25,684","-100,183",Monterrey
+,Pesquería,"25,781","-99,992",Monterrey
+,Santa Catarina,"25,737","-100,52",Monterrey
+,West,"27,495","-99,605",Nuevo Laredo
+,East,"27,477","-99,533",Nuevo Laredo
+,Cuautlancingo,"19,126","-98,25",Puebla
+,Tlaxcala,"19,369","-97,976",Puebla
+,San Jose Chiapa,"19,212","-97,77",Puebla
+,Airport,"20,585","-100,189",Queretaro
+,El Marques,"20,576","-100,283",Queretaro
+,North,"20,779","-100,407",Queretaro
+,Pharr Bridge,"26,015","-98,208",Reynosa
+,Central,"26,02","-98,283",Reynosa
+,West,"26,052","-98,373",Reynosa
+,Northwest,"26,136","-98,341",Reynosa
+,Derramadero,"25,249","-101,147",Saltillo
+,Arteaga,"25,415","-100,949",Saltillo
+,Ramos Arizpe,"25,521","-100,946",Saltillo
+,Central,"32,489","-116,902",Tijuana
+,Florido,"32,456","-116,834",Tijuana
+,Libramiento,"32,452","-117,002",Tijuana
+,Otay,"32,534","-116,933",Tijuana
+,Rosarito,"32,358","-117,02",Tijuana
+,Tecate,"32,551","-116,603",Tijuana
+,EL Salto,"20,504","-103,268",Guadalajara
+,Lopez Mateos,"20,346","-103,612",Guadalajara
+,South Periferico,"20,596","-103,389",Guadalajara
+,Zapopan,"20,709","-103,443",Guadalajara
+,Gomez Palacio,"25,576","-103,465",La Laguna
+,Torreon,"25,503","-103,357",La Laguna
+,Matamoros,"25,536","-103,245",La Laguna
+,Las Colinas,"22,115","-100,813",San Luis Potosi
+,Logistik,"21,978","-100,869",San Luis Potosi
+,Milenium,"22,052","-100,886",San Luis Potosi
+,WTC,"22,027","-100,894",San Luis Potosi
+,Tres Naciones,"22,051","-100,875",San Luis Potosi
+,Industrial San Luis,"22,09","-100,897",San Luis Potosi
+,WTC II,"21,956","-100,914",San Luis Potosi
+,San Luis de la Paz,"21,289","-100,524",San Luis Potosi
+,West,"29,085","-111,046",Hermosillo
+,South,"29,005","-110,901",Hermosillo
