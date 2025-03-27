@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             ReitSeeder::class,
             ModuleSeeder::class,
             CamSeeder::class,
+            UserClientSeeder::class,
         ]);
     }
 }
