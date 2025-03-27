@@ -14,16 +14,14 @@ class BrokerSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = storage_path('app/brokers.csv');
+        $path = storage_path('app/brokers-1.csv');
         $file = fopen($path, 'r');
 
         fgetcsv($file);
 
         $data = [];
-        $id = 1;
         while (($row = fgetcsv($file)) !== false) {
             $data[] = [
-                'id' => $id++,
                 'name' => $row[1],
             ];
         }
