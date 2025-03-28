@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // use App\Models\User;
+use App\Http\Resources\UserResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class AuthController extends ApiController
             return $this->error('Invalid credentials', status: 401);
         }
 
-        $user = Auth::user();
+        $user = new UserResource(Auth::user());
 
         // * Generar el token de acceso
         $token = $user->createToken('market-analysis')->plainTextToken;
@@ -36,15 +37,13 @@ class AuthController extends ApiController
 
         return $this->success('Login successful', $user, [
             'access_token' => $token,
-            'company' => $company ? $company->toArray() : null
         ]);
     }
 
     public function me()
     {
-        $user = Auth::user();
-        $company = optional(Company::find($user->company_id))->toArray() ?? [];
+        $user = new UserResource(Auth::user());
         $permissions = $user->getAllPermissions()->pluck('name');
-        return $this->success('I am', compact('user', 'permissions', 'company'));
+        return $this->success('I am', compact('user', 'permissions'));
     }
 }
