@@ -42,6 +42,7 @@ class ConfigurationController extends ApiController implements HasMiddleware
         $validatedData = $request->validated();
 
         $configuration->update($validatedData);
+        $configuration->refresh();
         return $this->success('Configuration updated successfully', new ConfigurationResource($configuration));
 
     }
@@ -61,12 +62,14 @@ class ConfigurationController extends ApiController implements HasMiddleware
             }
 
             $uploadedFile = $request->file('kmz');
-            $path = $uploadedFile->storeAs('kmz_files', $uploadedFile->getClientOriginalName(), 'public');
+            $extension = $uploadedFile->getClientOriginalExtension();
+            $filename = uniqid() . '.' . $extension;
+            $path = $uploadedFile->storeAs('kmz_files', $filename, 'public');
 
             $file = $configuration->file()->updateOrCreate([], [
                 'name' => pathinfo($path, PATHINFO_FILENAME),
                 'original_name' => $uploadedFile->getClientOriginalName(),
-                'extension' => $uploadedFile->getClientOriginalExtension(),
+                'extension' => $extension,
                 'size' => $uploadedFile->getSize(),
                 'mime_type' => $uploadedFile->getMimeType(),
                 'path' => $path,
@@ -77,6 +80,7 @@ class ConfigurationController extends ApiController implements HasMiddleware
         $configuration->update([
             'description' => $validatedData['description'] ?? $configuration->description
         ]);
+        $configuration->refresh();
 
         return $this->success('KMZ configuration updated successfully', new ConfigurationResource($configuration));
 
