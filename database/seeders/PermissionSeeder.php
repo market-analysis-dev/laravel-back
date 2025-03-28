@@ -190,6 +190,10 @@ class PermissionSeeder extends Seeder
             ['name' => 'submarkets.create'],
             ['name' => 'submarkets.update'],
             ['name' => 'submarkets.destroy'],
+
+            ['name' => 'configurations.index'],
+            ['name' => 'configurations.update'],
+            ['name' => 'configurations.uploadKmz'],
         ];
         foreach ($permissions as $permission) {
             Permission::create($permission);
