@@ -40,6 +40,7 @@ class UpdateUserRequest extends FormRequest
             'role_id' => 'nullable|exists:roles,id',
             'total_devices' => 'nullable|integer|min:0',
             'status' => 'nullable|in:Enabled,Disabled',
+            'type' => 'in:Admin,Client',
             'updated_by' => 'nullable|exists:users,id',
         ];
     }

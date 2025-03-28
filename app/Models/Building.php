@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -152,6 +152,15 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
  * @property-read int|null $contacts_count
+ * @property string $building_type
+ * @property string $certifications
+ * @property string $owner_type
+ * @property string $stage
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCertifications($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereGeneration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOwnerType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStage($value)
  * @mixin \Eloquent
  */
 class Building extends Model

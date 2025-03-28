@@ -28,7 +28,8 @@ class UserSeeder extends Seeder
                 'company_id' => 1,
                 'role_id' => 1,
                 'total_devices' => 1,
-                'status' => 'Enabled'
+                'status' => 'Enabled',
+                'type' => 'Admin',
             ],
             [
                 'name' => 'User',
@@ -41,7 +42,8 @@ class UserSeeder extends Seeder
                 'company_id' => 1,
                 'role_id' => null,
                 'total_devices' => 1,
-                'status' => 'Enabled'
+                'status' => 'Enabled',
+                'type' => 'Client',
             ],
         ]);
 

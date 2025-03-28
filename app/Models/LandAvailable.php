@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $land_id
@@ -131,6 +131,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereWater($value)
  * @property-read \App\Models\Industry|null $absIndustry
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandAvailable whereAvlMinimumSizeHa($value)
  * @mixin \Eloquent
  */
 class LandAvailable extends Model

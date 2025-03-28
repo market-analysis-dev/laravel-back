@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_available_id
@@ -117,6 +117,10 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog withoutTrashed()
+ * @property int|null $ramps
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAvlType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereRamps($value)
  * @mixin \Eloquent
  */
 class BuildingAvailableLog extends Model

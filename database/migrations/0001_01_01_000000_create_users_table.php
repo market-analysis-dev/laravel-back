@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->enum('status', ['Enabled', 'Disabled'])->default('Enabled');
+            $table->enum('type',['Client','Admin'])->default('Client');
             $table->timestamps();
             $table->softDeletes();
             $table->integer('deleted_by')->nullable();
