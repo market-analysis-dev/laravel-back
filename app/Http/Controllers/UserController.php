@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
@@ -25,9 +26,15 @@ class UserController extends ApiController implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexUserRequest $request)
     {
-        return $this->success(data: User::all());
+        $query = User::query();
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
+        }
+
+        return $this->success(data: $query->get());
     }
 
     /**

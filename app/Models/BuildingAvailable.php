@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -135,6 +135,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereBuildingAvailableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereIsNegativeAbsorption($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereStatus($value)
+ * @property int|null $ramps
+ * @property string|null $abs_min_lease
+ * @property string|null $abs_max_lease
+ * @property int $offices_space_sf
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsMaxLease($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsMinLease($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAbsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereOfficesSpaceSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereRamps($value)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model

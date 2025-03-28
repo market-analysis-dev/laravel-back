@@ -39,6 +39,7 @@ class StoreUserRequest extends FormRequest
             'role_id' => 'nullable|exists:roles,id',
             'total_devices' => 'nullable|integer|min:0',
             'status' => 'nullable|in:Enabled,Disabled',
+            'type' => 'in:Admin,Client',
             'created_by' => 'nullable|exists:users,id',
             'updated_by' => 'nullable|exists:users,id',
         ];

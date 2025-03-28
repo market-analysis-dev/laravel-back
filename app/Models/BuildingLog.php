@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -126,6 +126,17 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereYearBuilt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog withoutTrashed()
+ * @property string|null $transformer_capacity
+ * @property string $building_type
+ * @property string $certifications
+ * @property string $owner_type
+ * @property string $stage
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereBuildingType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereCertifications($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereGeneration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereOwnerType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereStage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingLog whereTransformerCapacity($value)
  * @mixin \Eloquent
  */
 class BuildingLog extends Model
