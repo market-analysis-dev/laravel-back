@@ -164,7 +164,7 @@ class BuildingService
                 'building_av.truck_court_ft',
                 'building_av.trailer_parking_space',
                 'building_av.shared_truck',
-                'buildings.offices_space_sf',
+                'building_av.offices_space_sf',
                 'market.name as market_name',
                 'submarket.name as submarket_name',
                 'industrial_parks.name as industrial_park_name',

@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('bay_size', 45)->nullable();
             $table->date('avl_date')->nullable();
             $table->integer('abs_lease_term_month')->nullable();
+            $table->integer('knockouts_docks')->nullable();
             $table->integer('parking_space')->nullable();
             $table->integer('trailer_parking_space')->nullable();
             $table->decimal('avl_min_lease', 18, 2)->nullable();
