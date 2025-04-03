@@ -38,7 +38,7 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'bay_size' => 'nullable|string|max:45',
             'abs_lease_term_month' => 'nullable|integer|min:0',
             'parking_space' => 'nullable|integer|min:0',
-            'abs_closing_rate' => 'sometimes|numeric|min:0',
+            'abs_closing_rate' => 'nullable|numeric|min:0',
             'abs_closing_date' => 'nullable|date',
             'abs_lease_up' => 'nullable|date',
             'abs_month' => 'nullable|string',

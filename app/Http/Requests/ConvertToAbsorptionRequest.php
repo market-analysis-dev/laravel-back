@@ -67,7 +67,7 @@ class ConvertToAbsorptionRequest extends FormRequest
             'abs_industry_id' => 'required|integer|exists:cat_industries,id',
             'abs_country_id' => 'required|integer|exists:countries,id',
             'abs_lease_term_month' => 'required|integer|min:0',
-            'abs_closing_rate' => 'sometimes|numeric|min:0',
+            'abs_closing_rate' => 'nullable|numeric|min:0',
             'abs_closing_date' => 'required|date',
             'abs_company_type' => 'required|in:Existing Company,New Company in Market,New Company in Mexico',
             'abs_lease_up' => 'required|date',
