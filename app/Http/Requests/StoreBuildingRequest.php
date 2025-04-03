@@ -50,28 +50,14 @@ class StoreBuildingRequest extends FormRequest
             'tenancy' => 'required|in:Single,Multitenant',
             'construction_type' => 'nullable|in:TILT_UP,Precast,Block & Sheet Metal,Sheet Metal',
             'lightning' => 'nullable|in:LED,T5,Metal Halide',
-            'fire_protection_system' => [
-                'required',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
-
-                    foreach ($value as $item) {
-                        if (!in_array($item, $allowedValues)) {
-                            return $fail(__('Invalid value in fire_protection_system.'));
-                        }
-                    }
-                }
-            ],
             'deal' => 'required|in:Sale,Lease',
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
             'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
-            'certifications' => 'required|in:No,LEED,EDGE,BOMA',
+            'certifications' => 'required|in:None,LEED,EDGE,BOMA',
             'owner_type' => 'required|in:Investor,REITS,Developer,User Owner,Builder,Private Owner',
             'stage' => 'required|in:Availability,Construction,Leased,Sold',
             'status' => 'required|in:Enabled,Disabled,Pending,Draft',
             'columns_spacing_ft' => 'string|max:20',
-            'bay_size' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',
             'floor_resistance' => 'required|string|max:255',
             'expansion_up_to_sf' => 'required|integer|min:0',

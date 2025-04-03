@@ -71,23 +71,18 @@ class BuildingController extends ApiController implements HasMiddleware
         if ($validated['sqftToM2'] ?? false) {
             $validated = $this->buildingService->convertMetrics($validated);
         }
-        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-        }
+
         if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
             $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
         }
 
-        $building = $this->buildingService->create($validated);
+        $building = $this->buildingService->create($validated)->refresh();
 
         if ($request->hasFile('files')) {
             $type = $request->input('type');
             $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
         }
 
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
         if (!empty($building->above_market_tis)) {
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
@@ -100,9 +95,7 @@ class BuildingController extends ApiController implements HasMiddleware
     public function show(Building $building): ApiResponse
     {
         $building = $this->buildingService->show($building);
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
+
         if (!empty($building->above_market_tis)) {
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
@@ -123,9 +116,6 @@ class BuildingController extends ApiController implements HasMiddleware
                 $validated = $this->buildingService->convertMetrics($validated);
             }
 
-            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-            }
             if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
                 $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
             }
@@ -140,9 +130,7 @@ class BuildingController extends ApiController implements HasMiddleware
                 $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
             }
 
-            if (!empty($building->fire_protection_system)) {
-                $building->fire_protection_system = explode(',', $building->fire_protection_system);
-            }
+
             if (!empty($building->above_market_tis)) {
                 $building->above_market_tis = explode(',', $building->above_market_tis);
             }

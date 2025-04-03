@@ -35,8 +35,8 @@ class ConvertToAbsorptionRequest extends FormRequest
             'parking_space' => 'sometimes|integer|min:0',
             'trailer_parking_space' => 'sometimes|integer|min:0',
             'avl_date' => 'sometimes|date',
-            'abs_min_lease' => 'required|numeric|min:0',
-            'abs_max_lease' => 'required|numeric|min:0',
+            'abs_min_lease' => 'numeric|min:0',
+            'abs_max_lease' => 'numeric|min:0',
             'fire_protection_system' => [
                 'sometimes',
                 'array',
@@ -73,7 +73,7 @@ class ConvertToAbsorptionRequest extends FormRequest
             'abs_lease_up' => 'required|date',
             'abs_month' => 'required|string',
             'abs_sale_price' => 'required|numeric|min:0',
-            'abs_final_use' => 'required|in:Logistic,Manufacturing',
+            'abs_final_use' => 'required|in:Logistic,Manufacturing,TBD',
             'abs_type' => 'required|in:BTS,Expansion,Inventory,BTS Expansion',
             'abs_shelter_id' => 'required|exists:cat_shelters,id',
             'size_sf' => [

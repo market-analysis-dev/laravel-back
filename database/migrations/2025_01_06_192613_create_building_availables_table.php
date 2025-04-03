@@ -34,10 +34,10 @@ return new class extends Migration
             $table->integer('abs_lease_term_month')->nullable();
             $table->integer('parking_space')->nullable();
             $table->integer('trailer_parking_space')->nullable();
-            $table->decimal('avl_min_lease', 18, 2)->nullable();
-            $table->decimal('avl_max_lease', 18, 2)->nullable();
-            $table->decimal('abs_min_lease', 18, 2)->nullable();
-            $table->decimal('abs_max_lease', 18, 2)->nullable();
+            $table->decimal('avl_min_lease', 18, 2)->default(0);
+            $table->decimal('avl_max_lease', 18, 2)->default(0);
+            $table->decimal('abs_min_lease', 18, 2)->default(0);
+            $table->decimal('abs_max_lease', 18, 2)->default(0);
             $table->decimal('abs_closing_rate', 18, 2)->nullable();
             $table->date('abs_closing_date')->nullable();
             $table->date('abs_lease_up')->nullable();
@@ -47,7 +47,7 @@ return new class extends Migration
             $table->enum('building_state', ['Availability', 'Absorption']);
             $table->enum('avl_type', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory'])->nullable();
             $table->enum('abs_type', ['BTS', 'Expansion', 'Inventory', 'BTS Expansion'])->nullable();
-            $table->enum('abs_final_use', ['Logistic', 'Manufacturing'])->nullable();
+            $table->enum('abs_final_use', ['Logistic', 'Manufacturing', 'TBD'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
             $table->enum('abs_deal', ['Sale', 'Lease']);
             $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);

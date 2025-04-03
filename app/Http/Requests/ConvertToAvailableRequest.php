@@ -63,8 +63,8 @@ class ConvertToAvailableRequest extends FormRequest
             'avl_building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'required|integer|min:0',
             'avl_date' => 'required|date',
-            'avl_min_lease' => 'required|numeric|min:0',
-            'avl_max_lease' => 'required|numeric|min:0',
+            'avl_min_lease' => 'numeric|min:0',
+            'avl_max_lease' => 'numeric|min:0',
             'avl_type' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
             'size_sf' => [
                 'sometimes',

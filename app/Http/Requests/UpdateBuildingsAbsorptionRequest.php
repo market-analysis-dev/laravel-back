@@ -47,15 +47,15 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'updated_by' => 'nullable|integer|exists:users,id',
             'offices_space_sf' => 'required|integer',
             'abs_type' => 'required|in:BTS,Expansion,Inventory,BTS Expansion',
-            'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
+            'abs_final_use' => 'nullable|in:Logistic,Manufacturing,TBD',
             'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
             'status' => 'in:Enabled,Disabled,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'avl_date' => 'nullable|date',
-            'abs_min_lease' => 'required|numeric|min:0',
-            'abs_max_lease' => 'required|numeric|min:0',
+            'abs_min_lease' => 'numeric|min:0',
+            'abs_max_lease' => 'numeric|min:0',
             'fire_protection_system' => [
-                'required',
+                'nullable',
                 'array',
                 function ($attribute, $value, $fail) {
                     $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
