@@ -29,15 +29,15 @@ class BuildingService
             ->select('buildings.*', 'cat_markets.name AS marketName', 'cat_sub_markets.name AS submarketName', 'industrial_parks.name AS industrialParkName')
             ->when($validated['search'] ?? false, function ($query, $search) {
                 $query->where(function ($query) use ($search){
-                    $query->where('status', 'like', "%{$search}%")
-                        ->orWhere('building_name', 'like', "%{$search}%");
+                    $query->where('buildings.status', 'like', "%{$search}%")
+                        ->orWhere('buildings.building_name', 'like', "%{$search}%");
                 });
             })
             ->when($validated['status'] ?? false, function ($query, $status) {
                 $query->where('buildings.status', $status);
             })
             ->when($validated['building_name'] ??  false, function ($query, $building_name){
-                $query->where('building_name', 'like', "%{$building_name}%");
+                $query->where('buildings.building_name', 'like', "%{$building_name}%");
             })
             ->when($validated['marketName'] ?? false, function ($query, $marketName) {
                 $query->whereHas('market', function ($query) use ($marketName) {
