@@ -34,10 +34,10 @@ return new class extends Migration
             $table->integer('abs_lease_term_month')->nullable();
             $table->integer('parking_space')->nullable();
             $table->integer('trailer_parking_space')->nullable();
-            $table->decimal('avl_min_lease', 18, 2)->default(0);
-            $table->decimal('avl_max_lease', 18, 2)->default(0);
-            $table->decimal('abs_min_lease', 18, 2)->default(0);
-            $table->decimal('abs_max_lease', 18, 2)->default(0);
+            $table->decimal('avl_min_lease', 18, 2)->nullable()->default(0);
+            $table->decimal('avl_max_lease', 18, 2)->nullable()->default(0);
+            $table->decimal('abs_min_lease', 18, 2)->nullable()->default(0);
+            $table->decimal('abs_max_lease', 18, 2)->nullable()->default(0);
             $table->decimal('abs_closing_rate', 18, 2)->nullable()->default(0);
             $table->date('abs_closing_date')->nullable();
             $table->date('abs_lease_up')->nullable();

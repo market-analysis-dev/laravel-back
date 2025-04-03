@@ -43,7 +43,7 @@ class UpdateBuildingRequest extends FormRequest
             'skylights_sf' => 'nullable|string|max:45',
             'coverage' => 'nullable|string|max:45',
             'transformer_capacity' => 'nullable|string|max:20',
-            'expansion_land' => 'integer',
+            'expansion_land' => 'nullable|integer',
             'class' => 'required|in:A,B,C',
             'generation' => 'required|in:1st Generation,2nd Generation',
             'currency' => 'required|in:USD,MXP',

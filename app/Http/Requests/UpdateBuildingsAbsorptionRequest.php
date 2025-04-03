@@ -52,8 +52,8 @@ class UpdateBuildingsAbsorptionRequest extends FormRequest
             'status' => 'in:Enabled,Disabled,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'avl_date' => 'nullable|date',
-            'abs_min_lease' => 'numeric|min:0',
-            'abs_max_lease' => 'numeric|min:0',
+            'abs_min_lease' => 'nullable|numeric|min:0',
+            'abs_max_lease' => 'nullable|numeric|min:0',
             'fire_protection_system' => [
                 'nullable',
                 'array',

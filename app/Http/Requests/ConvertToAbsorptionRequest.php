@@ -35,8 +35,8 @@ class ConvertToAbsorptionRequest extends FormRequest
             'parking_space' => 'sometimes|integer|min:0',
             'trailer_parking_space' => 'sometimes|integer|min:0',
             'avl_date' => 'sometimes|date',
-            'abs_min_lease' => 'numeric|min:0',
-            'abs_max_lease' => 'numeric|min:0',
+            'abs_min_lease' => 'nullable|numeric|min:0',
+            'abs_max_lease' => 'nullable|numeric|min:0',
             'fire_protection_system' => [
                 'sometimes',
                 'array',
