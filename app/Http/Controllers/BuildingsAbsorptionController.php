@@ -161,7 +161,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
 
             return $this->success('Building Absorption updated successfully', $buildingAbsorption);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 

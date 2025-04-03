@@ -60,7 +60,7 @@ class StoreBuildingRequest extends FormRequest
             'columns_spacing_ft' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',
             'floor_resistance' => 'required|string|max:255',
-            'expansion_up_to_sf' => 'required|integer|min:0',
+            'expansion_up_to_sf' => 'sometimes|integer|min:0',
             'sqftToM2' => 'boolean',
             'files' => 'nullable|array',
             'files.*' => 'file|max:10240',

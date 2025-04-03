@@ -38,7 +38,7 @@ return new class extends Migration
             $table->decimal('avl_max_lease', 18, 2)->default(0);
             $table->decimal('abs_min_lease', 18, 2)->default(0);
             $table->decimal('abs_max_lease', 18, 2)->default(0);
-            $table->decimal('abs_closing_rate', 18, 2)->nullable();
+            $table->decimal('abs_closing_rate', 18, 2)->nullable()->default(0);
             $table->date('abs_closing_date')->nullable();
             $table->date('abs_lease_up')->nullable();
             $table->string('abs_month', 20)->nullable();
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->enum('abs_final_use', ['Logistic', 'Manufacturing', 'TBD'])->nullable();
             $table->enum('abs_company_type', ['Existing Company', 'New Company in Market', 'New Company in Mexico'])->nullable();
             $table->enum('abs_deal', ['Sale', 'Lease']);
-            $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
+            $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"])->nullable();
             $table->set('above_market_tis', ["HVAC", "CRANE", "Rail Spur", "Sprinklers", "Crossdock", "Office", "Leed", "Land Expansion"])->nullable();
             $table->boolean('is_negative_absorption')->default(false);
             $table->enum('status', ['Enabled', 'Disabled', 'Draft'])->default('Enabled');
