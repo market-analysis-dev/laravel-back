@@ -81,7 +81,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
         }
 
-        $absorption = $this->buildingAvailableService->create($validated);
+        $absorption = $this->buildingAvailableService->create($validated)->refresh();
 
         if (!empty($building->fire_protection_system)) {
             $building->fire_protection_system = explode(',', $building->fire_protection_system);
