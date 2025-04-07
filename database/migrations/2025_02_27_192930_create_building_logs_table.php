@@ -34,12 +34,11 @@ return new class extends Migration
             $table->string('skylights_sf', 45)->nullable();
             $table->string('coverage', 45)->nullable();
             $table->string('transformer_capacity', 20)->nullable();
-            $table->integer('expansion_land');
+            $table->integer('expansion_land')->default(0)->nullable();
             $table->string('columns_spacing_ft', 20);
-            $table->string('bay_size', 20);
             $table->integer('floor_thickness_in');
             $table->string('floor_resistance', 255);
-            $table->integer('expansion_up_to_sf');
+            $table->integer('expansion_up_to_sf')->default(0)->nullable();
             $table->enum('class', ['A', 'B', 'C']);
             $table->enum('generation', ['1st Generation', '2nd Generation']);
             $table->enum('currency', ['USD', 'MXP']);
@@ -49,11 +48,10 @@ return new class extends Migration
             $table->enum('deal', ['Sale', 'Lease']);
             $table->enum('loading_door', ['Crossdock', 'Back Loading', 'Front Loading'])->nullable();
             $table->enum('building_type', ['Spec', 'BTS', 'BTS Expansion', 'Expansion']);
-            $table->enum('certifications', ['No', 'LEED', 'EDGE', 'BOMA']);
+            $table->enum('certifications', ['None', 'LEED', 'EDGE', 'BOMA']);
             $table->enum('owner_type', ['Investor', 'REITS', 'Developer', 'User Owner', 'Builder', 'Private Owner']);
             $table->enum('stage', ['Availability', 'Construction', 'Leased', 'Sold']);
-            $table->enum('status', ['Enabled', 'Disabled', 'Pending', 'Approved']);
-            $table->set('fire_protection_system', ["Hose Station", "Sprinkler", "Extinguisher"]);
+            $table->enum('status', ['Enabled', 'Disabled', 'Pending', 'Draft']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();

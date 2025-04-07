@@ -43,33 +43,19 @@ class UpdateBuildingDraftRequest extends FormRequest
             'skylights_sf' => 'nullable|string|max:45',
             'coverage' => 'nullable|string|max:45',
             'transformer_capacity' => 'nullable|string|max:20',
-            'expansion_land' => 'integer',
+            'expansion_land' => 'nullable|integer',
             'class' => 'required|in:A,B,C',
             'generation' => 'required|in:1st Generation,2nd Generation',
             'currency' => 'required|in:USD,MXP',
             'tenancy' => 'required|in:Single,Multitenant',
             'construction_type' => 'nullable|in:TILT_UP,Precast,Block & Sheet Metal,Sheet Metal',
             'lightning' => 'nullable|in:LED,T5,Metal Halide',
-            'fire_protection_system' => [
-                'required',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
-
-                    foreach ($value as $item) {
-                        if (!in_array($item, $allowedValues)) {
-                            return $fail(__('Invalid value in fire_protection_system.'));
-                        }
-                    }
-                }
-            ],
             'deal' => 'required|in:Sale,Lease',
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
             'status' => 'required|in:Enabled,Draft',
             'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
             'certifications' => 'required|in:No,LEED,EDGE,BOMA',
             'columns_spacing_ft' => 'string|max:20',
-            'bay_size' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',
             'floor_resistance' => 'required|string|max:255',
             'expansion_up_to_sf' => 'required|integer|min:0',

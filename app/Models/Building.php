@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -48,7 +48,6 @@ use Storage;
  * @property string $tenancy
  * @property string|null $construction_type
  * @property string|null $lightning
- * @property string $fire_protection_system
  * @property string $deal
  * @property string|null $loading_door
  * @property string $status
@@ -127,7 +126,6 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withoutTrashed()
  * @property string $columns_spacing
- * @property string $bay_size
  * @property int $floor_thickness
  * @property string $floor_resistance
  * @property int $expansion_up_to_sf
@@ -198,7 +196,6 @@ class Building extends Model
         'tenancy',
         'construction_type',
         'lightning',
-        'fire_protection_system',
         'deal',
         'loading_door',
         'status',
@@ -208,7 +205,6 @@ class Building extends Model
         'floor_thickness_in',
         'floor_resistance',
         'expansion_up_to_sf',
-        'bay_size',
         'owner_type',
         'stage',
         'created_by',

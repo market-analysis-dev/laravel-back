@@ -37,8 +37,8 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'bay_size' => 'nullable|string|max:45',
             'avl_date' => 'nullable|date',
             'parking_space' => 'nullable|integer|min:0',
-            'avl_min_lease' => 'required|numeric|min:0',
-            'avl_max_lease' => 'required|numeric|min:0',
+            'avl_min_lease' => 'nullable|numeric|min:0',
+            'avl_max_lease' => 'nullable|numeric|min:0',
             'created_by' => 'nullable|integer|exists:users,id',
             'updated_by' => 'nullable|integer|exists:users,id',
             'offices_space_sf' => 'required|integer',
@@ -46,7 +46,7 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'status' => 'in:Enabled,Disabled,Draft',
             'trailer_parking_space' => 'nullable|integer|min:0',
             'fire_protection_system' => [
-                'required',
+                'nullable',
                 'array',
                 function ($attribute, $value, $fail) {
                     $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
