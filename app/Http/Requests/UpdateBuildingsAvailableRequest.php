@@ -39,6 +39,7 @@ class UpdateBuildingsAvailableRequest extends FormRequest
             'parking_space' => 'nullable|integer|min:0',
             'avl_min_lease' => 'nullable|numeric|min:0',
             'avl_max_lease' => 'nullable|numeric|min:0',
+            'avl_knockout_docks' => 'nullable|numeric|min:0',
             'created_by' => 'nullable|integer|exists:users,id',
             'updated_by' => 'nullable|integer|exists:users,id',
             'offices_space_sf' => 'required|integer',
