@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_available_id
@@ -182,6 +182,7 @@ class BuildingAvailableLog extends Model
         'currency',
         'fire_protection_system',
         'is_negative_absorption',
+        'avl_knockout_docs',
         'created_by',
         'updated_by',
         'deleted_by',

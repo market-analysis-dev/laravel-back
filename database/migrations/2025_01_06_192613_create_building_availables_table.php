@@ -44,6 +44,7 @@ return new class extends Migration
             $table->string('abs_month', 20)->nullable();
             $table->decimal('abs_sale_price', 18, 2)->nullable();
             $table->integer('offices_space_sf');
+            $table->unsignedSmallInteger('avl_knockout_docs')->nullable()->default(0);
             $table->enum('building_state', ['Availability', 'Absorption']);
             $table->enum('avl_type', ['Construction', 'Planned', 'Sublease', 'Expiration', 'Inventory'])->nullable();
             $table->enum('abs_type', ['BTS', 'Expansion', 'Inventory', 'BTS Expansion'])->nullable();
