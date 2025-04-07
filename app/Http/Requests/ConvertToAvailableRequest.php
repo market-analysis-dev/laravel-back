@@ -65,7 +65,7 @@ class ConvertToAvailableRequest extends FormRequest
             'avl_date' => 'required|date',
             'avl_min_lease' => 'nullable|numeric|min:0',
             'avl_max_lease' => 'nullable|numeric|min:0',
-            'avl_knockout_docs' => 'nullable|numeric|min:0',
+            'avl_knockout_docks' => 'nullable|numeric|min:0',
             'avl_type' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
             'size_sf' => [
                 'sometimes',

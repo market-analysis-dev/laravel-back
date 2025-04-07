@@ -182,7 +182,7 @@ class BuildingAvailableLog extends Model
         'currency',
         'fire_protection_system',
         'is_negative_absorption',
-        'avl_knockout_docs',
+        'avl_knockout_docks',
         'created_by',
         'updated_by',
         'deleted_by',
