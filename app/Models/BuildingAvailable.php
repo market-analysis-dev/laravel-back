@@ -8,7 +8,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -210,6 +210,7 @@ class BuildingAvailable extends Model
         'is_negative_absorption',
         'status',
         'offices_space_sf',
+        'avl_knockout_docks',
         'created_by',
         'updated_by',
         'deleted_by',
