@@ -54,7 +54,7 @@ class UpdateBuildingRequest extends FormRequest
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
             'status' => 'required|in:Enabled,Disabled,Pending,Draft',
             'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
-            'certifications' => 'required|in:No,LEED,EDGE,BOMA',
+            'certifications' => 'required|in:None,LEED,EDGE,BOMA',
             'owner_type' => 'required|in:Investor,REITS,Developer,User Owner,Builder,Private Owner',
             'stage' => 'required|in:Availability,Construction,Leased,Sold',
             'columns_spacing_ft' => 'string|max:20',

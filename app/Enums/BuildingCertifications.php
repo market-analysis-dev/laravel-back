@@ -9,7 +9,7 @@ enum BuildingCertifications: string
 {
     use EnumHelper;
 
-    case NO = 'No';
+    case NO = 'None';
     case LEED = 'LEED';
     case EDGE = 'EDGE';
     case BOMA = 'BOMA';
