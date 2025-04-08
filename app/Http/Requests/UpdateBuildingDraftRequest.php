@@ -54,7 +54,7 @@ class UpdateBuildingDraftRequest extends FormRequest
             'loading_door' => 'nullable|in:Crossdock,Back Loading,Front Loading',
             'status' => 'required|in:Enabled,Draft',
             'building_type' => 'required|in:Spec,BTS,BTS Expansion,Expansion',
-            'certifications' => 'required|in:No,LEED,EDGE,BOMA',
+            'certifications' => 'required|in:None,LEED,EDGE,BOMA',
             'columns_spacing_ft' => 'string|max:20',
             'floor_thickness_in' => 'required|integer|min:0',
             'floor_resistance' => 'required|string|max:255',
