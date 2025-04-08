@@ -183,7 +183,6 @@ class BuildingAvailable extends Model
         'bay_size',
         'avl_date',
         'abs_lease_term_month',
-        'knockouts_docks',
         'parking_space',
         'avl_min_lease',
         'avl_max_lease',
