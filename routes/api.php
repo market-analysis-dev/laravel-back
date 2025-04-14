@@ -107,3 +107,4 @@ require_once '_contacts.php';
 require_once '_reit_instruments.php';
 require_once '_reits_cetes.php';
 require_once '_configurations.php';
+require_once '_clients.php';
