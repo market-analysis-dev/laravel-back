@@ -94,6 +94,12 @@ class IndexClientBuildingAvailabilityRequest extends FormRequest
             'owner_type'           => 'array|nullable',
             'owner_type.*'         => 'string',
 
+            'latitud'              => 'array|nullable',
+            'latitud.*'            => 'string|max:20',
+
+            'longitud'              => 'array|nullable',
+            'longitud.*'            => 'string|max:20',
+
             'sqftToM2'             => 'boolean|nullable',
         ];
     }
