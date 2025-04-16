@@ -252,8 +252,8 @@ class BuildingService
     public function createDraft(Building $building): array
     {
         if ($building->status === BuildingStatus::DRAFT->value) {
-        return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
-    }
+            return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
+        }
 
         $existingDraft = Building::where('building_id', $building->id)
             ->where('status', BuildingStatus::DRAFT->value)
