@@ -217,13 +217,15 @@ class BuildingService
         // Validar si los archivos existen en el directorio
         $validFiles = [];
 
-        foreach ($files as $file) {
-            $filePath = storage_path('app/public/' . $file->path); // Ruta del archivo en storage
-            if (file_exists($filePath)) {
-                $validFiles[] = [
-                    'type' => $file->type,
-                    'url' => asset('storage/' . $file->path) // Convertir a URL accesible
-                ];
+        if ($files) { // validando que existan imagenes
+            foreach ($files as $file) {
+                $filePath = storage_path('app/public/' . $file->path); // Ruta del archivo en storage
+                if (file_exists($filePath)) {
+                    $validFiles[] = [
+                        'type' => $file->type,
+                        'url' => $filePath // Convertir a URL accesible
+                    ];
+                }
             }
         }
 
@@ -233,12 +235,13 @@ class BuildingService
     public function layoutDesign($buildingId)
     {
         $userId = auth()->id();
-        $user = $this->userData($userId);
+        // $user = $this->userData($userId);
+        $user = $this->userData(397);
         $building = $this->getBuildingData($buildingId);
         $images = $this->getBuildingImages($buildingId); // Obtener imágenes validadas
-
+        $logoPath = null;
+        $logoPath = $user->logo_path ? storage_path('app/public/' . $user->logo_path) : null;        
         // Obtener la ruta del logo
-        $logoPath = $user->logo_path ? storage_path('app/public/' . $user->logo_path) : null;
         $pdf = Pdf::loadView('buildings.layout-design', compact('building', 'user', 'logoPath', 'images'));
         return $pdf->stream('layout-design.pdf');
     }

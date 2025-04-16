@@ -122,7 +122,7 @@
                     <!-- Imagen derecha -->
                     <td style="text-align: right;">
                     @if($logoPath)
-                        <img src="{{ $logoPath }}" style="width: 150px; height: auto;">
+                        <img src="{{ $logoPath }}" style="width: auto; height: 50px;">
                     @else
                         <img src="{{ public_path('buildings-flyer/detalle-header-flyer.png') }}" style="width: 150px; height: auto;">
                     @endif
@@ -135,12 +135,18 @@
         <br>
         {{-- Contenido principal --}}
         <div class="first-img">
-        @php $frontPage = collect($images)->firstWhere('type', 'Front Page'); @endphp
-        @if($frontPage)
-            <img src="{{ $frontPage['url'] }}" style="height: 400px; width:100%;">
-        @else
-            <img src="{{ public_path('buildings-flyer\detalle-header-flyer.png') }}" style="height: 400px; width:100%;">
-        @endif
+            {{-- Debug: --}}
+            {{-- @dd($images) --}}
+            @php 
+                $frontPage = collect($images)->firstWhere('type', 'Front Page');
+                // Debug:
+                // dump($frontPage);
+            @endphp
+            @if(!empty($frontPage) && !empty($frontPage['url']))
+                <img src="{{ $frontPage['url'] }}" style="height: 400px; width:100%;">
+            @else
+                <img src="{{ asset('buildings-flyer/detalle-header-flyer.png') }}" style="height: 400px; width:100%;">
+            @endif
         </div>
 
         <br>
