@@ -9,4 +9,5 @@ Route::group([
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/building-availability', [ClientController::class, 'buildingAvailabilityList'])->name('buildingAvailabilityList');
+    Route::get('/building-availability/statistics', [ClientController::class, 'buildingAvailabilityStatistic'])->name('buildingAvailabilityStatistic');
 });
