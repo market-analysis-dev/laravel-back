@@ -235,8 +235,7 @@ class BuildingService
     public function layoutDesign($buildingId)
     {
         $userId = auth()->id();
-        // $user = $this->userData($userId);
-        $user = $this->userData(397);
+        $user = $this->userData($userId);
         $building = $this->getBuildingData($buildingId);
         $images = $this->getBuildingImages($buildingId); // Obtener imágenes validadas
         $logoPath = null;
