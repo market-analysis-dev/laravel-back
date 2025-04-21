@@ -135,7 +135,7 @@ class ClientBuildingAvailabilityService
             }
         };
 
-        $filterMultiRange = function ($field, $param) use ($filters, $query) {
+        /*$filterMultiRange = function ($field, $param) use ($filters, $query) {
             if (!empty($filters[$param]) && is_array($filters[$param])) {
                 $query->where(function ($q) use ($filters, $param, $field) {
                     foreach ($filters[$param] as $range) {
@@ -152,7 +152,35 @@ class ClientBuildingAvailabilityService
                     }
                 });
             }
+        };*/
+        $filterMultiRange = function ($field, $param) use ($filters, $query) {
+            if (!empty($filters[$param])) {
+                $ranges = $filters[$param];
+
+                // Преобразуем [0 => 1, 1 => 2] в [[1, 2]]
+                if (array_is_list($ranges) && count($ranges) === 2 && is_numeric($ranges[0]) && is_numeric($ranges[1])) {
+                    $ranges = [ $ranges ];
+                }
+
+                if (is_array($ranges)) {
+                    $query->where(function ($q) use ($ranges, $field) {
+                        foreach ($ranges as $range) {
+                            if (is_array($range) && count($range) === 2) {
+                                [$from, $to] = $range;
+                                if (is_numeric($from) && is_numeric($to)) {
+                                    $q->orWhereBetween($field, [$from, $to]);
+                                } elseif (is_numeric($from)) {
+                                    $q->orWhere($field, '>=', $from);
+                                } elseif (is_numeric($to)) {
+                                    $q->orWhere($field, '<=', $to);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
         };
+
 
 
         $filterIn('buildings.market_id', 'market_id');
@@ -162,10 +190,10 @@ class ClientBuildingAvailabilityService
         $filterIn('buildings.generation', 'generation');
         $filterIn('buildings.currency', 'currency');
         $filterIn('buildings.tenancy', 'tenancy');
-        $filterIn('buildings.latitud', 'latitud');
-        $filterIn('buildings.longitud', 'longitud');
+        $filterExact('buildings.latitud', 'latitud');
+        $filterExact('buildings.longitud', 'longitud');
         $filterIn('buildings.industrial_park_id', 'industrial_park_id');
-        $filterIn('buildings_available.shared_truck', 'shared_truck');
+        $filterExact('buildings_available.shared_truck', 'shared_truck');
         $filterIn('buildings.loading_door', 'loading_door');
         $filterIn('buildings.developer_id', 'developer_id');
         $filterIn('buildings.owner_id', 'owner_id');
