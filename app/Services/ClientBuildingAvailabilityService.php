@@ -5,16 +5,35 @@ namespace App\Services;
 
 
 use App\Models\BuildingAvailable;
+use App\Enums\BuildingState;
+use App\Enums\BuildingStatus;
 
 class ClientBuildingAvailabilityService
 {
     public function filter(array $filters)
     {
         $query = BuildingAvailable::query()
-            ->where('buildings_available.building_state', 'Availability')
-            ->where('buildings_available.status', 'Enabled')
+            ->where('buildings_available.building_state', BuildingState::AVAILABILITY->value)
+            ->where('buildings_available.status', BuildingStatus::ENABLED->value)
             ->join('buildings', 'buildings.id', '=', 'buildings_available.building_id')
-            ->select('buildings_available.*', 'buildings.*');
+            ->join('cat_markets', 'cat_markets.id', '=', 'buildings.market_id')
+            ->join('cat_sub_markets', 'cat_sub_markets.id', '=', 'buildings.sub_market_id')
+            ->join('cat_developers as developer', 'developer.id', '=', 'buildings.developer_id')
+            ->join('cat_developers as owner', 'owner.id', '=', 'buildings.owner_id')
+            ->join('cat_developers as builder', 'builder.id', '=', 'buildings.builder_id')
+            ->join('industrial_parks', 'industrial_parks.id', '=', 'buildings.industrial_park_id')
+            ->join('cat_brokers', 'cat_brokers.id', '=', 'buildings_available.broker_id')
+            ->select(
+                'buildings_available.*',
+                'buildings.*',
+                'cat_markets.name as market_name',
+                'cat_sub_markets.name as sub_market_name',
+                'developer.name as developer_name',
+                'owner.name as owner_name',
+                'builder.name as builder_name',
+                'industrial_parks.name as industrial_park_name',
+                'cat_brokers.name as broker_name'
+            );
 
         $this->applyFilters($query, $filters);
 
@@ -116,7 +135,7 @@ class ClientBuildingAvailabilityService
             }
         };
 
-        $filterMultiRange = function ($field, $param) use ($filters, $query) {
+        /*$filterMultiRange = function ($field, $param) use ($filters, $query) {
             if (!empty($filters[$param]) && is_array($filters[$param])) {
                 $query->where(function ($q) use ($filters, $param, $field) {
                     foreach ($filters[$param] as $range) {
@@ -133,7 +152,35 @@ class ClientBuildingAvailabilityService
                     }
                 });
             }
+        };*/
+        $filterMultiRange = function ($field, $param) use ($filters, $query) {
+            if (!empty($filters[$param])) {
+                $ranges = $filters[$param];
+
+                // Преобразуем [0 => 1, 1 => 2] в [[1, 2]]
+                if (array_is_list($ranges) && count($ranges) === 2 && is_numeric($ranges[0]) && is_numeric($ranges[1])) {
+                    $ranges = [ $ranges ];
+                }
+
+                if (is_array($ranges)) {
+                    $query->where(function ($q) use ($ranges, $field) {
+                        foreach ($ranges as $range) {
+                            if (is_array($range) && count($range) === 2) {
+                                [$from, $to] = $range;
+                                if (is_numeric($from) && is_numeric($to)) {
+                                    $q->orWhereBetween($field, [$from, $to]);
+                                } elseif (is_numeric($from)) {
+                                    $q->orWhere($field, '>=', $from);
+                                } elseif (is_numeric($to)) {
+                                    $q->orWhere($field, '<=', $to);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
         };
+
 
 
         $filterIn('buildings.market_id', 'market_id');
@@ -143,8 +190,10 @@ class ClientBuildingAvailabilityService
         $filterIn('buildings.generation', 'generation');
         $filterIn('buildings.currency', 'currency');
         $filterIn('buildings.tenancy', 'tenancy');
+        $filterExact('buildings.latitud', 'latitud');
+        $filterExact('buildings.longitud', 'longitud');
         $filterIn('buildings.industrial_park_id', 'industrial_park_id');
-        $filterIn('buildings_available.shared_truck', 'shared_truck');
+        $filterExact('buildings_available.shared_truck', 'shared_truck');
         $filterIn('buildings.loading_door', 'loading_door');
         $filterIn('buildings.developer_id', 'developer_id');
         $filterIn('buildings.owner_id', 'owner_id');

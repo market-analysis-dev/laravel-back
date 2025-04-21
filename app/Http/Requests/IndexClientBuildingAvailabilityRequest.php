@@ -50,10 +50,8 @@ class IndexClientBuildingAvailabilityRequest extends FormRequest
             'above_market_tis'     => 'array|nullable',
             'above_market_tis.*'   => 'string',
 
-            'size_sf' => 'array|nullable',
-            'size_sf.*' => 'array|size:2',
-            'size_sf.*.0' => 'nullable|numeric',
-            'size_sf.*.1' => 'nullable|numeric',
+            'size_sf' => ['nullable', 'array'],
+            'size_sf.*' => ['nullable', 'numeric'],
 
 
             'region_id'            => 'array|nullable',
@@ -68,14 +66,12 @@ class IndexClientBuildingAvailabilityRequest extends FormRequest
             'tenancy'              => 'array|nullable',
             'tenancy.*'            => 'string',
 
-            'building_name'        => 'array|nullable',
-            'building_name.*'        => 'string',
+            'building_name'        => 'string|nullable',
 
             'industrial_park_id'   => 'array|nullable',
             'industrial_park_id.*' => 'integer|exists:industrial_parks,id',
 
-            'shared_truck'         => 'array|nullable',
-            'shared_truck.*'       => 'string',
+            'shared_truck'         => 'boolean|nullable',
 
             'loading_door'         => 'array|nullable',
             'loading_door.*'       => 'string',
@@ -83,16 +79,19 @@ class IndexClientBuildingAvailabilityRequest extends FormRequest
             'developer_id'         => 'array|nullable',
             'developer_id.*'       => 'integer|exists:cat_developers,id',
 
-            'clear_height_ft' => 'array|nullable',
-            'clear_height_ft.*' => 'array|size:2',
-            'clear_height_ft.*.0' => 'nullable|numeric',
-            'clear_height_ft.*.1' => 'nullable|numeric',
+            'clear_height_ft' => ['nullable', 'array'],
+            'clear_height_ft.*' => ['nullable', 'numeric'],
+
 
             'owner_id'             => 'array|nullable',
             'owner_id.*'           => 'integer|exists:cat_developers,id',
 
             'owner_type'           => 'array|nullable',
             'owner_type.*'         => 'string',
+
+            'latitud'            => 'string|max:20',
+
+            'longitud'            => 'string|max:20',
 
             'sqftToM2'             => 'boolean|nullable',
         ];
