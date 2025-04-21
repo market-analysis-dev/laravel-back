@@ -65,10 +65,15 @@ class ClientBuildingAvailabilityService
         $results = $query->get();
 
         $totalBuildings = $results->sum('size_sf');
+        $totalBuildingsCount = $results->count();
 
         $totalA = $results->where('class', 'A')->sum('size_sf');
         $totalB = $results->where('class', 'B')->sum('size_sf');
         $totalC = $results->where('class', 'C')->sum('size_sf');
+
+        $totalACount = $results->where('class', 'A')->count();
+        $totalBCount = $results->where('class', 'B')->count();
+        $totalCCount = $results->where('class', 'C')->count();
 
         $totalPercentA = $totalBuildings > 0 ? round(($totalA / $totalBuildings) * 100, 2) : 0;
         $totalPercentB = $totalBuildings > 0 ? round(($totalB / $totalBuildings) * 100, 2) : 0;
@@ -77,6 +82,11 @@ class ClientBuildingAvailabilityService
         $totalUnderConstruction = $results
             ->where('stage', 'Construction')
             ->sum('size_sf');
+
+        $totalUnderConstructionCount = $results
+            ->where('stage', 'Construction')
+            ->count();
+
         $totalUnderConstructionPercent = $totalUnderConstruction > 0 ? round(($totalUnderConstruction / $totalBuildings) * 100, 2) : 0;
 
         $totalByLocations = $results->groupBy('region_id')
@@ -94,13 +104,18 @@ class ClientBuildingAvailabilityService
 
         return [
             'total_buildings' => $totalBuildings,
+            'total_buildings_count' => $totalBuildingsCount,
             'total_class_a' => $totalA,
+            'total_class_a_count' => $totalACount,
             'total_percent_a' => $totalPercentA,
             'total_class_b' => $totalB,
+            'total_class_b_count' => $totalBCount,
             'total_percent_b' => $totalPercentB,
             'total_class_c' => $totalC,
+            'total_class_c_count' => $totalCCount,
             'total_percent_c' => $totalPercentC,
             'total_underconstruction' => $totalUnderConstruction,
+            'total_underconstruction_count' => $totalUnderConstructionCount,
             'total_percent_underconstruction' => $totalUnderConstructionPercent,
             'total_by_locations' => $totalByLocations,
         ];

@@ -25,7 +25,6 @@ class ClientController extends ApiController
     {
         $validated = $request->validated();
         $availabilities = $service->filterStatistic($validated);
-        //return $this->success(data:$availabilities);
         return $this->success(
             data: ClientBuildingAvailabilityStatisticResource::make($availabilities)
         );
