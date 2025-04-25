@@ -48,7 +48,7 @@ class BuildingController extends ApiController implements HasMiddleware
             new Middleware('permission:buildings.approve', only: ['approve']),
             new Middleware('permission:buildings.draft', only: ['draft']),
             new Middleware('permission:buildings.uploadFiles', only: ['uploadFiles']),
-            new Middleware('permission:buildings.layoutDesign', only: ['layoutDesign']),
+            // new Middleware('permission:buildings.layoutDesign', only: ['layoutDesign']),
         ];
     }
 

@@ -156,17 +156,26 @@ class BuildingService
                 'buildings.floor_resistance',
                 'buildings.roof_system',
                 'buildings.clear_height_ft',
+                'buildings.skylights_sf',
+                'buildings.lightning',
+                'buildings.ventilation',
+                'buildings.hvac_production_area',
                 'building_av.avl_building_dimensions_ft',
+                'building_av.avl_max_lease',
+                'building_av.avl_min_lease',
                 'buildings.columns_spacing_ft',
-                'buildings.bay_size',
+                'building_av.bay_size',
                 'building_av.dock_doors',
-                'building_av.knockouts_docks',
+                'building_av.fire_protection_system',
+                'building_av.avl_knockout_docks',
                 'building_av.truck_court_ft',
                 'building_av.trailer_parking_space',
+                'building_av.avl_date',
+                'building_av.parking_space',
                 'building_av.shared_truck',
-                'buildings.offices_space_sf',
+                'building_av.offices_space_sf',
                 'market.name as market_name',
-                'submarket.name as submarket_name',
+                'submarket.name as sub_market_name',
                 'industrial_parks.name as industrial_park_name',
                 'buildings.year_built',
                 'buildings.currency',
@@ -208,13 +217,15 @@ class BuildingService
         // Validar si los archivos existen en el directorio
         $validFiles = [];
 
-        foreach ($files as $file) {
-            $filePath = storage_path('app/public/' . $file->path); // Ruta del archivo en storage
-            if (file_exists($filePath)) {
-                $validFiles[] = [
-                    'type' => $file->type,
-                    'url' => asset('storage/' . $file->path) // Convertir a URL accesible
-                ];
+        if ($files) { // validando que existan imagenes
+            foreach ($files as $file) {
+                $filePath = storage_path('app/public/' . $file->path); // Ruta del archivo en storage
+                if (file_exists($filePath)) {
+                    $validFiles[] = [
+                        'type' => $file->type,
+                        'url' => $filePath // Convertir a URL accesible
+                    ];
+                }
             }
         }
 
@@ -227,9 +238,9 @@ class BuildingService
         $user = $this->userData($userId);
         $building = $this->getBuildingData($buildingId);
         $images = $this->getBuildingImages($buildingId); // Obtener imágenes validadas
-
+        $logoPath = null;
+        $logoPath = $user->logo_path ? storage_path('app/public/' . $user->logo_path) : null;        
         // Obtener la ruta del logo
-        $logoPath = $user->logo_path ? storage_path('app/public/' . $user->logo_path) : null;
         $pdf = Pdf::loadView('buildings.layout-design', compact('building', 'user', 'logoPath', 'images'));
         return $pdf->stream('layout-design.pdf');
     }
@@ -241,8 +252,8 @@ class BuildingService
     public function createDraft(Building $building): array
     {
         if ($building->status === BuildingStatus::DRAFT->value) {
-        return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
-    }
+            return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
+        }
 
         $existingDraft = Building::where('building_id', $building->id)
             ->where('status', BuildingStatus::DRAFT->value)

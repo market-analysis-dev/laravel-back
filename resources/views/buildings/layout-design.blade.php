@@ -122,7 +122,7 @@
                     <!-- Imagen derecha -->
                     <td style="text-align: right;">
                     @if($logoPath)
-                        <img src="{{ $logoPath }}" style="width: 150px; height: auto;">
+                        <img src="{{ $logoPath }}" style="width: auto; height: 50px;">
                     @else
                         <img src="{{ public_path('buildings-flyer/detalle-header-flyer.png') }}" style="width: 150px; height: auto;">
                     @endif
@@ -135,12 +135,18 @@
         <br>
         {{-- Contenido principal --}}
         <div class="first-img">
-        @php $frontPage = collect($images)->firstWhere('type', 'Front Page'); @endphp
-        @if($frontPage)
-            <img src="{{ $frontPage['url'] }}" style="height: 400px; width:100%;">
-        @else
-            <img src="{{ public_path('buildings-flyer\detalle-header-flyer.png') }}" style="height: 400px; width:100%;">
-        @endif
+            {{-- Debug: --}}
+            {{-- @dd($images) --}}
+            @php 
+                $frontPage = collect($images)->firstWhere('type', 'Front Page');
+                // Debug:
+                // dump($frontPage);
+            @endphp
+            @if(!empty($frontPage) && !empty($frontPage['url']))
+                <img src="{{ $frontPage['url'] }}" style="height: 400px; width:100%;">
+            @else
+                <img src="{{ asset('buildings-flyer/detalle-header-flyer.png') }}" style="height: 400px; width:100%;">
+            @endif
         </div>
 
         <br>
@@ -151,51 +157,48 @@
                     <tr class="primary-row">
                         <th class="s2">Total Land:</th>
                         <td class="s3">{{ $building->total_land_sf }} SF</td>
-                    
-                        <th class="s2">Electric Substations:</th>
-                        <td class="s3"> KVAS</td>
                     </tr>
                     <tr>
                         <th class="s2">Total Building Size:</th>
                         <td class="s3">{{ number_format($building->building_size_sf, 0) }} SF</td>
                     
                         <th class="s2">Skylight:</th>
-                        <td class="s3">%</td>
+                        <td class="s3">{{ $building->skylights_sf }}</td>
                     </tr>
                     <tr class="primary-row">
                         <th class="s2">Available Building:</th>
-                        <td class="s3">169,432 SF</td>
+                        <td class="s3">{{ $building->avl_building_dimensions_ft }}</td>
                     
                         <th class="s2">Lighting:</th>
-                        <td class="s3">169,432 SF</td>    
+                        <td class="s3">{{ $building->lightning }}</td>
                     </tr>
                     <tr>
                         <th class="s2">Expansion Up To:</th>
                         <td class="s3">{{ $building->expansion_up_to_sf }} SF</td>
                         
                         <th class="s2">Ventilation System:</th>
-                        <td class="s3"></td>
+                        <td class="s3">{{ $building->ventilation}}</td>
                     </tr>
                     <tr class="primary-row">
                         <th class="s2">Construction Type:</th>
                         <td class="s3">{{ $building->construction_type }}</td>
                         
                         <th class="s2">HVAC for Production Area:</th>
-                        <td class="s3"></td>
+                        <td class="s3">{{ $building->hvac_production_area }}</td>
                     </tr>
                     <tr>
                         <th class="s2">Floor Slab Thickness:</th>
                         <td class="s3">{{ $building->floor_thickness_in }}</td>
                         
                         <th class="s2">Fire Protection System:</th>
-                        <td class="s3">{{ $building->floor_thickness_in }}</td>
+                        <td class="s3">{{ $building->fire_protection_system }}</td>
                     </tr>
                     <tr class="primary-row">
                         <th class="s2">Floor Resistance:</th>
                         <td class="s3">{{ $building->floor_resistance }}</td>
                     
                         <th class="s2">Parking Space:</th>
-                        <td class="s3"></td>
+                        <td class="s3">{{ $building->parking_space }}</td>
                     </tr>
                     <tr>
                         <th class="s2">Roofing</th>
@@ -214,14 +217,14 @@
                     {{-- Segunda columna --}}
                     <tr>
                         <th class="s2">Building Dimensions</th>
-                        <td class="s3">{{ $building->avl_building_dimensions }}</td>
+                        <td class="s3">{{ $building->avl_building_dimensions_ft }}</td>
                         
                         <th class="s2">Submarket</th>
-                        <td class="s3">{{ $building->submarket_name }}</td>
+                        <td class="s3">{{ $building->sub_market_name }}</td>
                     </tr>
                     <tr class="primary-row">
                         <th class="s2">Columns Spacing</th>
-                        <td class="s3">{{ $building->columns_spacing }}</td>
+                        <td class="s3">{{ $building->columns_spacing_ft }}</td>
                         
                         <th class="s2">Industrial Park</th>
                         <td class="s3">{{ $building->industrial_park_name }}</td>
@@ -238,42 +241,40 @@
                         <td class="s3">{{ $building->dock_doors }}</td>
                     
                         <th class="s2">Available From</th>
-                        <td class="s3">{{ $building->dock_doors }}</td>
+                        <td class="s3">{{ $building->avl_date }}</td>
                     </tr>
                     <tr>
-                        <th class="s2">Knockouts Docks</th>
-                        <td class="s3">{{ $building->knockouts_docks }}</td>
-                    
                         <th class="s2">Owner</th>
                         <td class="s3">{{ $building->owner_id }}</td>
+
                     </tr>
                     <tr class="primary-row">
-                        <th class="s2">Drive In Door</th>
-                        <td class="s3">2</td>
-                    
                         <th class="s2">Builder</th>
                         <td class="s3">{{ $building->builder_id }}</td>
-                    </tr>
-                    <tr>    
+                    
                         <th class="s2">Truck Court</th>
                         <td class="s3">{{ $building->truck_court_ft }}</td>
-                    
-                        <th class="s2">Currency</th>
-                        <td class="s3">{{ $building->currency }}</td>
-                    </tr>
-                    <tr class="primary-row">    
-                        <th class="s2">Trailer Parking Spaces</th>
-                        <td class="s3">{{ $building->trailer_parking_space }}</td>
-                    
-                        <th class="s2">Min. Asking Rate (SF/MO)</th>
-                        <td class="s3">$0.4</td>
                     </tr>
                     <tr>    
+                        <th class="s2">Currency</th>
+                        <td class="s3">{{ $building->currency }}</td>
+                    
+                        <th class="s2">Trailer Parking Spaces</th>
+                        <td class="s3">{{ $building->trailer_parking_space }}</td>
+                    </tr>
+                    <tr class="primary-row">    
+                        <th class="s2">Min. Asking Rate (SF/MO)</th>
+                        <td class="s3">$ {{ number_format($building->avl_min_lease, 0) }}</td>
+                        
                         <th class="s2">Shared Truck Court Area</th>
                         <td class="s3">{{ $building->shared_truck }}</td>
-                    
+                    </tr>
+                    <tr>    
                         <th class="s2">Max. Asking Rate (SF/MO)</th>
-                        <td class="s3">$0</td>
+                        <td class="s3">$ {{ $building->avl_max_lease }}</td>
+
+                        <th class="s2">Knockout Docks</th>
+                        <td class="s3">{{ number_format($building->avl_knockout_docks, 0) }}</td>
                     </tr>
                 </tbody>
             </table>
