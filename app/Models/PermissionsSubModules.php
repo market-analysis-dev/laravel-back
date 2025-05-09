@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 
@@ -33,11 +34,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PermissionsSubModules extends Model
 {
-    use HasFactory;
-
-    protected $fillable = [
-        'userId', 'subModuleId', 'status'
-    ];
+    use HasFactory, SoftDeletes;
 
     protected $table = 'permissions_submodules';
+
+    protected $fillable = [
+        'access_policy_id', 'submodule_id', 'market_id', 'sub_market_id', 'year', 'quarter', 'status',
+    ];
 }
