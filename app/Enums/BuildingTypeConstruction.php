@@ -8,9 +8,10 @@ enum BuildingTypeConstruction: string
 {
     use EnumHelper;
 
-    case TILT_UP = 'TILT_UP';
+    case TILTUP = 'Tiltup';
     case PRECAST = 'Precast';
-    case BLOCK_SHEET_METAL = 'Block & Sheet Metal';
-    case SHEET_METAL = 'Sheet Metal';
-
+    case CONCRETE_MASONRY_METAL_SHEET = 'Concrete Masonry & Metal Sheet';
+    case HEBEL = 'Hebel';
+    case CONCRETE_MASONRY = 'Concrete Masonry';
+    case METAL_SHEET = 'Metal Sheet';
 }

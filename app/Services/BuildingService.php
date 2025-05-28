@@ -80,9 +80,9 @@ class BuildingService
 
     public function update(Building $building, array $validated): Building
     {
-        if($validated['status'] === BuildingStatus::ENABLED->value) {
+        /*if($validated['status'] === BuildingStatus::ENABLED->value) {
             $this->makeBuildingLogRecord($building);
-        }
+        }*/
         $building->update($validated);
         return $building;
     }

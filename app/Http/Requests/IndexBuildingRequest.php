@@ -25,7 +25,6 @@ class IndexBuildingRequest extends FormRequest
             'page' => 'nullable|integer',
             'size' => 'nullable|integer',
             'search' => 'nullable|string',
-            'status' => 'nullable|string',
             'building_name' => 'nullable|string',
             'marketName' => 'nullable|string',
             'submarketName' => 'nullable|string',

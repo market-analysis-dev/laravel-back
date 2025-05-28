@@ -141,7 +141,6 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThicknessIn($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOfficesSpaceSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTotalLandSf($value)
- * @property int|null $building_id
  * @property-read Building|null $building
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingFile> $files
  * @property-read int|null $files_count
@@ -175,7 +174,6 @@ class Building extends Model
         'industrial_park_id',
         'developer_id',
         'owner_id',
-        'building_id',
         'building_name',
         'building_size_sf',
         'latitud',
@@ -250,11 +248,6 @@ class Building extends Model
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Developer::class, 'owner_id');
-    }
-
-    public function building(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Building::class, 'building_id');
     }
 
 
