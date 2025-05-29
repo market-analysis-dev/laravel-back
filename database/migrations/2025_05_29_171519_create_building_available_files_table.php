@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('building_files', function (Blueprint $table) {
+        Schema::create('buildings_available_files', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('file_id');
-            $table->unsignedBigInteger('building_id');
+            $table->unsignedBigInteger('buildings_available_id');
             $table->enum('type', ['Front Page', 'Gallery', 'Aerial', '360', 'Layout', 'Brochure', 'KMZ']);
-            $table->string('path', 255);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
@@ -24,7 +23,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // * Relations
-            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
+            $table->foreign('buildings_available_id')->references('id')->on('buildings_available')->onDelete('cascade');
             $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
         });
     }
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('building_files');
+        Schema::dropIfExists('building_available_files');
     }
 };
