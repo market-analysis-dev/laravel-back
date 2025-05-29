@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_available_id
@@ -121,6 +121,54 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAvlType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereRamps($value)
+ * @property int|null $avl_knockout_docks
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAvlKnockoutDocks($value)
+ * @property string $building_dimensions_ft
+ * @property int $construction_size_sf
+ * @property string|null $kvas_fees_paid
+ * @property int|null $is_new_construction
+ * @property string $abs_asking_shell
+ * @property int $abs_closing_dock_door
+ * @property int $abs_closing_knockout_docks
+ * @property int $abs_closing_ramps
+ * @property int $abs_closing_truck_court
+ * @property string $abs_closing_currency
+ * @property int $avl_sale_price
+ * @property int $offices_space_sf
+ * @property int|null $knockout_docks
+ * @property string $avl_deal
+ * @property int $has_tis_hvac
+ * @property int $has_tis_crane
+ * @property int $has_tis_rail_spur
+ * @property int $has_tis_sprinklers
+ * @property int $has_tis_crossdock
+ * @property int $has_tis_office
+ * @property int $has_tis_leed
+ * @property int $has_tis_land_expansion
+ * @property string $status
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsAskingShell($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsClosingCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsClosingDockDoor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsClosingKnockoutDocks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsClosingRamps($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAbsClosingTruckCourt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAvlDeal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereAvlSalePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereBuildingDimensionsFt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereConstructionSizeSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisCrane($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisCrossdock($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisHvac($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisLandExpansion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisLeed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisOffice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisRailSpur($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereHasTisSprinklers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereIsNewConstruction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereKnockoutDocks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereKvasFeesPaid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereOfficesSpaceSf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailableLog whereStatus($value)
  * @mixin \Eloquent
  */
 class BuildingAvailableLog extends Model
@@ -132,57 +180,62 @@ class BuildingAvailableLog extends Model
     protected $fillable = [
         'building_available_id',
         'building_id',
-        'ramps',
-        'trailer_parking_space',
-        'above_market_tis',
         'abs_tenant_id',
         'abs_industry_id',
-        'abs_shelter_id',
         'abs_country_id',
         'broker_id',
-        'building_state',
+        'abs_shelter_id',
+        'building_available_id',
         'size_sf',
-        'avl_building_dimensions_ft',
-        'avl_type',
-        'abs_type',
+        'building_dimensions_ft',
         'avl_minimum_space_sf',
-        'avl_expansion_up_to_sf',
+        'construction_size_sf',
         'dock_doors',
-        'drive_in_door',
-        'floor_thickness',
-        'floor_resistance',
+        'ramps',
         'truck_court_ft',
-        'has_crossdock',
+        'kvas_fees_paid',
         'shared_truck',
-        'new_construction',
+        'is_new_construction',
         'is_starting_construction',
         'bay_size',
         'avl_date',
         'abs_lease_term_month',
-        'knockouts_docks',
         'parking_space',
+        'trailer_parking_space',
         'avl_min_lease',
         'avl_max_lease',
+        'abs_asking_shell',
         'abs_closing_rate',
+        'abs_closing_dock_door',
+        'abs_closing_knockout_docks',
+        'abs_closing_ramps',
+        'abs_closing_truck_court',
+        'abs_closing_currency',
+        'avl_sale_price',
         'abs_closing_date',
         'abs_lease_up',
         'abs_month',
+        'abs_sale_price',
+        'offices_space_sf',
+        'knockout_docks',
+        'building_state',
+        'avl_type',
+        'abs_type',
         'abs_final_use',
         'abs_company_type',
-        'abs_sale_price',
-        'abs_shelter_id',
-        'has_expansion_land',
-        'has_crane',
-        'has_hvac',
-        'has_rail_spur',
-        'has_sprinklers',
-        'has_office',
-        'has_leed',
         'abs_deal',
-        'currency',
+        'avl_deal',
         'fire_protection_system',
+        'has_tis_hvac',
+        'has_tis_crane',
+        'has_tis_rail_spur',
+        'has_tis_sprinklers',
+        'has_tis_crossdock',
+        'has_tis_office',
+        'has_tis_leed',
+        'has_tis_land_expansion',
         'is_negative_absorption',
-        'avl_knockout_docks',
+        'status',
         'created_by',
         'updated_by',
         'deleted_by',

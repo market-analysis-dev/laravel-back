@@ -25,15 +25,15 @@ class ConvertToAvailableRequest extends FormRequest
     {
         return [
             'broker_id' => 'sometimes|integer|exists:cat_brokers,id',
-            'dock_doors' => 'sometimes|integer|min:0',
-            'ramps' => 'sometimes|integer|min:0',
-            'truck_court_ft' => 'sometimes|integer|min:0',
+            'dock_doors' => 'required|integer|min:0',
+            'ramps' => 'required|integer|min:0',
+            'truck_court_ft' => 'required|integer|min:0',
             'shared_truck' => 'sometimes|boolean',
-            'new_construction' => 'sometimes|boolean',
+            'is_new_construction' => 'sometimes|boolean',
             'is_starting_construction' => 'sometimes|boolean',
             'bay_size' => 'sometimes|string|max:45',
-            'parking_space' => 'sometimes|integer|min:0',
-            'trailer_parking_space' => 'sometimes|integer|min:0',
+            'parking_space' => 'required|integer|min:0',
+            'trailer_parking_space' => 'required|integer|min:0',
             'fire_protection_system' => [
                 'sometimes',
                 'array',
@@ -47,25 +47,22 @@ class ConvertToAvailableRequest extends FormRequest
                     }
                 }
             ],
-            'above_market_tis' => [
-                'sometimes',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
-
-                    foreach ($value as $item) {
-                        if (!in_array($item, $allowedValues)) {
-                            return $fail(__('Invalid value in above_market_tis.'));
-                        }
-                    }
-                }
-            ],
-            'avl_building_dimensions_ft' => 'required|string|max:45',
+            'building_dimensions_ft' => 'required|string|max:45',
             'avl_minimum_space_sf' => 'required|integer|min:0',
             'avl_date' => 'required|date',
-            'avl_min_lease' => 'nullable|numeric|min:0',
-            'avl_max_lease' => 'nullable|numeric|min:0',
-            'avl_knockout_docks' => 'nullable|numeric|min:0',
+            'avl_min_lease' => 'required|numeric|min:0',
+            'avl_max_lease' => 'required|numeric|min:0',
+            'avl_sale_price' => 'required|integer|min:0',
+            'knockout_docks' => 'nullable|numeric|min:0',
+            'avl_deal' => 'required|in:Sale,Lease',
+            'has_tis_hvac'           => 'boolean',
+            'has_tis_crane'          => 'boolean',
+            'has_tis_rail_spur'      => 'boolean',
+            'has_tis_sprinklers'     => 'boolean',
+            'has_tis_crossdock'      => 'boolean',
+            'has_tis_office'         => 'boolean',
+            'has_tis_leed'           => 'boolean',
+            'has_tis_land_expansion' => 'boolean',
             'avl_type' => 'required|in:Construction,Planned,Sublease,Expiration,Inventory',
             'size_sf' => [
                 'sometimes',

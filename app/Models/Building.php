@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -158,6 +158,8 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereGeneration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOwnerType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStage($value)
+ * @property string|null $roofing
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRoofing($value)
  * @mixin \Eloquent
  */
 class Building extends Model

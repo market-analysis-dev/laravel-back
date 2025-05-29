@@ -449,7 +449,8 @@ class BuildingsAvailableService
      */
     private function makeBuildingAvailableLogRecord(BuildingAvailable $buildingAvailable):void
     {
-        $logRecord = new BuildingAvailableLog($buildingAvailable->toArray());
+        /*$logRecord = new BuildingAvailableLog($buildingAvailable->toArray());*/
+        $logRecord = new BuildingAvailableLog($buildingAvailable->getAttributes());
         $logRecord['building_available_id'] = $buildingAvailable->id;
         $logRecord->save();
     }
