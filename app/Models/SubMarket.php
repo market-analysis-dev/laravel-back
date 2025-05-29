@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\File;
 
 /**
- *
+ * 
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket newQuery()
@@ -41,6 +41,10 @@ use App\Models\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket withoutTrashed()
+ * @property string|null $latitude
+ * @property string|null $longitude
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereLatitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereLongitude($value)
  * @mixin \Eloquent
  */
 class SubMarket extends Model
