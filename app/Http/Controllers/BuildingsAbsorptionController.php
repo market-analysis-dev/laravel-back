@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ConvertToAvailableRequest;
 use App\Http\Requests\StoreBuildingsAbsorptionRequest;
+use App\Http\Requests\StoreBuildingWithAbsorptionRequest;
 use App\Http\Requests\UpdateBuildingAbsorptionDraftRequest;
 use App\Http\Requests\UpdateBuildingsAbsorptionRequest;
+use App\Http\Requests\UpdateBuildingWithAbsorptionRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
 use App\Services\BuildingsAvailableService;
 use App\Responses\ApiResponse;
 use App\Enums\BuildingState;
 use App\Http\Requests\IndexBuildingsAbsorptionRequest;
+use App\Services\BuildingService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Enums\BuildingStatus;
@@ -20,6 +23,7 @@ use Illuminate\Support\Arr;
 class BuildingsAbsorptionController extends ApiController implements HasMiddleware
 {
     private BuildingsAvailableService $buildingAvailableService;
+    private BuildingService $buildingService;
 
     public static function middleware()
     {
@@ -33,9 +37,10 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
         ];
     }
 
-    public function __construct(BuildingsAvailableService $buildingAvailableService)
+    public function __construct(BuildingsAvailableService $buildingAvailableService, BuildingService $buildingService)
     {
         $this->buildingAvailableService = $buildingAvailableService;
+        $this->buildingService = $buildingService;
     }
 
     /**
@@ -59,12 +64,8 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
     }
 
 
-    /**
-     * @param StoreBuildingsAbsorptionRequest $request
-     * @param Building $building
-     * @return ApiResponse
-     */
-    public function store(StoreBuildingsAbsorptionRequest $request, Building $building): ApiResponse
+
+    /*public function store(StoreBuildingsAbsorptionRequest $request, Building $building): ApiResponse
     {
         $validated = $request->validated();
         $validated['building_id'] = $building->id;
@@ -91,6 +92,22 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
         }
 
         return $this->success('Building Absorption created successfully', $absorption);
+    }*/
+
+    public function store(StoreBuildingWithAbsorptionRequest $request): ApiResponse
+    {
+        try {
+            $validated = $request->validated();
+            $buildingData = $validated['building'];
+            $absorptionData = $validated['absorption'];
+
+            $building = $this->buildingService->createWithAbsorption($buildingData, $absorptionData);
+
+            return $this->success('Created successfully', $building);
+        } catch (\Throwable $e) {
+            report($e);
+            return $this->error(message: 'Error creating building with absorption', data: [], status:500);
+        }
     }
 
     /**
@@ -119,13 +136,8 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
     }
 
 
-    /**
-     * @param UpdateBuildingsAbsorptionRequest $request
-     * @param Building $building
-     * @param BuildingAvailable $buildingAbsorption
-     * @return ApiResponse
-     */
-    public function update(UpdateBuildingsAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+
+   /* public function update(UpdateBuildingsAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
     {
         if ($buildingAbsorption->building_id !== $building->id) {
             return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
@@ -162,6 +174,34 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             return $this->success('Building Absorption updated successfully', $buildingAbsorption);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
+        }
+    }*/
+
+    public function update(UpdateBuildingWithAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        try {
+            $validated = $request->validated();
+            $buildingData = $validated['building'];
+            $availabilityData = $validated['absorption'];
+
+            if ($buildingAvailable->building_id !== $building->id) {
+                return $this->error('The absorptiony does not belong to the given building.', status: 422);
+            }
+
+            $buildingData['id'] = $building->id;
+            $availabilityData['id'] = $buildingAvailable->id;
+
+            $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData);
+
+            return $this->success('Updated successfully', $result);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->error(
+                message: 'Error updating building with absorption',
+                data: ['error' => $e->getMessage()],
+                status: 500
+            );
         }
     }
 

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Enums\BuildingStatus;
 use App\Enums\BuildingState;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class BuildingService
 {
@@ -54,11 +55,47 @@ class BuildingService
                 $building = $this->create($buildingData);
             }
             $availabilityData['building_id'] = $building->id;
+            $absorptionData['building_state'] = BuildingState::AVAILABILITY->value;
             $availabilityBuilding = $this->buildingsAvailableService->create($availabilityData);
 
             return [
                 'building' => $building,
                 'availability' => $availabilityBuilding,
+            ];
+        });
+    }
+
+
+    public function createWithAbsorption(array $buildingData, array $absorptionData): mixed
+    {
+        /* Building */
+        if ($buildingData['sqftToM2'] ?? false) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        /* Building Absorption */
+        if (!empty($absorptionData['sqftToM2']) || !empty($absorptionData['yrToMo'])) {
+            $absorptionData = $this->buildingsAvailableService->convertMetrics($absorptionData);
+        }
+        if (!empty($absorptionData['fire_protection_system']) && is_array($absorptionData['fire_protection_system'])) {
+            $absorptionData['fire_protection_system'] = implode(',', $absorptionData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $absorptionData) {
+
+            if (!empty($buildingData['id'])) {
+                $building = Building::findOrFail($buildingData['id']);
+                $building = $this->update($building, $buildingData);
+            } else {
+                $building = $this->create($buildingData);
+            }
+            $absorptionData['building_id'] = $building->id;
+            $absorptionData['building_state'] = BuildingState::ABSORPTION->value;
+            $absorptionBuilding = $this->buildingsAvailableService->create($absorptionData);
+
+            return [
+                'building' => $building,
+                'absorption' => $absorptionBuilding,
             ];
         });
     }
@@ -99,12 +136,64 @@ class BuildingService
 
             $availability = BuildingAvailable::findOrFail($availabilityData['id']);
 
+            if ($availability->building_state !== BuildingState::AVAILABILITY->value) {
+                throw ValidationException::withMessages([
+                    'availability.id' => __('The availability must be in AVAILABILITY state to update.'),
+                ]);
+            }
+
             $availabilityData['building_id'] = $building->id;
             $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
 
             return [
                 'building' => $building,
                 'availability' => $availability,
+            ];
+        });
+    }
+
+    public function updateWithAbsorption(array $buildingData, array $availabilityData): mixed
+    {
+
+        if (!empty($buildingData['sqftToM2'])) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
+            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        }
+
+        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
+            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $availabilityData) {
+            if (empty($buildingData['id'])) {
+                throw new \InvalidArgumentException('Missing building ID for update.');
+            }
+
+            $building = Building::findOrFail($buildingData['id']);
+            $building = $this->update($building, $buildingData);
+
+            if (empty($availabilityData['id'])) {
+                throw new \InvalidArgumentException('Missing availability ID for update.');
+            }
+
+            $availability = BuildingAvailable::findOrFail($availabilityData['id']);
+
+            if ($availability->building_state !== BuildingState::ABSORPTION->value) {
+                throw ValidationException::withMessages([
+                    'absorption.id' => __('The availability must be in ABSORPTION state to update.'),
+                ]);
+            }
+
+            $availabilityData['building_id'] = $building->id;
+
+            $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
+
+            return [
+                'building' => $building,
+                'absorption' => $availability,
             ];
         });
     }

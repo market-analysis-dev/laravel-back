@@ -9,11 +9,15 @@ Route::group([
     'as' => 'api.buildings.',
     'middleware' => 'auth:sanctum',
 ], function () {
-    Route::post('/availability', [\App\Http\Controllers\BuildingsAvailableController::class, 'store'])->name('store');
+    Route::post('/availability', [\App\Http\Controllers\BuildingsAvailableController::class, 'store'])->name('availabilityStore');
 
     Route::put('/{building}/availability/{buildingAvailable}', [\App\Http\Controllers\BuildingsAvailableController::class, 'update'])->name('update');
 
     Route::delete('/{building}/availability/{buildingAvailable}', [\App\Http\Controllers\BuildingsAvailableController::class, 'destroy'])->name('destroy');
+
+    Route::post('/absorption', [\App\Http\Controllers\BuildingsAbsorptionController::class, 'store'])->name('absorptionStore');
+
+    Route::put('/{building}/absorption/{buildingAvailable}', [\App\Http\Controllers\BuildingsAbsorptionController::class, 'update'])->name('update');
 
 
     Route::get('/classes', [BuildingController::class, 'listClasses'])->name('listClasses');
