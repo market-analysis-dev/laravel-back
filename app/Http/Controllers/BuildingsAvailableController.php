@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ConvertToAbsorptionRequest;
 use App\Http\Requests\IndexBuildingsAvailableRequest;
+use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\StoreBuildingsAvailableRequest;
+use App\Http\Requests\StoreBuildingWithAvailabilityRequest;
 use App\Http\Requests\UpdateBuildingAvailableDraftRequest;
 use App\Http\Requests\UpdateBuildingsAvailableRequest;
+use App\Http\Requests\UpdateBuildingWithAvailabilityRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
 use App\Services\BuildingsAvailableService;
+use App\Services\BuildingService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Enums\BuildingState;
@@ -23,6 +27,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
 
 
     private BuildingsAvailableService $buildingAvailableService;
+    private BuildingService $buildingService;
 
     public static function middleware()
     {
@@ -37,9 +42,13 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     }
 
 
-    public function __construct(BuildingsAvailableService $buildingAvailableService)
+    public function __construct(
+        BuildingsAvailableService $buildingAvailableService,
+        BuildingService $buildingService,
+    )
     {
         $this->buildingAvailableService = $buildingAvailableService;
+        $this->buildingService = $buildingService;
     }
 
     public function index(IndexBuildingsAvailableRequest $request, Building $building): ApiResponse
@@ -58,12 +67,8 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     }
 
 
-    /**
-     * @param StoreBuildingsAvailableRequest $request
-     * @param Building $building
-     * @return ApiResponse
-     */
-    public function store(StoreBuildingsAvailableRequest $request, Building $building): ApiResponse
+
+    /*public function store(StoreBuildingsAvailableRequest $request, Building $building): ApiResponse
     {
         $validated = $request->validated();
         $validated['building_id'] = $building->id;
@@ -89,6 +94,27 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         }
 
         return $this->success('Building Available created successfully', $availability);
+    }*/
+
+
+    /**
+     * @param StoreBuildingWithAvailabilityRequest $request
+     * @return ApiResponse
+     */
+    public function store(StoreBuildingWithAvailabilityRequest $request): ApiResponse
+    {
+        try {
+            $validated = $request->validated();
+            $buildingData = $validated['building'];
+            $availabilityData = $validated['availability'];
+
+            $building = $this->buildingService->createWithAvailability($buildingData, $availabilityData);
+
+            return $this->success('Created successfully', $building);
+        } catch (\Throwable $e) {
+            report($e);
+            return $this->error(message: 'Error creating building with availability', data: [], status:500);
+        }
     }
 
     /**
@@ -117,13 +143,8 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     }
 
 
-    /**
-     * @param UpdateBuildingsAvailableRequest $request
-     * @param Building $building
-     * @param BuildingAvailable $buildingAvailable
-     * @return ApiResponse
-     */
-    public function update(UpdateBuildingsAvailableRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+
+    /*public function update(UpdateBuildingsAvailableRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
         if ($buildingAvailable->building_id !== $building->id) {
             return $this->error('Building Available not found for this Building', ['error_code' => 404]);
@@ -159,7 +180,62 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
+    }*/
+
+    /**
+     * @param UpdateBuildingWithAvailabilityRequest $request
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function update(UpdateBuildingWithAvailabilityRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        try {
+            $validated = $request->validated();
+            $buildingData = $validated['building'];
+            $availabilityData = $validated['availability'];
+
+            if ($buildingAvailable->building_id !== $building->id) {
+                return $this->error('The availability does not belong to the given building.', status: 422);
+            }
+
+            $buildingData['id'] = $building->id;
+            $availabilityData['id'] = $buildingAvailable->id;
+
+            $result = $this->buildingService->updateWithAvailability($buildingData, $availabilityData);
+
+            return $this->success('Updated successfully', $result);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->error(
+                message: 'Error updating building with availability',
+                data: ['error' => $e->getMessage()],
+                status: 500
+            );
+        }
     }
+
+
+    /*public function destroy(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        if ($buildingAvailable->building_id !== $building->id) {
+            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
+        }
+
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+            return $this->error('Invalid building state', ['error_code' => 403]);
+        }
+
+        try {
+            if ($buildingAvailable->delete()) {
+                return $this->success('Building Available deleted successfully', $buildingAvailable);
+            }
+            return $this->error('Building Available delete failed', ['error_code' => 422]);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), ['error_code' => 500]);
+        }
+    }*/
 
     /**
      * @param Building $building
@@ -170,10 +246,6 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     {
         if ($buildingAvailable->building_id !== $building->id) {
             return $this->error('Building Available not found for this Building', ['error_code' => 404]);
-        }
-
-        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
         }
 
         try {

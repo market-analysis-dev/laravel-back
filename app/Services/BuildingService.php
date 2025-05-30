@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\BuildingAvailable;
 use App\Models\BuildingLog;
+use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Models\Building;
 use App\Models\User;
@@ -10,11 +12,108 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\BuildingStatus;
+use App\Enums\BuildingState;
+use Illuminate\Support\Facades\DB;
 
 class BuildingService
 {
+    private BuildingsAvailableService $buildingsAvailableService;
+
+    public function __construct(BuildingsAvailableService $buildingsAvailableService)
+    {
+        $this->buildingsAvailableService = $buildingsAvailableService;
+    }
+
     /**
-     * Create a new class instance.
+     * @param array $buildingData
+     * @param array $availabilityData
+     * @return \Illuminate\Database\TReturn|mixed
+     * @throws \Throwable
+     */
+    public function createWithAvailability(array $buildingData, array $availabilityData): mixed
+    {
+        /* Building */
+        if ($buildingData['sqftToM2'] ?? false) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        /* Building Availability */
+        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
+            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        }
+        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
+            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $availabilityData) {
+
+            if (!empty($buildingData['id'])) {
+                $building = Building::findOrFail($buildingData['id']);
+                $building = $this->update($building, $buildingData);
+            } else {
+                $building = $this->create($buildingData);
+            }
+            $availabilityData['building_id'] = $building->id;
+            $availabilityBuilding = $this->buildingsAvailableService->create($availabilityData);
+
+            return [
+                'building' => $building,
+                'availability' => $availabilityBuilding,
+            ];
+        });
+    }
+
+
+    /**
+     * @param array $buildingData
+     * @param array $availabilityData
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function updateWithAvailability(array $buildingData, array $availabilityData): mixed
+    {
+
+        if (!empty($buildingData['sqftToM2'])) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
+            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        }
+
+        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
+            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $availabilityData) {
+            if (empty($buildingData['id'])) {
+                throw new \InvalidArgumentException('Missing building ID for update.');
+            }
+
+            $building = Building::findOrFail($buildingData['id']);
+            $building = $this->update($building, $buildingData);
+
+            if (empty($availabilityData['id'])) {
+                throw new \InvalidArgumentException('Missing availability ID for update.');
+            }
+
+            $availability = BuildingAvailable::findOrFail($availabilityData['id']);
+
+            $availabilityData['building_id'] = $building->id;
+            $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
+
+            return [
+                'building' => $building,
+                'availability' => $availability,
+            ];
+        });
+    }
+
+
+
+    /**
+     * @param array $validated
+     * @return mixed
      */
     public function filter(array $validated): mixed
     {

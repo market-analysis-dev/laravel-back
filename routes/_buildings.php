@@ -9,6 +9,13 @@ Route::group([
     'as' => 'api.buildings.',
     'middleware' => 'auth:sanctum',
 ], function () {
+    Route::post('/availability', [\App\Http\Controllers\BuildingsAvailableController::class, 'store'])->name('store');
+
+    Route::put('/{building}/availability/{buildingAvailable}', [\App\Http\Controllers\BuildingsAvailableController::class, 'update'])->name('update');
+
+    Route::delete('/{building}/availability/{buildingAvailable}', [\App\Http\Controllers\BuildingsAvailableController::class, 'destroy'])->name('destroy');
+
+
     Route::get('/classes', [BuildingController::class, 'listClasses'])->name('listClasses');
     Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoors'])->name('listLoadingDoors');
     Route::get('/types', [BuildingController::class, 'listPhases'])->name('listPhases');
@@ -27,11 +34,11 @@ Route::group([
     Route::get('/company-types', [BuildingController::class, 'listBuildingsCompanyTypes'])->name('listBuildingsCompanyTypes');
     Route::get('/final-uses', [BuildingController::class, 'listFinalUses'])->name('listFinalUses');
     Route::get('/', [BuildingController::class, 'index'])->name('index');
-    Route::post('/', [BuildingController::class, 'store'])->name('store');
+    /*Route::post('/', [BuildingController::class, 'store'])->name('store');*/
     Route::get('/{building}', [BuildingController::class, 'show'])->name('show');
     /*Route::put('/{building}', [BuildingController::class, 'update'])->name('update');*/
-    Route::post('/{building}', [BuildingController::class, 'update'])->name('update');
-    Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');
+   /* Route::post('/{building}', [BuildingController::class, 'update'])->name('update');
+    Route::delete('/{building}', [BuildingController::class, 'destroy'])->name('destroy');*/
     Route::post('/{building}/files', [BuildingFileController::class, 'uploadFiles'])->name('uploadFiles');
 
     Route::get('/{building}/layout-design', [BuildingController::class, 'layoutDesign'])->name('layoutDesign');

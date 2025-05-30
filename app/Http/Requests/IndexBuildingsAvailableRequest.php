@@ -21,7 +21,7 @@ class IndexBuildingsAvailableRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        /*return [
             'page' => 'nullable|integer',
             'size' => 'nullable|integer',
             'search' => 'nullable|string',
@@ -35,6 +35,25 @@ class IndexBuildingsAvailableRequest extends FormRequest
 
             'column' => 'nullable|in:building_state,avl_size_sf,avl_building_dimensions,avl_minimum_space_sf,avl_expansion_up_to_sf,dock_doors',
             'state' => 'nullable|in:asc,desc',
+        ];*/
+        return [
+            'size' => 'integer|nullable',
+            'column' => 'string|nullable',
+            'state' => 'string|nullable',
+            'search' => 'string|nullable',
+            'avl_size_sf' => 'string|nullable',
+            'avl_building_dimensions' => 'string|nullable',
+            'avl_minimum_space_sf' => 'string|nullable',
+            'avl_expansion_up_to_sf' => 'string|nullable',
+            'dock_doors' => 'string|nullable',
+            'avl_type' => 'string|nullable',
+
+            'building_name' => 'string|nullable',
+            'building_class' => 'string|nullable',
+            'market' => 'string|nullable',
+            'sub_market' => 'string|nullable',
+            'industrial_park' => 'string|nullable',
+            'developer' => 'string|nullable',
         ];
     }
 }

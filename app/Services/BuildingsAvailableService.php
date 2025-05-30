@@ -62,7 +62,7 @@ class BuildingsAvailableService
     /**
      * Create a new class instance.
      */
-    public function filterAvailable(array $validatedData, int $buildingId)
+    /*public function filterAvailable(array $validatedData, int $buildingId)
     {
         $size = $validatedData['size'] ?? 10;
         $order = $validatedData['column'] ?? 'id';
@@ -94,7 +94,75 @@ class BuildingsAvailableService
             })
             ->orderBy($order, $direction)
             ->paginate($size);
-    }
+    }*/
+    public function filterAvailable(array $validatedData, int $buildingId)
+    {
+        $size = $validatedData['size'] ?? 10;
+        $order = $validatedData['column'] ?? 'id';
+        $direction = $validatedData['state'] ?? 'desc';
+
+        return BuildingAvailable::query()
+            ->where('building_id', $buildingId)
+            ->where('building_state', BuildingState::AVAILABILITY->value)
+        ->whereHas('building', function ($query) use ($validatedData) {
+        $query
+            ->when($validatedData['building_name'] ?? false, fn ($q, $val) =>
+            $q->where('building_name', 'like', "%{$val}%")
+            )
+            ->when($validatedData['building_class'] ?? false, fn ($q, $val) =>
+            $q->where('class', 'like', "%{$val}%")
+            )
+            ->when($validatedData['market'] ?? false, fn ($q, $val) =>
+            $q->whereHas('market', fn ($mq) =>
+            $mq->where('name', 'like', "%{$val}%")
+            )
+            )
+            ->when($validatedData['sub_market'] ?? false, fn ($q, $val) =>
+            $q->whereHas('subMarket', fn ($sq) =>
+            $sq->where('name', 'like', "%{$val}%")
+            )
+            )
+            ->when($validatedData['industrial_park'] ?? false, fn ($q, $val) =>
+            $q->whereHas('industrialPark', fn ($iq) =>
+            $iq->where('name', 'like', "%{$val}%")
+            )
+            )
+            ->when($validatedData['developer'] ?? false, fn ($q, $val) =>
+            $q->whereHas('developer', fn ($dq) =>
+            $dq->where('name', 'like', "%{$val}%")
+            )
+            );
+    })
+        ->when($validatedData['avl_type'] ?? false, fn ($q, $val) =>
+        $q->where('avl_type', 'like', "%{$val}%")
+        )
+        ->when($validatedData['search'] ?? false, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('building_state', 'like', "%{$search}%")
+                    ->orWhere('avl_size_sf', 'like', "%{$search}%")
+                    ->orWhere('dock_doors', 'like', "%{$search}%");
+            });
+        })
+        ->when($validatedData['avl_size_sf'] ?? false, fn ($q, $val) =>
+        $q->where('avl_size_sf', 'like', "%{$val}%")
+        )
+        ->when($validatedData['avl_building_dimensions'] ?? false, fn ($q, $val) =>
+        $q->where('avl_building_dimensions', 'like', "%{$val}%")
+        )
+        ->when($validatedData['avl_minimum_space_sf'] ?? false, fn ($q, $val) =>
+        $q->where('avl_minimum_space_sf', 'like', "%{$val}%")
+        )
+        ->when($validatedData['avl_expansion_up_to_sf'] ?? false, fn ($q, $val) =>
+        $q->where('avl_expansion_up_to_sf', 'like', "%{$val}%")
+        )
+        ->when($validatedData['dock_doors'] ?? false, fn ($q, $val) =>
+        $q->where('dock_doors', 'like', "%{$val}%")
+        )
+        ->orderBy($order, $direction)
+        ->with('building.market', 'building.subMarket', 'building.industrialPark', 'building.developer')
+        ->paginate($size);
+}
+
 
     /**
      * @param array $validatedData
@@ -166,9 +234,9 @@ class BuildingsAvailableService
      */
     public function create(array $validated): BuildingAvailable
     {
-        if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_type'] == BuildingType::INVENTORY->value) {
-            $validated['is_negative_absorption'] = true;
-    }
+        /*if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_type'] == BuildingType::INVENTORY->value) {
+            $validated['building_state'] = true;
+    }*/
         return BuildingAvailable::create($validated);
     }
 
