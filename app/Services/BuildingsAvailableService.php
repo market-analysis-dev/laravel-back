@@ -12,15 +12,14 @@ use Illuminate\Support\Arr;
 
 class BuildingsAvailableService
 {
-    public function filterAbsorption(array $validatedData, int $buildingId): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function filterAbsorption(array $validatedData): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $size = $validatedData['size'] ?? 10;
-        $order = $validatedData['column'] ?? 'id';
-        $direction = $validatedData['state'] ?? 'desc';
+        $page_size = $validatedData['page_size'] ?? 10;
+        $page = $validatedData['page'] ?? 1;
+        $sort_column = $validatedData['sort_column'] ?? 'id';
+        $sort = $validatedData['sort'] ?? 'desc';
 
-        return BuildingAvailable::with(['tenant', 'industry'])
-            ->where('building_id', $buildingId)
-            ->where('building_state', BuildingState::ABSORPTION->value)
+        return BuildingAvailable::where('building_state', BuildingState::ABSORPTION->value)
             ->whereHas('building', function ($query) use ($validatedData) {
                 $query
                     ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
@@ -34,60 +33,18 @@ class BuildingsAvailableService
                 $query->when($validatedData['broker_name'] ?? false, fn($q, $val) => $q->where('name', 'like', "%{$val}%"));
             })
             ->when($validatedData['abs_type'] ?? false, fn($q, $val) => $q->where('abs_type', 'like', "%{$val}%"))
-            ->when($validatedData['search'] ?? false, function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('building_state', 'like', "%{$search}%")
-                        ->orWhere('avl_size_sf', 'like', "%{$search}%")
-                        ->orWhere('dock_doors', 'like', "%{$search}%");
-                });
-            })
-            ->when($validatedData['avl_deal'] ?? false, fn($q, $val) => $q->where('avl_deal', 'like', "%{$val}%"))
-            ->orderBy($order, $direction)
+            ->closingDate($validatedData['closing_quarter'] ?? null, $validatedData['closing_year'] ?? null)
+            ->orderBy($sort_column, $sort)
             ->with(['building.market', 'building.subMarket', 'building.industrialPark', 'building.developer', 'broker'])
-            ->paginate($size);
+            ->paginate($page_size, page: $page);
     }
 
-    /**
-     * Create a new class instance.
-     */
-    /*public function filterAvailable(array $validatedData, int $buildingId)
-    {
-        $size = $validatedData['size'] ?? 10;
-        $order = $validatedData['column'] ?? 'id';
-        $direction = $validatedData['state'] ?? 'desc';
-
-        return BuildingAvailable::where('building_id', $buildingId)
-            ->where('building_state', '=', BuildingState::AVAILABILITY->value)
-            ->when($validatedData['search'] ?? false, function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('building_state', 'like', "%{$search}%")
-                        ->orWhere('avl_size_sf', 'like', "%{$search}%")
-                        ->orWhere('dock_doors', 'like', "%{$search}%");
-                });
-            })
-            ->when($validatedData['avl_size_sf'] ?? false, function ($query, $avl_size_sf) {
-                $query->where('avl_size_sf', 'like', "%{$avl_size_sf}%");
-            })
-            ->when($validatedData['avl_building_dimensions'] ?? false, function ($query, $avl_building_dimensions) {
-                $query->where('avl_building_dimensions', 'like', "%{$avl_building_dimensions}%");
-            })
-            ->when($validatedData['avl_minimum_space_sf'] ?? false, function ($query, $avl_minimum_space_sf) {
-                $query->where('avl_minimum_space_sf', 'like', "%{$avl_minimum_space_sf}%");
-            })
-            ->when($validatedData['avl_expansion_up_to_sf'] ?? false, function ($query, $avl_expansion_up_to_sf) {
-                $query->where('avl_expansion_up_to_sf', 'like', "%{$avl_expansion_up_to_sf}%");
-            })
-            ->when($validatedData['dock_doors'] ?? false, function ($query, $dock_doors) {
-                $query->where('dock_doors', 'like', "%{$dock_doors}%");
-            })
-            ->orderBy($order, $direction)
-            ->paginate($size);
-    }*/
     public function filterAvailable(array $validatedData): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $size = $validatedData['page_size'] ?? 10;
-        $order = $validatedData['column'] ?? 'id';
-        $direction = $validatedData['state'] ?? 'desc';
+        $page_size = $validatedData['page_size'] ?? 10;
+        $page = $validatedData['page'] ?? 1;
+        $sort_column = $validatedData['sort_column'] ?? 'id';
+        $sort = $validatedData['sort'] ?? 'desc';
 
         return BuildingAvailable::query()
             ->where('building_state', BuildingState::AVAILABILITY->value)
@@ -101,21 +58,9 @@ class BuildingsAvailableService
                     ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
             })
             ->when($validatedData['avl_type'] ?? false, fn($q, $val) => $q->where('avl_type', 'like', "%{$val}%"))
-            ->when($validatedData['search'] ?? false, function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('building_state', 'like', "%{$search}%")
-                        ->orWhere('avl_size_sf', 'like', "%{$search}%")
-                        ->orWhere('dock_doors', 'like', "%{$search}%");
-                });
-            })
-            ->when($validatedData['avl_size_sf'] ?? false, fn($q, $val) => $q->where('avl_size_sf', 'like', "%{$val}%"))
-            ->when($validatedData['avl_building_dimensions'] ?? false, fn($q, $val) => $q->where('avl_building_dimensions', 'like', "%{$val}%"))
-            ->when($validatedData['avl_minimum_space_sf'] ?? false, fn($q, $val) => $q->where('avl_minimum_space_sf', 'like', "%{$val}%"))
-            ->when($validatedData['avl_expansion_up_to_sf'] ?? false, fn($q, $val) => $q->where('avl_expansion_up_to_sf', 'like', "%{$val}%"))
-            ->when($validatedData['dock_doors'] ?? false, fn($q, $val) => $q->where('dock_doors', 'like', "%{$val}%"))
-            ->orderBy($order, $direction)
+            ->orderBy($sort_column, $sort)
             ->with('building.market', 'building.subMarket', 'building.industrialPark', 'building.developer')
-            ->paginate($size);
+            ->paginate($page_size, page: $page);
     }
 
 
@@ -484,5 +429,6 @@ class BuildingsAvailableService
         $logRecord['building_available_id'] = $buildingAvailable->id;
         $logRecord->save();
     }
+
 
 }

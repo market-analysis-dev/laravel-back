@@ -37,7 +37,9 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     public function __construct(
         private readonly BuildingsAvailableService $buildingAvailableService,
         private readonly BuildingService           $buildingService,
-    ){}
+    )
+    {
+    }
 
     public function index(IndexBuildingsAvailableRequest $request): ApiResponse
     {
@@ -81,11 +83,9 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
      */
     public function show(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
-
         if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Availability not found', status: 404);
         }
-
         if (!empty($building->fire_protection_system)) {
             $building->fire_protection_system = explode(',', $building->fire_protection_system);
         }
@@ -97,8 +97,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     }
 
 
-
-       /**
+    /**
      * @param UpdateBuildingWithAvailabilityRequest $request
      * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
@@ -109,6 +108,14 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $availabilityData = $validated['availability'];
+
+            if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+                return $this->error('Building Availability not found', status: 404);
+            }
+
+            if ($buildingAvailable->building_id !== $buildingData['id']) {
+                return $this->error('Building ID mismatch', status: 422);
+            }
 
             $buildingData['id'] = $buildingAvailable->building_id;
             $availabilityData['id'] = $buildingAvailable->id;

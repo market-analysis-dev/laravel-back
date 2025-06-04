@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use RichanFongdasen\EloquentBlameable\BlameableTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 
 /**
- * 
  *
  * @property int $id
  * @property int $building_id
@@ -156,6 +154,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingDate(?string $quarter, ?int $year)
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -256,6 +255,27 @@ class BuildingAvailable extends Model
     public function absShelter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Shelter::class, 'abs_shelter_id');
+    }
+
+    public function scopeClosingDate($query, ?string $quarter, ?int $year)
+    {
+        if ($year) {
+            $query->whereYear('closing_date', $year);
+        }
+
+        if ($quarter) {
+            $startMonth = match ($quarter) {
+                'Q1' => 1,
+                'Q2' => 4,
+                'Q3' => 7,
+                'Q4' => 10,
+                default => throw new \InvalidArgumentException("Invalid quarter: {$quarter}"),
+            };
+            $query->whereMonth('closing_date', '>=', $startMonth)
+                ->whereMonth('closing_date', '<', $startMonth + 3);
+        }
+
+        return $query;
     }
 
 }

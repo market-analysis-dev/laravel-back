@@ -23,18 +23,20 @@ class IndexBuildingsAbsorptionRequest extends FormRequest
     {
         return [
             'page' => 'nullable|integer',
-            'size' => 'nullable|integer',
-            'search' => 'nullable',
+            'page_size' => 'nullable|integer',
+            'sort' => 'nullable|in:asc,desc',
+            'sort_column' => 'nullable|in:building_name,building_class,market,sub_market,industrial_park,developer,broker,abs_type,closing_quarter,closing_year',
 
-            'tenantName' => 'nullable',
-            'industryName' => 'nullable',
-            'abs_lease_term_month' => 'nullable',
-            'abs_closing_date' => 'nullable',
-            'abs_final_use' => 'nullable',
-            'abs_sale_price' => 'nullable',
-
-            'column' => 'nullable|in:tenantName,industryName,abs_lease_term_month,abs_closing_date,abs_final_use,abs_sale_price',
-            'state' => 'nullable|in:asc,desc',
+            'building_name' => 'string|nullable',
+            'building_class' => 'string|nullable',
+            'market' => 'string|nullable',
+            'sub_market' => 'string|nullable',
+            'industrial_park' => 'string|nullable',
+            'developer' => 'string|nullable',
+            'broker' => 'string|nullable',
+            'abs_type' => 'string|nullable',
+            'closing_quarter' => 'string|nullable|in:Q1,Q2,Q3,Q4',
+            'closing_year' => 'integer|nullable|min:1950|max:2100',
         ];
     }
 }

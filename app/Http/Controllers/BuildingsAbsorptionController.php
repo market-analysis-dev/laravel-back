@@ -2,28 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BuildingState;
+use App\Enums\BuildingStatus;
 use App\Http\Requests\ConvertToAvailableRequest;
-use App\Http\Requests\StoreBuildingsAbsorptionRequest;
+use App\Http\Requests\IndexBuildingsAbsorptionRequest;
 use App\Http\Requests\StoreBuildingWithAbsorptionRequest;
 use App\Http\Requests\UpdateBuildingAbsorptionDraftRequest;
-use App\Http\Requests\UpdateBuildingsAbsorptionRequest;
 use App\Http\Requests\UpdateBuildingWithAbsorptionRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
-use App\Services\BuildingsAvailableService;
 use App\Responses\ApiResponse;
-use App\Enums\BuildingState;
-use App\Http\Requests\IndexBuildingsAbsorptionRequest;
+use App\Services\BuildingsAvailableService;
 use App\Services\BuildingService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Enums\BuildingStatus;
-use Illuminate\Support\Arr;
 
 class BuildingsAbsorptionController extends ApiController implements HasMiddleware
 {
-    private BuildingsAvailableService $buildingAvailableService;
-    private BuildingService $buildingService;
 
     public static function middleware()
     {
@@ -37,10 +32,11 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
         ];
     }
 
-    public function __construct(BuildingsAvailableService $buildingAvailableService, BuildingService $buildingService)
+    public function __construct(
+        private readonly BuildingsAvailableService $buildingAvailableService,
+        private readonly BuildingService           $buildingService
+    )
     {
-        $this->buildingAvailableService = $buildingAvailableService;
-        $this->buildingService = $buildingService;
     }
 
     /**
@@ -48,10 +44,10 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
      * @param Building $building
      * @return ApiResponse
      */
-    public function index(IndexBuildingsAbsorptionRequest $request, Building $building): ApiResponse
+    public function index(IndexBuildingsAbsorptionRequest $request): ApiResponse
     {
         $validated = $request->validated();
-        $absorptions = $this->buildingAvailableService->filterAbsorption($validated, $building->id);
+        $absorptions = $this->buildingAvailableService->filterAbsorption($validated);
 
         if (!empty($building->fire_protection_system)) {
             $building->fire_protection_system = explode(',', $building->fire_protection_system);
@@ -62,37 +58,6 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
 
         return $this->success(data: $absorptions);
     }
-
-
-
-    /*public function store(StoreBuildingsAbsorptionRequest $request, Building $building): ApiResponse
-    {
-        $validated = $request->validated();
-        $validated['building_id'] = $building->id;
-        $validated['building_state'] = BuildingState::ABSORPTION;
-
-        if (!empty($validated['sqftToM2']) || !empty($validated['yrToMo'])) {
-            $validated = $this->buildingAvailableService->convertMetrics($validated);
-        }
-
-        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-        }
-        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
-            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
-        }
-
-        $absorption = $this->buildingAvailableService->create($validated)->refresh();
-
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
-        if (!empty($building->above_market_tis)) {
-            $building->above_market_tis = explode(',', $building->above_market_tis);
-        }
-
-        return $this->success('Building Absorption created successfully', $absorption);
-    }*/
 
     public function store(StoreBuildingWithAbsorptionRequest $request): ApiResponse
     {
@@ -106,23 +71,18 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             return $this->success('Created successfully', $building);
         } catch (\Throwable $e) {
             report($e);
-            return $this->error(message: 'Error creating building with absorption', data: [], status:500);
+            return $this->error(message: 'Error creating building with absorption', data: [], status: 500);
         }
     }
 
     /**
-     * @param Building $building
      * @param BuildingAvailable $buildingAbsorption
      * @return ApiResponse
      */
-    public function show(Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    public function show(BuildingAvailable $buildingAbsorption): ApiResponse
     {
-        if ($buildingAbsorption->building_id !== $building->id) {
-            return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
-        }
-
         if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
+            return $this->error('Building Absorption not found', status: 404);
         }
 
         if (!empty($building->fire_protection_system)) {
@@ -136,59 +96,21 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
     }
 
 
-
-   /* public function update(UpdateBuildingsAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
-    {
-        if ($buildingAbsorption->building_id !== $building->id) {
-            return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
-        }
-        if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
-        }
-        if ($buildingAbsorption->status == BuildingStatus::DRAFT->value) {
-        return $this->error('Building must to have status Enabled', ['error_code' => 403]);
-    }
-
-        $validated = $request->validated();
-        $validated['building_id'] = $building->id;
-        $validated['building_state'] = BuildingState::ABSORPTION;
-        try {
-            if (!empty($validated['sqftToM2']) || !empty($validated['yrToMo'])) {
-                $validated = $this->buildingAvailableService->convertMetrics($validated);
-            }
-            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-            }
-            if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
-                $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
-            }
-            $building = $this->buildingAvailableService->update($buildingAbsorption, $validated);
-
-            if (!empty($building->fire_protection_system)) {
-                $building->fire_protection_system = explode(',', $building->fire_protection_system);
-            }
-            if (!empty($building->above_market_tis)) {
-                $building->above_market_tis = explode(',', $building->above_market_tis);
-            }
-
-            return $this->success('Building Absorption updated successfully', $buildingAbsorption);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), status: 500);
-        }
-    }*/
-
-    public function update(UpdateBuildingWithAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    public function update(UpdateBuildingWithAbsorptionRequest $request, BuildingAvailable $buildingAvailable): ApiResponse
     {
         try {
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $availabilityData = $validated['absorption'];
 
-            if ($buildingAvailable->building_id !== $building->id) {
-                return $this->error('The absorptiony does not belong to the given building.', status: 422);
+            if($buildingAvailable->building_state !== BuildingState::ABSORPTION->value) {
+                return $this->error('Building Absorption not found', status: 404);
             }
 
-            $buildingData['id'] = $building->id;
+            if ($buildingAvailable->building_id !== $buildingData['id']) {
+                return $this->error('Building ID mismatch', status: 400);
+            }
+
             $availabilityData['id'] = $buildingAvailable->id;
 
             $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData);
@@ -206,18 +128,13 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
     }
 
     /**
-     * @param Building $building
      * @param BuildingAvailable $buildingAbsorption
      * @return ApiResponse
      */
-    public function destroy(Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
+    public function destroy(BuildingAvailable $buildingAbsorption): ApiResponse
     {
-        if ($buildingAbsorption->building_id !== $building->id) {
-            return $this->error('Building Absorption not found for this Building', ['error_code' => 404]);
-        }
-
         if ($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
+            return $this->error('Building Absorption not found', status: 404);
         }
 
         try {
@@ -287,7 +204,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
      */
     public function getDraft(Building $building, BuildingAvailable $buildingAbsorption): ApiResponse
     {
-        $result = $this->buildingAvailableService->getDraft( $building, $buildingAbsorption, BuildingState::ABSORPTION->value);
+        $result = $this->buildingAvailableService->getDraft($building, $buildingAbsorption, BuildingState::ABSORPTION->value);
 
         if (isset($result['error'])) {
             return $this->error($result['error'], status: $result['status']);

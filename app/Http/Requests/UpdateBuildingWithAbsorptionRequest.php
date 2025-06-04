@@ -24,6 +24,7 @@ class UpdateBuildingWithAbsorptionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'building.id' => 'required|integer|exists:buildings,id',
             'building' => ['required', 'array'],
             'building.region_id' => 'required|integer|exists:cat_regions,id',
             'building.market_id' => 'required|integer|exists:cat_markets,id',

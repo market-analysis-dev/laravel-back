@@ -9,12 +9,6 @@ Route::group([
     'as' => 'api.buildings.',
     'middleware' => 'auth:sanctum',
 ], function () {
-
-    Route::post('/absorption', [\App\Http\Controllers\BuildingsAbsorptionController::class, 'store'])->name('absorptionStore');
-
-    Route::put('/{building}/absorption/{buildingAvailable}', [\App\Http\Controllers\BuildingsAbsorptionController::class, 'update'])->name('update');
-
-
     Route::get('/classes', [BuildingController::class, 'listClasses'])->name('listClasses');
     Route::get('/loading-doors', [BuildingController::class, 'listLoadingDoors'])->name('listLoadingDoors');
     Route::get('/types', [BuildingController::class, 'listPhases'])->name('listPhases');
