@@ -34,7 +34,7 @@ class BuildingService
     public function createWithAvailability(array $buildingData, array $availabilityData): mixed
     {
         /* Building */
-        if ($buildingData['sqftToM2'] ?? false) {
+        if ($buildingData['sqftToM2']) {
             $buildingData = $this->convertMetrics($buildingData);
         }
 
@@ -48,7 +48,7 @@ class BuildingService
 
         return DB::transaction(function () use ($buildingData, $availabilityData) {
 
-            if (!empty($buildingData['id'])) {
+            if ($buildingData['id']) {
                 $building = Building::findOrFail($buildingData['id']);
                 $building = $this->update($building, $buildingData);
             } else {

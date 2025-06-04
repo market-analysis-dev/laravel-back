@@ -37,17 +37,10 @@ class IndexBuildingsAvailableRequest extends FormRequest
             'state' => 'nullable|in:asc,desc',
         ];*/
         return [
-            'size' => 'integer|nullable',
+            'page_size' => 'integer|nullable',
             'column' => 'string|nullable',
-            'state' => 'string|nullable',
             'search' => 'string|nullable',
-            'avl_size_sf' => 'string|nullable',
-            'avl_building_dimensions' => 'string|nullable',
-            'avl_minimum_space_sf' => 'string|nullable',
-            'avl_expansion_up_to_sf' => 'string|nullable',
-            'dock_doors' => 'string|nullable',
             'avl_type' => 'string|nullable',
-
             'building_name' => 'string|nullable',
             'building_class' => 'string|nullable',
             'market' => 'string|nullable',

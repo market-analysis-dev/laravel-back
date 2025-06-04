@@ -2,61 +2,49 @@
 
 namespace App\Services;
 
+use App\Enums\BuildingState;
+use App\Enums\BuildingStatus;
+use App\Enums\BuildingType;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
-use App\Enums\BuildingState;
-use App\Enums\BuildingType;
-use App\Enums\BuildingStatus;
 use App\Models\BuildingAvailableLog;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 class BuildingsAvailableService
 {
-    public function filterAbsorption(array $validated, int $buildingId)
+    public function filterAbsorption(array $validatedData, int $buildingId): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $size = $validated['size'] ?? 10;
-        $order = $validated['column'] ?? 'id';
-        $direction = $validated['state'] ?? 'desc';
+        $size = $validatedData['size'] ?? 10;
+        $order = $validatedData['column'] ?? 'id';
+        $direction = $validatedData['state'] ?? 'desc';
 
         return BuildingAvailable::with(['tenant', 'industry'])
-        ->leftJoin('cat_tenants', 'cat_tenants.id', '=', 'buildings_available.abs_tenant_id')
-        ->leftJoin('cat_industries', 'cat_industries.id', '=', 'buildings_available.abs_industry_id')
-        ->select('buildings_available.*', 'cat_tenants.name AS tenantName', 'cat_industries.name AS industryName')
-        ->where('building_id', $buildingId)
-        ->where('building_state', '=', BuildingState::ABSORPTION->value)
-        ->when($validated['search'] ?? false, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('abs_lease_term_month', 'like', "%{$search}%")
-                    ->orWhere('abs_closing_date', 'like', "%{$search}%")
-                    ->orWhere('abs_sale_price', 'like', "%{$search}%")
-                    ->orWhere('abs_final_use', 'like', "%{$search}%");
-            });
-        })
-        ->when($validated['abs_lease_term_month'] ?? false, function ($query, $abs_lease_term_month) {
-            $query->where('abs_lease_term_month', 'like', "%{$abs_lease_term_month}%");
-        })
-        ->when($validated['abs_closing_date'] ?? false, function ($query, $abs_closing_date) {
-            $query->where('abs_closing_date', 'like', "%{$abs_closing_date}%");
-        })
-        ->when($validated['abs_final_use'] ?? false, function ($query, $abs_final_use) {
-            $query->where('abs_final_use', 'like', "%{$abs_final_use}%");
-        })
-        ->when($validated['abs_sale_price'] ?? false, function ($query, $abs_sale_price) {
-            $query->where('abs_sale_price', 'like', "%{$abs_sale_price}%");
-        })
-        ->when($validated['tenantName'] ?? false, function ($query, $tenantName) {
-            $query->whereHas('tenant', function ($query) use ($tenantName) {
-                $query->where('name', 'like', "%{$tenantName}%");
-            });
-        })
-        ->when($validated['industryName'] ?? false, function ($query, $industryName) {
-            $query->whereHas('industry', function ($query) use ($industryName) {
-                $query->where('name', 'like', "%{$industryName}%");
-            });
-        })
-        ->orderBy($order, $direction)
-        ->paginate($size);
+            ->where('building_id', $buildingId)
+            ->where('building_state', BuildingState::ABSORPTION->value)
+            ->whereHas('building', function ($query) use ($validatedData) {
+                $query
+                    ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
+                    ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
+                    ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
+                    ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
+                    ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
+                    ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
+            })
+            ->whereHas('broker', function ($query) use ($validatedData) {
+                $query->when($validatedData['broker_name'] ?? false, fn($q, $val) => $q->where('name', 'like', "%{$val}%"));
+            })
+            ->when($validatedData['abs_type'] ?? false, fn($q, $val) => $q->where('abs_type', 'like', "%{$val}%"))
+            ->when($validatedData['search'] ?? false, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('building_state', 'like', "%{$search}%")
+                        ->orWhere('avl_size_sf', 'like', "%{$search}%")
+                        ->orWhere('dock_doors', 'like', "%{$search}%");
+                });
+            })
+            ->when($validatedData['avl_deal'] ?? false, fn($q, $val) => $q->where('avl_deal', 'like', "%{$val}%"))
+            ->orderBy($order, $direction)
+            ->with(['building.market', 'building.subMarket', 'building.industrialPark', 'building.developer', 'broker'])
+            ->paginate($size);
     }
 
     /**
@@ -95,73 +83,40 @@ class BuildingsAvailableService
             ->orderBy($order, $direction)
             ->paginate($size);
     }*/
-    public function filterAvailable(array $validatedData, int $buildingId)
+    public function filterAvailable(array $validatedData): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $size = $validatedData['size'] ?? 10;
+        $size = $validatedData['page_size'] ?? 10;
         $order = $validatedData['column'] ?? 'id';
         $direction = $validatedData['state'] ?? 'desc';
 
         return BuildingAvailable::query()
-            ->where('building_id', $buildingId)
             ->where('building_state', BuildingState::AVAILABILITY->value)
-        ->whereHas('building', function ($query) use ($validatedData) {
-        $query
-            ->when($validatedData['building_name'] ?? false, fn ($q, $val) =>
-            $q->where('building_name', 'like', "%{$val}%")
-            )
-            ->when($validatedData['building_class'] ?? false, fn ($q, $val) =>
-            $q->where('class', 'like', "%{$val}%")
-            )
-            ->when($validatedData['market'] ?? false, fn ($q, $val) =>
-            $q->whereHas('market', fn ($mq) =>
-            $mq->where('name', 'like', "%{$val}%")
-            )
-            )
-            ->when($validatedData['sub_market'] ?? false, fn ($q, $val) =>
-            $q->whereHas('subMarket', fn ($sq) =>
-            $sq->where('name', 'like', "%{$val}%")
-            )
-            )
-            ->when($validatedData['industrial_park'] ?? false, fn ($q, $val) =>
-            $q->whereHas('industrialPark', fn ($iq) =>
-            $iq->where('name', 'like', "%{$val}%")
-            )
-            )
-            ->when($validatedData['developer'] ?? false, fn ($q, $val) =>
-            $q->whereHas('developer', fn ($dq) =>
-            $dq->where('name', 'like', "%{$val}%")
-            )
-            );
-    })
-        ->when($validatedData['avl_type'] ?? false, fn ($q, $val) =>
-        $q->where('avl_type', 'like', "%{$val}%")
-        )
-        ->when($validatedData['search'] ?? false, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('building_state', 'like', "%{$search}%")
-                    ->orWhere('avl_size_sf', 'like', "%{$search}%")
-                    ->orWhere('dock_doors', 'like', "%{$search}%");
-            });
-        })
-        ->when($validatedData['avl_size_sf'] ?? false, fn ($q, $val) =>
-        $q->where('avl_size_sf', 'like', "%{$val}%")
-        )
-        ->when($validatedData['avl_building_dimensions'] ?? false, fn ($q, $val) =>
-        $q->where('avl_building_dimensions', 'like', "%{$val}%")
-        )
-        ->when($validatedData['avl_minimum_space_sf'] ?? false, fn ($q, $val) =>
-        $q->where('avl_minimum_space_sf', 'like', "%{$val}%")
-        )
-        ->when($validatedData['avl_expansion_up_to_sf'] ?? false, fn ($q, $val) =>
-        $q->where('avl_expansion_up_to_sf', 'like', "%{$val}%")
-        )
-        ->when($validatedData['dock_doors'] ?? false, fn ($q, $val) =>
-        $q->where('dock_doors', 'like', "%{$val}%")
-        )
-        ->orderBy($order, $direction)
-        ->with('building.market', 'building.subMarket', 'building.industrialPark', 'building.developer')
-        ->paginate($size);
-}
+            ->whereHas('building', function ($query) use ($validatedData) {
+                $query
+                    ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
+                    ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
+                    ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
+                    ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
+                    ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
+                    ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
+            })
+            ->when($validatedData['avl_type'] ?? false, fn($q, $val) => $q->where('avl_type', 'like', "%{$val}%"))
+            ->when($validatedData['search'] ?? false, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('building_state', 'like', "%{$search}%")
+                        ->orWhere('avl_size_sf', 'like', "%{$search}%")
+                        ->orWhere('dock_doors', 'like', "%{$search}%");
+                });
+            })
+            ->when($validatedData['avl_size_sf'] ?? false, fn($q, $val) => $q->where('avl_size_sf', 'like', "%{$val}%"))
+            ->when($validatedData['avl_building_dimensions'] ?? false, fn($q, $val) => $q->where('avl_building_dimensions', 'like', "%{$val}%"))
+            ->when($validatedData['avl_minimum_space_sf'] ?? false, fn($q, $val) => $q->where('avl_minimum_space_sf', 'like', "%{$val}%"))
+            ->when($validatedData['avl_expansion_up_to_sf'] ?? false, fn($q, $val) => $q->where('avl_expansion_up_to_sf', 'like', "%{$val}%"))
+            ->when($validatedData['dock_doors'] ?? false, fn($q, $val) => $q->where('dock_doors', 'like', "%{$val}%"))
+            ->orderBy($order, $direction)
+            ->with('building.market', 'building.subMarket', 'building.industrialPark', 'building.developer')
+            ->paginate($size);
+    }
 
 
     /**
@@ -202,7 +157,8 @@ class BuildingsAvailableService
      * @param int $buildingAvailableId
      * @return array|\Illuminate\Database\Eloquent\TModel
      */
-    public function convertToAbsorption(array $validatedData, int $buildingId, int $buildingAvailableId) {
+    public function convertToAbsorption(array $validatedData, int $buildingId, int $buildingAvailableId)
+    {
         $buildingAvailable = BuildingAvailable::where('building_id', $buildingId)
             ->where('id', $buildingAvailableId)
             ->firstOrFail();
@@ -249,7 +205,7 @@ class BuildingsAvailableService
     {
         if (($validated['status'] ?? BuildingStatus::ENABLED->value) === BuildingStatus::ENABLED->value) {
             $this->makeBuildingAvailableLogRecord($buildingAvailable);
-         }
+        }
         $buildingAvailable->update($validated);
         return $buildingAvailable;
     }
@@ -264,7 +220,7 @@ class BuildingsAvailableService
         $yrToMo = $data['yrToMo'] ?? false;
 
 
-        if($sqftToM2) {
+        if ($sqftToM2) {
             if (isset($data['size_sf'])) {
                 $data['size_sf'] = $this->convertM2ToSqFt($data['size_sf']);
             }
@@ -315,7 +271,7 @@ class BuildingsAvailableService
      */
     public function convertM2ToSqFt(float $m2): int
     {
-        return (int) round($m2 * 10.764);
+        return (int)round($m2 * 10.764);
     }
 
     /**
@@ -324,7 +280,7 @@ class BuildingsAvailableService
      */
     public function convertMToFt(float $m): int
     {
-        return (int) round($m * 3.281);
+        return (int)round($m * 3.281);
     }
 
     /**
@@ -333,12 +289,12 @@ class BuildingsAvailableService
      */
     public function convertUsdM2ToUsdSqft(float $usdM2, bool $sqftToM2 = false, bool $yrToMo = false): int
     {
-        if($sqftToM2 && $yrToMo) {
-            return (int) round($usdM2 / (10.764 * 12));
+        if ($sqftToM2 && $yrToMo) {
+            return (int)round($usdM2 / (10.764 * 12));
         } elseif ($yrToMo) {
-            return (int) round($usdM2 / 12);
+            return (int)round($usdM2 / 12);
         }
-        return (int) round($usdM2 / 10.764);
+        return (int)round($usdM2 / 10.764);
     }
 
     /**
@@ -348,7 +304,7 @@ class BuildingsAvailableService
     public function convertColumnsSpacingToFt(string $spacing): string
     {
         $parts = explode('x', $spacing);
-        $convertedParts = array_map(fn($value) => $this->convertMToFt((float) $value), $parts);
+        $convertedParts = array_map(fn($value) => $this->convertMToFt((float)$value), $parts);
         return implode('x', $convertedParts);
     }
 
@@ -359,7 +315,10 @@ class BuildingsAvailableService
      */
     public function isNegativeAbsorption(string $avlBuildingPhase, string $absBuildingPhase): bool
     {
-        if (in_array($avlBuildingPhase, [BuildingType::CONSTRUCTION->value, BuildingType::EXPIRATION->value]) && $absBuildingPhase == BuildingType::INVENTORY->value) {
+        if (in_array($avlBuildingPhase, [
+                BuildingType::CONSTRUCTION->value,
+                BuildingType::EXPIRATION->value
+            ]) && $absBuildingPhase == BuildingType::INVENTORY->value) {
             return true;
         }
         return false;
@@ -371,16 +330,16 @@ class BuildingsAvailableService
      * @param string $state
      * @return array
      */
-    public function createDraft(Building $building, BuildingAvailable $buildingAvailable, string $state):array
+    public function createDraft(Building $building, BuildingAvailable $buildingAvailable, string $state): array
     {
         if ($buildingAvailable->building_id !== $building->id) {
             return ['error' => 'Building Available not found for this Building', 'status' => 404];
         }
         if ($buildingAvailable->building_state !== $state) {
-        return ['error' => 'Invalid building state', 'status' => 403];
+            return ['error' => 'Invalid building state', 'status' => 403];
         }
         if ($buildingAvailable->status === BuildingStatus::DRAFT->value) {
-        return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
+            return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
         }
         $existingDraft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
             ->where('status', BuildingStatus::DRAFT->value)
@@ -388,7 +347,7 @@ class BuildingsAvailableService
 
         if ($existingDraft) {
             return ['error' => 'Draft already exists for this building.', 'status' => 400];
-            }
+        }
         $draft = $buildingAvailable->replicate();
         $draft->status = BuildingStatus::DRAFT->value;
         $draft->building_available_id = $buildingAvailable->id;
@@ -474,7 +433,10 @@ class BuildingsAvailableService
                 if (!empty($buildingAvailable->above_market_tis)) {
                     $buildingAvailable->above_market_tis = explode(',', $buildingAvailable->above_market_tis);
                 }
-                return ['success' => 'Draft deleted and applied to the original building.', 'data' => $buildingAvailable];
+                return [
+                    'success' => 'Draft deleted and applied to the original building.',
+                    'data' => $buildingAvailable
+                ];
             }
 
             $draft->update($validated);
@@ -500,7 +462,7 @@ class BuildingsAvailableService
 
         if ($buildingAvailable->building_state !== $state) {
             return ['error' => 'Invalid building state', 'status' => 403];
-    }
+        }
         $draft = BuildingAvailable::where('building_available_id', $buildingAvailable->id)
             ->where('status', BuildingStatus::DRAFT->value)
             ->first();
@@ -515,7 +477,7 @@ class BuildingsAvailableService
     /**
      * @param BuildingAvailable $buildingAvailable
      */
-    private function makeBuildingAvailableLogRecord(BuildingAvailable $buildingAvailable):void
+    private function makeBuildingAvailableLogRecord(BuildingAvailable $buildingAvailable): void
     {
         /*$logRecord = new BuildingAvailableLog($buildingAvailable->toArray());*/
         $logRecord = new BuildingAvailableLog($buildingAvailable->getAttributes());
