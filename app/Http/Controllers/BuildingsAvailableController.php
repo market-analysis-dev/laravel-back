@@ -77,11 +77,10 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     }
 
     /**
-     * @param Building $building
      * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
      */
-    public function show(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    public function show(BuildingAvailable $buildingAvailable): ApiResponse
     {
         if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
             return $this->error('Availability not found', status: 404);
@@ -93,7 +92,10 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
 
-        return $this->success(data: $buildingAvailable);
+        return $this->success(data: [
+            'building' => $buildingAvailable->building,
+            'availability' => $buildingAvailable
+        ]);
     }
 
 
