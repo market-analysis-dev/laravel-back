@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $market_id
@@ -113,6 +114,15 @@ class IndustrialPark extends Model
         'deleted_at',
     ];
 
+    protected $hidden = [
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function market(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Market::class, 'market_id');
@@ -141,5 +151,10 @@ class IndustrialPark extends Model
     public function updatedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function buildings(): HasMany
+    {
+        return $this->hasMany(Building::class, 'industrial_park_id');
     }
 }

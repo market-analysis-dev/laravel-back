@@ -35,6 +35,10 @@ class IndustrialParkController extends ApiController implements HasMiddleware
     {
         $query = IndustrialPark::query();
 
+        if ($request->has('region_id')) {
+            $query->where('region_id', $request->input('region_id'));
+        }
+
         if ($request->has('market_id')) {
             $query->where('market_id', $request->input('market_id'));
         }

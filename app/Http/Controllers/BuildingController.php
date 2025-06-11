@@ -20,18 +20,23 @@ use App\Enums\BuildingCertifications;
 use App\Enums\BuildingOwnerType;
 use App\Enums\BuildingStage;
 use App\Http\Requests\IndexBuildingRequest;
+use App\Http\Requests\IndexLocationRequest;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingDraftRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
+use App\Models\Developer;
+use App\Models\IndustrialPark;
 use App\Services\BuildingService;
 use App\Responses\ApiResponse;
 use App\Services\FileService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use PDF;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Log;
 
 class BuildingController extends ApiController implements HasMiddleware
 {
@@ -384,6 +389,56 @@ class BuildingController extends ApiController implements HasMiddleware
         return $this->success($result['success'], data: $result['data']);
     }
 
+    public function listDevelopers(IndexLocationRequest $request): ApiResponse
+    {
+        $requestQuery = $request->query();
 
+        $query = Developer::select('id', 'name')
+        ->where('is_developer', true);
 
+        $hasAnyParam = collect($requestQuery)->only(['region_id', 'market_id', 'sub_market_id'])->filter()->isNotEmpty();
+        if ($hasAnyParam) {
+            $query->whereHas('buildings', function (Builder $query) use ($request) {
+                if ($request->query('region_id')) {
+                    $query->where('region_id', $request->query('region_id'));
+                }
+                if ($request->query('market_id')) {
+                    $query->where('market_id', $request->query('market_id'));
+                }
+                if ($request->query('sub_market_id')) {
+                    $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+            });
+        }
+        $developers = $query->orderBy('name')->get();
+        return $this->success(data: $developers);
+    }
+
+    public function listIndustrialParks(IndexLocationRequest $request): ApiResponse
+    {
+        $requestQuery = $request->query();
+
+        $query = IndustrialPark::query();
+
+        $hasAnyParam = collect($requestQuery)->only(['region_id', 'market_id', 'sub_market_id', 'developer_id'])->filter()->isNotEmpty();
+        if ($hasAnyParam) {
+            $query->whereHas('buildings', function (Builder $query) use ($request) {
+                if ($request->query('region_id')) {
+                    $query->where('region_id', $request->query('region_id'));
+                }
+                if ($request->query('market_id')) {
+                    $query->where('market_id', $request->query('market_id'));
+                }
+                if ($request->query('sub_market_id')) {
+                    $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+                if ($request->query('developer_id')) {
+                    $query->where('developer_id', $request->query('developer_id'));
+                }
+            });
+        }
+        $industrialParks = $query->orderBy('name')->get();
+
+        return $this->success(data: $industrialParks);
+    }
 }
