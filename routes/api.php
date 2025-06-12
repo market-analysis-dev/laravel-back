@@ -69,9 +69,9 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
 
 
 
-// Route::post('/market/login', [MarketAuthController::class, 'login']);
 
 require_once '_users.php';
+require_once '_market_size.php';
 require_once '_buildings_available.php';
 require_once '_buildings_absorption.php';
 require_once '_building_contacts.php';
