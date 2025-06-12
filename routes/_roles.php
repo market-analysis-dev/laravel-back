@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'roles',
-    'as' => 'api.roles',
+    'as' => 'api.roles.',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/', [RoleController::class, 'index'])->name('index');

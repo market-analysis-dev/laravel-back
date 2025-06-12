@@ -7,9 +7,22 @@ use App\Http\Requests\UpdateIndustryRequest;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Models\Industry;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class IndustryController extends ApiController
+class IndustryController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:industries.index', only: ['index']),
+            new Middleware('permission:industries.show', only: ['show']),
+            new Middleware('permission:industries.create', only: ['store']),
+            new Middleware('permission:industries.update', only: ['update']),
+            new Middleware('permission:industries.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
@@ -41,7 +54,7 @@ class IndustryController extends ApiController
                 return $this->success('Industry updated successfully', $industry);
             }
 
-            return $this->error('Industry update failed', status:423);
+            return $this->error('Industry update failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }
@@ -57,7 +70,7 @@ class IndustryController extends ApiController
             if ($industry->delete()) {
                 return $this->success('Industry deleted successfully', $industry);
             }
-            return $this->error('Industry delete failed', status:423);
+            return $this->error('Industry delete failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }

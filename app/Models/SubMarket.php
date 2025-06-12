@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\File;
 
 /**
  * 
@@ -40,18 +41,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket withoutTrashed()
+ * @property string|null $latitude
+ * @property string|null $longitude
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereLatitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereLongitude($value)
  * @mixin \Eloquent
  */
 class SubMarket extends Model
 {
     use HasFactory, BlameableTrait, SoftDeletes;
 
-    protected $table = 'cat_submarkets';
+    protected $table = 'cat_sub_markets';
 
     protected $fillable = [
         'name',
         'market_id',
         'status',
+        'latitude',
+        'longitude',
         'created_by',
         'updated_by',
         'deleted_by',

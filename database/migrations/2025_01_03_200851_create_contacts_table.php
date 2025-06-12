@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('contact_name', 255)->nullable();
-            $table->string('contact_phone', 50)->nullable();
-            $table->string('contact_email', 255)->nullable();
-            $table->string('contact_comments', 255)->nullable();
+            $table->string('name', 255)->nullable();
+            $table->string('phone', 50)->nullable();
+            $table->string('email', 255)->nullable();
+            $table->string('comments', 255)->nullable();
             $table->boolean('is_direct_contact')->default(false);
             $table->boolean('is_land_contact')->default(false);
             $table->boolean('is_buildings_contact')->default(false);

@@ -25,12 +25,11 @@ class IndexBuildingRequest extends FormRequest
             'page' => 'nullable|integer',
             'size' => 'nullable|integer',
             'search' => 'nullable|string',
-            'status' => 'nullable|string',
             'building_name' => 'nullable|string',
             'marketName' => 'nullable|string',
             'submarketName' => 'nullable|string',
             'industrialParkName' => 'nullable|string',
-            'column' => 'nullable|in:status,building_name,marketName,submarketName,industrialPark',
+            'column' => 'nullable|in:status,building_name,marketName,submarketName,industrialParkName',
             'state' => 'nullable|in:asc,desc',
         ];
     }

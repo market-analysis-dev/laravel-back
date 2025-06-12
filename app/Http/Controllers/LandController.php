@@ -12,9 +12,23 @@ use App\Responses\ApiResponse;
 use App\Enums\LandParcelShape;
 use App\Enums\LandZoning;
 use App\Enums\LandsTypeBuyer;
+use App\Enums\LandsServiceState;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class LandController extends ApiController
+class LandController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:lands.index', only: ['index']),
+            new Middleware('permission:lands.show', only: ['show']),
+            new Middleware('permission:lands.create', only: ['store']),
+            new Middleware('permission:lands.update', only: ['update']),
+            new Middleware('permission:lands.destroy', only: ['destroy']),
+        ];
+    }
+
     private LandService $landService;
 
     public function __construct(LandService $landService)
@@ -63,7 +77,7 @@ class LandController extends ApiController
             if($land->update($request->validated())) {
                 return $this->success('Land updated successfully', $land);
             }
-            return $this->error('Land update field', status: 423);
+            return $this->error('Land update field', status: 422);
 
         }catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
@@ -80,7 +94,7 @@ class LandController extends ApiController
             if($land->delete()) {
                 return $this->success('Land deleted successfully', $land);
             }
-            return $this->error('Land delete field', status: 423);
+            return $this->error('Land delete field', status: 422);
 
         }catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
@@ -107,4 +121,9 @@ class LandController extends ApiController
     {
         return $this->success(data: LandsTypeBuyer::array());
     }
+    public function getServiceState(): ApiResponse
+    {
+        return $this->success(data: LandsServiceState::array());
+    }
+
 }

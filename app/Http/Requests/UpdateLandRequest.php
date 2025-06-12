@@ -24,8 +24,8 @@ class UpdateLandRequest extends FormRequest
         return [
             'region_id' => 'required|integer|exists:cat_regions,id',
             'market_id' => 'required|integer|exists:cat_markets,id',
-            'sub_market_id' => 'required|integer|exists:cat_submarkets,id',
-            'industrial_park_id' => 'required|integer|exists:cat_industrial_parks,id',
+            'sub_market_id' => 'required|integer|exists:cat_sub_markets,id',
+            'industrial_park_id' => 'required|integer|exists:industrial_parks,id',
             'developer_id' => 'required|integer|exists:cat_developers,id',
             'owner_id' => 'required|integer|exists:cat_developers,id',
             'contact_id' => 'nullable|integer|exists:contacts,id',
@@ -37,7 +37,7 @@ class UpdateLandRequest extends FormRequest
             'kvas' => 'nullable|string|max:20',
             'zoning' => 'required|in:Industrial,Commercial,Residential',
             'parcel_shape' => 'required|in:Regular,Irregular',
-            'status' => 'required|in:Active,Inactive,Pending,Approved',
+            'status' => 'required|in:Enabled,Disabled,Pending,Approved',
         ];
     }
 }

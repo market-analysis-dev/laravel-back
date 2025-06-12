@@ -2,19 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends ApiController
+class UserController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:users.index', only: ['index']),
+            new Middleware('permission:users.show', only: ['show']),
+            new Middleware('permission:users.create', only: ['store']),
+            new Middleware('permission:users.update', only: ['update']),
+            new Middleware('permission:users.destroy', only: ['destroy'])
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexUserRequest $request)
     {
-        return $this->success(data: User::all());
+        $query = User::query();
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
+        }
+
+        return $this->success(data: $query->get());
     }
 
     /**
@@ -27,9 +47,10 @@ class UserController extends ApiController
             $validatedData = $request->validated();
             $validatedData['password'] = Hash::make($validatedData['password']);
             $user = User::create($validatedData);
-
+            if (!empty($validatedData['role_id'])) {
+                $user->syncRoles($validatedData['role_id']);
+            }
             return $this->success('User created successfully', $user);
-
         } catch (\Exception $e) {
             return $this->error('Error creating user: ' . $e->getMessage(), status: 500);
         }
@@ -61,6 +82,9 @@ class UserController extends ApiController
 
         // Actualizar el usuario con los datos ajustados
         $user->update($validatedData);
+        if (!empty($validatedData['role_id'])) {
+            $user->syncRoles($validatedData['role_id']);
+        }
         return response()->json($user);
     }
 
@@ -73,7 +97,7 @@ class UserController extends ApiController
             if ($user->delete()) {
                 return $this->success('User deleted successfully');
             }
-            return $this->error('User delete failed', status: 423);
+            return $this->error('User delete failed', status: 422);
 
         } catch (\Exception $e) {
             return $this->error('Error deleting user: ' . $e->getMessage(), status: 500);

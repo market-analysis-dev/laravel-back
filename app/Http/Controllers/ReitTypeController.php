@@ -7,9 +7,22 @@ use App\Responses\ApiResponse;
 use App\Models\ReitType;
 use App\Http\Requests\StoreReitTypeRequest;
 use App\Http\Requests\UpdateReitTypeRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ReitTypeController extends ApiController
+class ReitTypeController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:reit-types.index', only: ['index']),
+            new Middleware('permission:reit-types.show', only: ['show']),
+            new Middleware('permission:reit-types.create', only: ['store']),
+            new Middleware('permission:reit-types.update', only: ['update']),
+            new Middleware('permission:reit-types.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
@@ -49,7 +62,7 @@ class ReitTypeController extends ApiController
             if($reitType->update($request->validated())) {
                 return $this->success('Reit type updated successfully', $reitType);
             }
-            return  $this->error('Reit type updated field', status: 423);
+            return  $this->error('Reit type updated field', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
@@ -65,7 +78,7 @@ class ReitTypeController extends ApiController
             if($reitType->delete()) {
                 return $this->success('Reit type deleted successfully', $reitType);
             }
-            return $this->error('Reit type deleted filed', status: 423);
+            return $this->error('Reit type deleted filed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }

@@ -12,14 +12,9 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 
-class PermissionController extends ApiController implements HasMiddleware
+class PermissionController extends ApiController
 {
-    public static function middleware()
-    {
-        return [
-            new Middleware('permission:roles.index', only: ['index']),
-        ];
-    }
+
     /**
      * Display a listing of the resource.
      */
@@ -97,9 +92,9 @@ class PermissionController extends ApiController implements HasMiddleware
         $yearsArray = explode(",", $request->yearsCbo);
         $quartersArray = explode(",", $request->quartersCbo);
 
-        
+
         foreach ($modulesArray as $key => $moduleId) {
-            
+
             foreach ($marketArray as $key => $market) {
                 $marketId = str_replace("market_", "", $market["marketId"]);
                 $submarketId = $market["subMarketId"];
@@ -129,11 +124,11 @@ class PermissionController extends ApiController implements HasMiddleware
                             ]);
                         }
                     break;
-                    
+
                     default:
 
                         foreach ($yearsArray as $key => $year) {
-                            
+
                             foreach ($quartersArray as $key => $quarter) {
 
                                 $exists = Permission::where('userId', $userId)
@@ -219,7 +214,7 @@ class PermissionController extends ApiController implements HasMiddleware
                         ->get();
 
                     foreach ($allSubMarkets as $key => $subMarketData) {
-                        
+
                         $arrayOptions = array(
                             "value" => $subMarketData->id,
                             "label" => $subMarketData->subMarketName,
@@ -246,7 +241,7 @@ class PermissionController extends ApiController implements HasMiddleware
                 $mainReturn['markets'] = $newArray;
 
             break;
-            
+
             default:
 
                 // * en caso de no recibir un año válido se sale de la función
@@ -283,10 +278,10 @@ class PermissionController extends ApiController implements HasMiddleware
                             ->get();
 
                         return response()->json($getQuarters);
-    
+
                         $quarter = [];
                         $contador = 0;
-    
+
                         foreach ($getQuarters as $key => $quarterValue) {
                             array_push($quarter, $quarterValue->quarter);
                             $contador++;
@@ -325,7 +320,7 @@ class PermissionController extends ApiController implements HasMiddleware
                         ->get();
 
                     foreach ($allSubMarkets as $key => $subMarketData) {
-                        
+
                         $arrayOptions = array(
                             "value" => $subMarketData->id,
                             "label" => $subMarketData->subMarketName,
@@ -403,10 +398,10 @@ class PermissionController extends ApiController implements HasMiddleware
                     ->get();
 
                 foreach ($allMarkets as $key => $marketData) {
-                    
+
                     // * Si el mercado está en el post se hace el update
                     if (in_array($marketData->id, $justMarkets)) {
-                        
+
                         // * Obtener los submercados
                         $allSubMarkets = SubMarket::select('id', 'subMarketName')
                             ->where('marketId', $marketData->id)
@@ -417,23 +412,23 @@ class PermissionController extends ApiController implements HasMiddleware
 
                             // * Si el submercado está en el post se hace el update
                             if (in_array($subMarketData->id, $justSubMarkets)) {
-    
+
                                 $existSubMarketPermission = Permission::where('userId', $userId)
                                     ->where('moduleId', $moduleId)
                                     ->where('marketId', $marketData->id)
                                     ->where('subMarketId', $subMarketData->id)
                                     ->exists();
-    
+
                                 if ($existSubMarketPermission) {
-                                    
+
                                     Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
                                         ->where('subMarketId', $subMarketData->id)
                                         ->update(['status' => 'Activo']);
-    
+
                                 } else {
-                                
+
                                     Permission::insert([
                                         'userId' => $userId,
                                         'moduleId' => $moduleId,
@@ -452,15 +447,15 @@ class PermissionController extends ApiController implements HasMiddleware
                                     ->where('marketId', $marketData->id)
                                     ->where('subMarketId', $subMarketData->id)
                                     ->exists();
-    
+
                                 if ($existSubMarketPermission) {
-                                    
+
                                     Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
                                         ->where('subMarketId', $subMarketData->id)
                                         ->update(['status' => 'Inactivo']);
-    
+
                                 }
                             }
                         }
@@ -491,10 +486,10 @@ class PermissionController extends ApiController implements HasMiddleware
                     ->get();
 
                 foreach ($allMarkets as $key => $marketData) {
-                    
+
                     // * Si el mercado está en el post se hace el update
                     if (in_array($marketData->id, $justMarkets)) {
-                        
+
                         // * Obtener los submercados
                         $allSubMarkets = SubMarket::select('id', 'subMarketName')
                             ->where('marketId', $marketData->id)
@@ -509,7 +504,7 @@ class PermissionController extends ApiController implements HasMiddleware
                                 if (is_array($quarter)) {
 
                                     foreach ($quarter as $key => $stringQuarter) {
-                                        
+
                                         $existSubMarketPermission = Permission::where('userId', $userId)
                                             ->where('moduleId', $moduleId)
                                             ->where('marketId', $marketData->id)
@@ -517,9 +512,9 @@ class PermissionController extends ApiController implements HasMiddleware
                                             ->where('year', $year)
                                             ->where('quarter', $stringQuarter)
                                             ->exists();
-        
+
                                         if ($existSubMarketPermission) {
-                                            
+
                                             Permission::where('userId', $userId)
                                                 ->where('moduleId', $moduleId)
                                                 ->where('marketId', $marketData->id)
@@ -527,9 +522,9 @@ class PermissionController extends ApiController implements HasMiddleware
                                                 ->where('year', $year)
                                                 ->where('quarter', $stringQuarter)
                                                 ->update(['status' => 'Activo']);
-        
+
                                         } else {
-                                        
+
                                             Permission::insert([
                                                 'userId' => $userId,
                                                 'moduleId' => $moduleId,
@@ -541,9 +536,9 @@ class PermissionController extends ApiController implements HasMiddleware
                                             ]);
                                         }
                                     }
-                                    
+
                                 } else {
-                                    
+
                                     $existSubMarketPermission = Permission::where('userId', $userId)
                                             ->where('moduleId', $moduleId)
                                             ->where('marketId', $marketData->id)
@@ -551,9 +546,9 @@ class PermissionController extends ApiController implements HasMiddleware
                                             ->where('year', $year)
                                             ->where('quarter', $quarter)
                                             ->exists();
-        
+
                                     if ($existSubMarketPermission) {
-                                        
+
                                         Permission::where('userId', $userId)
                                             ->where('moduleId', $moduleId)
                                             ->where('marketId', $marketData->id)
@@ -561,9 +556,9 @@ class PermissionController extends ApiController implements HasMiddleware
                                             ->where('year', $year)
                                             ->where('quarter', $quarter)
                                             ->update(['status' => 'Activo']);
-    
+
                                     } else {
-                                    
+
                                         Permission::insert([
                                             'userId' => $userId,
                                             'moduleId' => $moduleId,
@@ -587,7 +582,7 @@ class PermissionController extends ApiController implements HasMiddleware
                                     ->exists();
 
                                 if ($existSubMarketPermission) {
-                                    
+
                                     Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
                                         ->where('marketId', $marketData->id)
@@ -611,7 +606,7 @@ class PermissionController extends ApiController implements HasMiddleware
                                 ->where('year', $year)
                                 ->where('quarter', $stringQuarter)
                                 ->exists();
-    
+
                                 if($existMarketPermission){
                                     Permission::where('userId', $userId)
                                         ->where('moduleId', $moduleId)
@@ -630,7 +625,7 @@ class PermissionController extends ApiController implements HasMiddleware
                                 ->where('year', $year)
                                 ->where('quarter', $quarter)
                                 ->exists();
-    
+
                             if($existMarketPermission){
                                 Permission::where('userId', $userId)
                                     ->where('moduleId', $moduleId)
@@ -642,7 +637,7 @@ class PermissionController extends ApiController implements HasMiddleware
                         }
                     }
                 }
-                
+
             break;
         }
     }
@@ -704,7 +699,7 @@ class PermissionController extends ApiController implements HasMiddleware
                         ]);
                     }
                 break;
-                
+
                 default:
                     $exist = Permission::where('userId', $userId)
                         ->where('moduleId', $moduleId)
@@ -734,7 +729,7 @@ class PermissionController extends ApiController implements HasMiddleware
                         ]);
                     }
                 break;
-            }            
+            }
         }
     }
 
@@ -772,16 +767,16 @@ class PermissionController extends ApiController implements HasMiddleware
 
             // * Primero "eliminamos" los permisos actuales
             Permission::where('userId', $userCloneId)->update(['status' => 'Inactivo']);
-            
+
             foreach ($userClonePermissions as $key => $permissionsData) {
-    
+
                 $moduleId = $permissionsData->moduleId;
                 $marketId = $permissionsData->marketId;
                 $subMarketId = $permissionsData->subMarketId;
                 $year = $permissionsData->year;
                 $quarter = $permissionsData->quarter;
                 // $status = $permissionsData->status;
-    
+
                 switch ($moduleId) {
                     case 1:
                     case 5:
@@ -793,7 +788,7 @@ class PermissionController extends ApiController implements HasMiddleware
                             ->where('marketId', $marketId)
                             ->where('subMarketId', $subMarketId)
                             ->exists();
-    
+
                         if($exist){
                             Permission::where('userId', $userCloneId)
                                 ->where('moduleId', $moduleId)
@@ -810,7 +805,7 @@ class PermissionController extends ApiController implements HasMiddleware
                             ]);
                         }
                     break;
-                    
+
                     default:
                         $exist = Permission::where('userId', $userCloneId)
                             ->where('moduleId', $moduleId)
@@ -819,7 +814,7 @@ class PermissionController extends ApiController implements HasMiddleware
                             ->where('year', $year)
                             ->where('quarter', $quarter)
                             ->exists();
-    
+
                         if($exist){
                             Permission::where('userId', $userCloneId)
                                 ->where('moduleId', $moduleId)
@@ -850,7 +845,7 @@ class PermissionController extends ApiController implements HasMiddleware
             'icon' => 'success'
         ]);
     }
-    
+
     /**
      * Display the specified resource.
      */
@@ -872,7 +867,7 @@ class PermissionController extends ApiController implements HasMiddleware
         if ($permissionsModule->isEmpty() && $permissionsMarket->isEmpty() && $permissionsSubmarket->isEmpty() && $permissionsQuarters->isEmpty()) {
             return response()->json(['message' => 'Permissions not found'], 404);
         }
-        
+
         // * Organizar los permisos por año y quarters
         $organizedPermissions = [];
 

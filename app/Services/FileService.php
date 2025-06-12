@@ -19,17 +19,15 @@ class FileService
     {
         $result = [];
 
-        // Если $files — это одиночный файл, преобразуем его в массив
         if (!is_array($files)) {
             $files = [$files];
         }
 
         foreach ($files as $file) {
-            // Используем уже существующую логику
             $fileType = $type ?? $this->determineFileType($file->getClientOriginalName());
 
             if (!$fileType) {
-                continue; // Пропускаем недопустимые типы
+                continue;
             }
 
             $path = "public/buildings/{$buildingId}/{$fileType}/";
@@ -66,7 +64,7 @@ class FileService
                 'extension' => $file->getClientOriginalExtension(),
                 'size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
-                'path' => $uploadedFile['path'],
+                'path' => str_replace('public/', '', $uploadedFile['path']),
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
                 'deleted_by' => null,
@@ -77,7 +75,7 @@ class FileService
                 'building_id' => $buildingId,
                 'type' => $uploadedFile['type'],
                 'file_id' => $fileRecord->id,
-                'path' => $uploadedFile['path'],
+                'path' => str_replace('public/', '', $uploadedFile['path']),
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
                 'deleted_by' => null,
@@ -134,20 +132,104 @@ class FileService
 
         if (str_contains($name, 'frontpage')) {
             return 'Front Page';
-        } elseif (preg_match('/gallery[1-6]/', $name)) {
+        } elseif (preg_match('/^gallery[1-6]/', $name)) {
             return 'Gallery';
-        } elseif (str_contains($name, 'aerial')) {
+        } elseif (str_starts_with($name, 'aerial')) {
             return 'Aerial';
-        } elseif (str_contains($name, '360')) {
+        } elseif (str_starts_with($name, '360')) {
             return '360';
-        } elseif (str_contains($name, 'layout')) {
+        } elseif (str_starts_with($name, 'layout')) {
             return 'Layout';
-        } elseif (str_contains($name, 'brochure') && str_ends_with($name, '.pdf')) {
+        } elseif (str_starts_with($name, 'brochure') && str_ends_with($name, '.pdf')) {
             return 'Brochure';
         } elseif (str_ends_with($name, '.kmz')) {
             return 'KMZ';
         }
 
         return null; // Invalid or undetermined type
+    }
+
+    /**
+     * @param $buildingId
+     * @param null $type
+     * @return array
+     */
+    public function deleteBuildingFiles($buildingId, $type = null)
+    {
+        $query = BuildingFile::where('building_id', $buildingId);
+
+        if ($type) {
+            $query->where('type', $type);
+        } else {
+            $type = $this->determineFileType($file->getClientOriginalName());
+        }
+
+        $files = $query->get();
+
+        if ($files->isEmpty()) {
+            return [
+                'message' => 'No files found for deletion',
+                'deleted_files' => [],
+            ];
+        }
+
+        $deletedFiles = [];
+
+        foreach ($files as $file) {
+            Storage::disk('public')->delete($file->path);
+            $deletedFiles[] = [
+                'id' => $file->id,
+                'name' => $file->name,
+                'path' => $file->path,
+                'type' => $file->type,
+            ];
+            $file->delete();
+        }
+
+        return [
+            'message' => 'Files deleted successfully',
+            'deleted_files' => $deletedFiles,
+        ];
+    }
+
+    /**
+     * @param array $files
+     * @param int $buildingId
+     * @return array
+     */
+    public function deleteBuildingFilesByType(array $files, int $buildingId)
+    {
+        $query = BuildingFile::where('building_id', $buildingId);
+        $types = [];
+        foreach ($files as $file) {
+            $type = $this->determineFileType($file->getClientOriginalName());
+            $types[] = $type;
+        }
+        $query->whereIn('type', $types);
+        $result = $query->get();
+        if ($result->isEmpty()) {
+            return [
+                'message' => 'No files found for deletion',
+                'deleted_files' => [],
+            ];
+        }
+
+        $deletedFiles = [];
+
+        foreach ($result as $file) {
+            Storage::disk('public')->delete($file->path);
+            $deletedFiles[] = [
+                'id' => $file->id,
+                'name' => $file->name,
+                'path' => $file->path,
+                'type' => $file->type,
+            ];
+            $file->delete();
+        }
+
+        return [
+            'message' => 'Files deleted successfully',
+            'deleted_files' => $deletedFiles,
+        ];
     }
 }

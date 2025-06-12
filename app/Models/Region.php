@@ -31,6 +31,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Building> $buildings
+ * @property-read int|null $buildings_count
  * @mixin \Eloquent
  */
 class Region extends Model
@@ -48,4 +50,9 @@ class Region extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    public function buildings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Building::class);
+    }
 }

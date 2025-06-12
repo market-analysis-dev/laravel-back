@@ -2,21 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexReitAnnualRequest;
 use App\Http\Requests\StoreReitAnnualRequest;
 use App\Http\Requests\UpdateReitAnnualRequest;
 use App\Models\ReitAnnual;
-use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ReitAnnualController extends ApiController
+class ReitAnnualController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:reit-annual.index', only: ['index']),
+            new Middleware('permission:reit-annual.show', only: ['show']),
+            new Middleware('permission:reit-annual.create', only: ['store']),
+            new Middleware('permission:reit-annual.update', only: ['update']),
+            new Middleware('permission:reit-annual.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
-    public function index(): ApiResponse
+    public function index(IndexReitAnnualRequest $request): ApiResponse
     {
-        $reitsAnnual = ReitAnnual::all();
-        return $this->success(data: $reitsAnnual);
+        $reitAnnuals = ReitAnnual::filter($request->validated());
+        return $this->success(data: $reitAnnuals);
     }
 
     /**
@@ -49,7 +62,7 @@ class ReitAnnualController extends ApiController
             if($reitAnnual->update($request->validated())) {
                 return $this->success('Reit annual updated successfully', $reitAnnual);
             }
-            return  $this->error('Reit annual updated field', status: 423);
+            return  $this->error('Reit annual updated field', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }
@@ -65,7 +78,7 @@ class ReitAnnualController extends ApiController
             if($reitAnnual->delete()) {
                 return $this->success('Reit annual deleted successfully', $reitAnnual);
             }
-            return $this->error('Reit annual deleted filed', status: 423);
+            return $this->error('Reit annual deleted filed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status: 500);
         }

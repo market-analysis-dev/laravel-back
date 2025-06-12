@@ -15,13 +15,7 @@ use App\Http\Controllers\UserTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
-
-// * COMPANIES (COMPLETADO)
-Route::get('/companies', [CompanyController::class, 'index']); // * Este si se utiliza
-Route::get('/companies/{id}', [CompanyController::class, 'show']); // * Este si se utiliza
-Route::put('/companies/{id}', [CompanyController::class, 'update']); // * Este si se utiliza
-Route::put('/companies/{id}/delete', [CompanyController::class, 'destroy']); // * Este si se utiliza
-Route::post('/companies', [CompanyController::class, 'store']);
+Route::get('/auth/me', [AuthController::class, 'me'])->middleware('auth:sanctum')->name('me');
 
 
 // * USER DETAILS (COMPLETADO)
@@ -38,12 +32,7 @@ Route::put('/user-types/{id}', [UserTypeController::class, 'update']);
 Route::put('/user-types/{id}/delete', [UserTypeController::class, 'destroy']);
 Route::post('/user-types', [UserTypeController::class, 'store']);
 
-// * MODULES (COMPLETADO)
-Route::get('/modules', [ModuleController::class, 'index']);
-Route::get('/modules/{id}', [ModuleController::class, 'show']);
-Route::put('/modules/{id}', [ModuleController::class, 'update']);
-Route::put('/modules/{id}/delete', [ModuleController::class, 'destroy']);
-Route::post('/modules', [ModuleController::class, 'store']);
+
 
 // * MODULES COLUMNS (COMPLETADO)
 Route::get('/modules-col', [ModulesColumnController::class, 'index']);
@@ -57,7 +46,6 @@ Route::get('/permission', [PermissionController::class, 'index']);
 Route::get('/permission/{userId}', [PermissionController::class, 'show']);
 Route::put('/permission/{id}', [PermissionController::class, 'update']);
 Route::put('/permission/{id}/delete', [PermissionController::class, 'destroy']);
-// Route::post('/permission/{userId}', [PermissionController::class, 'store']);
 
 // * UNIQUE PERMISSIONS
 Route::get('/unique', [UniquePermissionController::class, 'index']);
@@ -81,11 +69,12 @@ Route::post('/permissions/clone/multiple/{userId}', [PermissionController::class
 
 
 
-// Route::post('/market/login', [MarketAuthController::class, 'login']);
 
 require_once '_users.php';
+require_once '_market_size.php';
 require_once '_buildings_available.php';
 require_once '_buildings_absorption.php';
+require_once '_building_contacts.php';
 require_once '_buildings.php';
 require_once '_industrial_parks.php';
 require_once '_regions.php';
@@ -98,9 +87,6 @@ require_once '_tenants.php';
 require_once '_developers.php';
 require_once '_shelters.php';
 require_once '_brokers.php';
-require_once  '_roles.php';
-require_once  '_permissions.php';
-require_once  '_developers.php';
 require_once  '_industries.php';
 require_once  '_countries.php';
 require_once '_companies.php';
@@ -112,3 +98,13 @@ require_once '_reits_types.php';
 require_once '_reits.php';
 require_once '_modules.php';
 require_once '_reit_annual.php';
+require_once '_reit_mortgages.php';
+require_once '_cams.php';
+require_once '_land_contacts.php';
+require_once '_market_growths.php';
+require_once '_reits_timeline.php';
+require_once '_contacts.php';
+require_once '_reit_instruments.php';
+require_once '_reits_cetes.php';
+require_once '_configurations.php';
+require_once '_clients.php';

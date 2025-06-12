@@ -24,18 +24,20 @@ class ConvertToAbsorptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'broker_id' => 'required|integer|exists:cat_brokers,id',
-            'dock_doors' => 'nullable|integer|min:0',
-            'rams' => 'nullable|integer|min:0',
-            'truck_court_ft' => 'nullable|integer|min:0',
-            'shared_truck' => 'nullable|boolean',
-            'new_construction' => 'nullable|boolean',
-            'is_starting_construction' => 'nullable|boolean',
-            'bay_size' => 'nullable|string|max:45',
-            'parking_space' => 'nullable|integer|min:0',
-            'trailer_parking_space' => 'nullable|integer|min:0',
+            'broker_id' => 'sometimes|integer|exists:cat_brokers,id',
+            'dock_doors' => 'required|integer|min:0',
+            'ramps' => 'required|integer|min:0',
+            'truck_court_ft' => 'required|integer|min:0',
+            'shared_truck' => 'sometimes|boolean',
+            'is_new_construction' => 'sometimes|boolean',
+            'is_starting_construction' => 'sometimes|boolean',
+            'bay_size' => 'sometimes|string|max:45',
+            'parking_space' => 'required|integer|min:0',
+            'trailer_parking_space' => 'required|integer|min:0',
+            'avl_date' => 'sometimes|date',
+            'abs_asking_shell' => 'required|numeric|min:0',
             'fire_protection_system' => [
-                'required',
+                'sometimes',
                 'array',
                 function ($attribute, $value, $fail) {
                     $allowedValues = ['Hose Station', 'Sprinkler', 'Extinguisher'];
@@ -47,35 +49,34 @@ class ConvertToAbsorptionRequest extends FormRequest
                     }
                 }
             ],
-            'above_market_tis' => [
-                'nullable',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $allowedValues = ['HVAC', 'CRANE', 'Rail Spur', 'Sprinklers', 'Crossdock', 'Office', 'Leed', 'Land Expansion'];
-
-                    foreach ($value as $item) {
-                        if (!in_array($item, $allowedValues)) {
-                            return $fail(__('Invalid value in above_market_tis.'));
-                        }
-                    }
-                }
-            ],
-            'abs_tenant_id' => 'required|integer|exists:cat_tenants,id',
-            'abs_industry_id' => 'required|integer|exists:cat_industries,id',
-            'abs_country_id' => 'required|integer|exists:countries,id',
-            'abs_lease_term_month' => 'nullable|integer|min:0',
+            'abs_tenant_id' => 'nullable|integer|exists:cat_tenants,id',
+            'abs_industry_id' => 'nullable|integer|exists:cat_industries,id',
+            'abs_country_id' => 'nullable|integer|exists:countries,id',
+            'abs_lease_term_month' => 'required|integer|min:0',
             'abs_closing_rate' => 'required|numeric|min:0',
-            'abs_closing_date' => 'nullable|date',
-            'abs_company_type' => 'nullable|in:Existing Company,New Company in Market,New Company in Mexico',
-            'abs_lease_up' => 'nullable|date',
-            'abs_month' => 'nullable|date',
-            'abs_sale_price' => 'nullable|numeric|min:0',
-            'abs_final_use' => 'nullable|in:Logistic,Manufacturing',
-            'abs_building_phase' => 'required|in:BTS,Expansion,Inventory',
-            'abs_broker_id' => 'nullable|exists:cat_brokers,id',
-            'abs_shelter_id' => 'nullable|exists:cat_shelters,id',
+            'abs_closing_date' => 'required|date',
+            'abs_company_type' => 'required|in:Existing Company,New Company in Market,New Company in Mexico',
+            'abs_lease_up' => 'required|date',
+            'abs_month' => 'required|string',
+            'abs_closing_dock_door' => 'required|integer|min:0',
+            'abs_closing_knockout_docks'  => 'required|integer|min:0',
+            'abs_closing_ramps'           => 'required|integer|min:0',
+            'abs_closing_truck_court'     => 'required|integer|min:0',
+            'abs_closing_currency'        => 'required|in:USD,MXP',
+            'abs_sale_price' => 'required|numeric|min:0',
+            'abs_final_use' => 'nullable|in:Logistic,Manufacturing,TBD',
+            'abs_type' => 'nullable|in:Inventory,Inventory Expansion,BTS,BTS Expansion',
+            'abs_shelter_id' => 'required|exists:cat_shelters,id',
+            'has_tis_hvac'           => 'boolean',
+            'has_tis_crane'          => 'boolean',
+            'has_tis_rail_spur'      => 'boolean',
+            'has_tis_sprinklers'     => 'boolean',
+            'has_tis_crossdock'      => 'boolean',
+            'has_tis_office'         => 'boolean',
+            'has_tis_leed'           => 'boolean',
+            'has_tis_land_expansion' => 'boolean',
             'size_sf' => [
-                'required',
+                'sometimes',
                 'integer',
                 'min:0',
                 function ($attribute, $value, $fail) {

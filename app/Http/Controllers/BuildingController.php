@@ -2,46 +2,68 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BuildingBuildingType;
+use App\Enums\BuildingCertifications;
 use App\Enums\BuildingClass;
+use App\Enums\BuildingCompanyType;
 use App\Enums\BuildingDeal;
+use App\Enums\BuildingFinalUse;
 use App\Enums\BuildingFireProtectionSystem;
+use App\Enums\BuildingGeneration;
 use App\Enums\BuildingLightning;
 use App\Enums\BuildingLoadingDoor;
-use App\Enums\BuildingPhase;
-use App\Enums\BuildingTenancy;
-use App\Enums\BuildingTypeConstruction;
-use App\Enums\BuildingTypeGeneration;
-use App\Enums\TechnicalImprovements;
+use App\Enums\BuildingOwnerType;
+use App\Enums\BuildingStage;
 use App\Enums\BuildingStatus;
-use App\Enums\BuildingCompanyType;
-use App\Enums\BuildingFinalUse;
+use App\Enums\BuildingTenancy;
+use App\Enums\BuildingType;
+use App\Enums\BuildingTypeConstruction;
+use App\Enums\TechnicalImprovements;
 use App\Http\Requests\IndexBuildingRequest;
+use App\Http\Requests\IndexLocationRequest;
 use App\Http\Requests\StoreBuildingRequest;
+use App\Http\Requests\UpdateBuildingDraftRequest;
 use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
-use App\Services\BuildingService;
+use App\Models\Developer;
+use App\Models\IndustrialPark;
+use App\Models\Region;
 use App\Responses\ApiResponse;
-use Illuminate\Http\Request;
+use App\Services\BuildingService;
+use App\Services\FileService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use PDF;
 
-class BuildingController extends ApiController
+class BuildingController extends ApiController implements HasMiddleware
 {
     private BuildingService $buildingService;
+    private FileService $fileService;
 
-    public function __construct(BuildingService $buildingService)
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:buildings.index', only: ['index']),
+            new Middleware('permission:buildings.show', only: ['show']),
+            new Middleware('permission:buildings.create', only: ['store']),
+            new Middleware('permission:buildings.update', only: ['update']),
+            new Middleware('permission:buildings.approve', only: ['approve']),
+            new Middleware('permission:buildings.draft', only: ['draft']),
+            new Middleware('permission:buildings.uploadFiles', only: ['uploadFiles']),
+            new Middleware('permission:buildings.layoutDesign', only: ['layoutDesign']),
+        ];
+    }
+
+    public function __construct(BuildingService $buildingService, FileService $fileService)
     {
         $this->buildingService = $buildingService;
+        $this->fileService = $fileService;
     }
 
     public function index(IndexBuildingRequest $request): ApiResponse
     {
         $buildings = $this->buildingService->filter($request->validated());
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
-        if (!empty($building->above_market_tis)) {
-            $building->above_market_tis = explode(',', $building->above_market_tis);
-        }
         return $this->success(data: $buildings);
     }
 
@@ -52,30 +74,31 @@ class BuildingController extends ApiController
         if ($validated['sqftToM2'] ?? false) {
             $validated = $this->buildingService->convertMetrics($validated);
         }
-        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-        }
+
         if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
             $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
         }
 
-        $building = $this->buildingService->create($validated);
+        $building = $this->buildingService->create($validated)->refresh();
 
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
+        if ($request->hasFile('files')) {
+            $type = $request->input('type');
+            $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
         }
+
         if (!empty($building->above_market_tis)) {
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
-        return $this->success('Building created successfully', $building);
+        return $this->success('Building created successfully', [
+            'building' => $building,
+            'uploaded_files' => $uploadedFilesInfo ?? null,
+        ]);
     }
 
     public function show(Building $building): ApiResponse
     {
         $building = $this->buildingService->show($building);
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
+
         if (!empty($building->above_market_tis)) {
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
@@ -96,24 +119,32 @@ class BuildingController extends ApiController
                 $validated = $this->buildingService->convertMetrics($validated);
             }
 
-            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-            }
             if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
                 $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
             }
 
             $building = $this->buildingService->update($building, $validated);
-            if (!empty($building->fire_protection_system)) {
-                $building->fire_protection_system = explode(',', $building->fire_protection_system);
+
+            if ($request->hasFile('files')) {
+                $type = $request->input('type');
+
+                $deletedFiles = $this->fileService->deleteBuildingFilesByType($request->file('files'), $building->id);
+
+                $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($request->file('files'), $building->id, $type);
             }
+
+
             if (!empty($building->above_market_tis)) {
                 $building->above_market_tis = explode(',', $building->above_market_tis);
             }
-            return $this->success('Building updated successfully', $building);
+            return $this->success('Building updated successfully', [
+                'building' => $building,
+                'uploaded_files' => $uploadedFilesInfo ?? null,
+                'deleted_files' => $deletedFiles ?? null,
+            ]);
 
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), status:500);
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 
@@ -127,11 +158,11 @@ class BuildingController extends ApiController
             if ($building->delete()) {
                 return $this->success('Building deleted successfully', $building);
             }
-            // return $this->error('Building delete failed', ['error_code' => 423]);
-            return $this->error('Building delete failed', status:423);
+            // return $this->error('Building delete failed', ['error_code' => 422]);
+            return $this->error('Building delete failed', status: 422);
         } catch (\Exception $e) {
             // return $this->error($e->getMessage(), ['error_code' => 500]);
-            return $this->error($e->getMessage(), status:500);
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 
@@ -157,23 +188,26 @@ class BuildingController extends ApiController
      */
     public function listPhases(): ApiResponse
     {
-        $phases = BuildingPhase::array();
+        $phases = BuildingType::array();
 
         $filteredPhases = collect($phases)
             ->when(request()->boolean('availability'), function ($collection) {
                 return $collection->filter(fn($phase) => in_array($phase, [
-                    BuildingPhase::CONSTRUCTION->value,
-                    BuildingPhase::PLANNED->value,
-                BuildingPhase::SUBLEASE->value,
-                BuildingPhase::EXPIRATION->value,
-            ]));
-        })
+                    BuildingType::CONSTRUCTION->value,
+                    BuildingType::PLANNED->value,
+                    BuildingType::SUBLEASE->value,
+                    BuildingType::EXPIRATION->value,
+                    BuildingType::INVENTORY->value,
+                ]));
+            })
             ->when(request()->boolean('absorption'), function ($collection) {
                 return $collection->filter(fn($phase) => in_array($phase, [
-                    BuildingPhase::BTS->value,
-                    BuildingPhase::EXPANSION->value,
-            ]));
-        });
+                    BuildingType::BTS->value,
+                    BuildingType::EXPANSION->value,
+                    BuildingType::INVENTORY->value,
+                    BuildingType::BTS_EXPANSION->value,
+                ]));
+            });
 
         return $this->success(data: $filteredPhases->values());
     }
@@ -216,7 +250,7 @@ class BuildingController extends ApiController
      */
     public function listTypeGenerations(): ApiResponse
     {
-        return $this->success(data: BuildingTypeGeneration::array());
+        return $this->success(data: BuildingGeneration::array());
     }
 
     /**
@@ -259,6 +293,26 @@ class BuildingController extends ApiController
         return $this->success(data: BuildingFinalUse::array());
     }
 
+    public function listBuildingTypes(): ApiResponse
+    {
+        return $this->success(data: BuildingBuildingType::array());
+    }
+
+    public function listBuildingCertifications(): ApiResponse
+    {
+        return $this->success(data: BuildingCertifications::array());
+    }
+
+    public function listBuildingOwnerTypes(): ApiResponse
+    {
+        return $this->success(data: BuildingOwnerType::array());
+    }
+
+    public function listBuildingStages(): ApiResponse
+    {
+        return $this->success(data: BuildingStage::array());
+    }
+
     public function layoutDesign($buildingId)
     {
         return response()->make(
@@ -266,5 +320,169 @@ class BuildingController extends ApiController
             200,
             ['Content-Type' => 'application/pdf']
         );
+    }
+
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function draft(Building $building): ApiResponse
+    {
+        $result = $this->buildingService->createDraft($building);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function getDraft(Building $building): ApiResponse
+    {
+        $draft = $this->buildingService->getDraft($building);
+
+        if (!$draft) {
+            return $this->error(message: 'Draft not found.', status: 404);
+        }
+
+        return $this->success(data: $draft);
+    }
+
+    /**
+     * @param UpdateBuildingDraftRequest $request
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function updateDraft(UpdateBuildingDraftRequest $request, Building $building): ApiResponse
+    {
+
+        $validated = $request->validated();
+        $result = $this->buildingService->updateDraft($building, $validated);
+
+        if (!$result) {
+            return $this->error('Draft not found.', status: 404);
+        }
+
+        $message = ($result->status === BuildingStatus::DRAFT->value)
+            ? 'Draft updated successfully.'
+            : 'Draft deleted and applied to the original building.';
+
+        return $this->success(message: $message, data: $result);
+    }
+
+    /**
+     * @param Building $building
+     * @return ApiResponse
+     */
+    public function deleteDraft(Building $building): ApiResponse
+    {
+        $result = $this->buildingService->deleteDraft($building);
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+    public function listRegions(IndexLocationRequest $request): ApiResponse
+    {
+        $requestQuery = $request->query();
+
+        $regions = Region::query();
+        $hasAnyParam = collect($requestQuery)->only([
+            'market_id',
+            'sub_market_id',
+            'developer_id',
+            'industrial_park_id'
+        ])->filter()->isNotEmpty();
+
+        if ($hasAnyParam) {
+            $regions->whereHas('buildings', function (Builder $query) use ($request) {
+                if ($request->query('market_id')) {
+                    $query->where('market_id', $request->query('market_id'));
+                }
+                if ($request->query('sub_market_id')) {
+                    $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+                if ($request->query('developer_id')) {
+                    $query->where('developer_id', $request->query('developer_id'));
+                }
+                if ($request->query('industrial_park_id')) {
+                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
+                }
+            });
+        }
+        $regions = $regions->select('id', 'name')->orderBy('name')->get();
+
+        return $this->success(data: $regions);
+    }
+
+    public function listDevelopers(IndexLocationRequest $request): ApiResponse
+    {
+        $requestQuery = $request->query();
+
+        $query = Developer::select('id', 'name')
+            ->where('is_developer', true);
+
+        $hasAnyParam = collect($requestQuery)->only([
+            'region_id',
+            'market_id',
+            'sub_market_id',
+            'industrial_park_id'
+        ])->filter()->isNotEmpty();
+        if ($hasAnyParam) {
+            $query->whereHas('buildings', function (Builder $query) use ($request) {
+                if ($request->query('region_id')) {
+                    $query->where('region_id', $request->query('region_id'));
+                }
+                if ($request->query('market_id')) {
+                    $query->where('market_id', $request->query('market_id'));
+                }
+                if ($request->query('sub_market_id')) {
+                    $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+                if ($request->query('industrial_park_id')) {
+                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
+                }
+            });
+        }
+        $developers = $query->orderBy('name')->get();
+        return $this->success(data: $developers);
+    }
+
+    public function listIndustrialParks(IndexLocationRequest $request): ApiResponse
+    {
+        $requestQuery = $request->query();
+
+        $query = IndustrialPark::query();
+
+        $hasAnyParam = collect($requestQuery)->only([
+            'region_id',
+            'market_id',
+            'sub_market_id',
+            'developer_id'
+        ])->filter()->isNotEmpty();
+        if ($hasAnyParam) {
+            $query->whereHas('buildings', function (Builder $query) use ($request) {
+                if ($request->query('region_id')) {
+                    $query->where('region_id', $request->query('region_id'));
+                }
+                if ($request->query('market_id')) {
+                    $query->where('market_id', $request->query('market_id'));
+                }
+                if ($request->query('sub_market_id')) {
+                    $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+                if ($request->query('developer_id')) {
+                    $query->where('developer_id', $request->query('developer_id'));
+                }
+            });
+        }
+        $industrialParks = $query->orderBy('name')->get();
+
+        return $this->success(data: $industrialParks);
     }
 }

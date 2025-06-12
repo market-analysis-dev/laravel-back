@@ -4,21 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Responses\ApiResponse;
 use App\Models\File;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CompanyController extends ApiController
+class CompanyController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:companies.index', only: ['index']),
+            new Middleware('permission:companies.show', only: ['show']),
+            new Middleware('permission:companies.create', only: ['store']),
+            new Middleware('permission:companies.update', only: ['update']),
+            new Middleware('permission:companies.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
     public function index(): ApiResponse
     {
         $companies = Company::all();
-        return $this->success(data: $companies);
+        return $this->success(data: CompanyResource::collection($companies));
     }
 
 
@@ -30,7 +44,7 @@ class CompanyController extends ApiController
     {
         $company = Company::findOrFail($companyId);
 
-        return $this->success(data: $company);
+        return $this->success(data: new CompanyResource($company));
     }
 
 

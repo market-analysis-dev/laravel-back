@@ -7,9 +7,22 @@ use App\Responses\ApiResponse;
 use App\Models\Broker;
 use App\Http\Requests\StoreBrokerRequest;
 use App\Http\Requests\UpdateBrokerRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BrokerController extends ApiController
+class BrokerController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:brokers.index', only: ['index']),
+            new Middleware('permission:brokers.show', only: ['show']),
+            new Middleware('permission:brokers.create', only: ['store']),
+            new Middleware('permission:brokers.update', only: ['update']),
+            new Middleware('permission:brokers.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
@@ -30,6 +43,15 @@ class BrokerController extends ApiController
     }
 
     /**
+     * @param Broker $broker
+     * @return ApiResponse
+     */
+    public function show(Broker $broker): ApiResponse
+    {
+        return $this->success(data: $broker);
+    }
+
+    /**
      * @param UpdateBrokerRequest $request
      * @param Broker $broker
      * @return ApiResponse
@@ -41,7 +63,7 @@ class BrokerController extends ApiController
                 return $this->success('Broker updated successfully', $broker);
             }
 
-            return $this->error('Broker update failed', status:423);
+            return $this->error('Broker update failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }
@@ -57,7 +79,7 @@ class BrokerController extends ApiController
             if ($broker->delete()) {
                 return $this->success('Broker deleted successfully', $broker);
             }
-            return $this->error('Broker delete failed', status:423);
+            return $this->error('Broker delete failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }

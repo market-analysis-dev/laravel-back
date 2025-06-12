@@ -2,16 +2,207 @@
 
 namespace App\Services;
 
+use App\Models\BuildingAvailable;
+use App\Models\BuildingLog;
+use App\Services\BuildingsAvailableService;
 use Illuminate\Http\Request;
 use App\Models\Building;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\BuildingStatus;
+use App\Enums\BuildingState;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class BuildingService
 {
+    private BuildingsAvailableService $buildingsAvailableService;
+
+    public function __construct(BuildingsAvailableService $buildingsAvailableService)
+    {
+        $this->buildingsAvailableService = $buildingsAvailableService;
+    }
+
     /**
-     * Create a new class instance.
+     * @param array $buildingData
+     * @param array $availabilityData
+     * @return \Illuminate\Database\TReturn|mixed
+     * @throws \Throwable
+     */
+    public function createWithAvailability(array $buildingData, array $availabilityData): mixed
+    {
+        /* Building */
+        if ($buildingData['sqftToM2']) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        /* Building Availability */
+        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
+            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        }
+        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
+            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $availabilityData) {
+
+            if ($buildingData['id']) {
+                $building = Building::findOrFail($buildingData['id']);
+                $building = $this->update($building, $buildingData);
+            } else {
+                $building = $this->create($buildingData);
+            }
+            $availabilityData['building_id'] = $building->id;
+            $absorptionData['building_state'] = BuildingState::AVAILABILITY->value;
+            $availabilityBuilding = $this->buildingsAvailableService->create($availabilityData);
+
+            return [
+                'building' => $building,
+                'availability' => $availabilityBuilding,
+            ];
+        });
+    }
+
+
+    public function createWithAbsorption(array $buildingData, array $absorptionData): mixed
+    {
+        /* Building */
+        if ($buildingData['sqftToM2'] ?? false) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        /* Building Absorption */
+        if (!empty($absorptionData['sqftToM2']) || !empty($absorptionData['yrToMo'])) {
+            $absorptionData = $this->buildingsAvailableService->convertMetrics($absorptionData);
+        }
+        if (!empty($absorptionData['fire_protection_system']) && is_array($absorptionData['fire_protection_system'])) {
+            $absorptionData['fire_protection_system'] = implode(',', $absorptionData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $absorptionData) {
+
+            if (!empty($buildingData['id'])) {
+                $building = Building::findOrFail($buildingData['id']);
+                $building = $this->update($building, $buildingData);
+            } else {
+                $building = $this->create($buildingData);
+            }
+            $absorptionData['building_id'] = $building->id;
+            $absorptionData['building_state'] = BuildingState::ABSORPTION->value;
+            $absorptionBuilding = $this->buildingsAvailableService->create($absorptionData);
+
+            return [
+                'building' => $building,
+                'absorption' => $absorptionBuilding,
+            ];
+        });
+    }
+
+
+    /**
+     * @param array $buildingData
+     * @param array $availabilityData
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function updateWithAvailability(array $buildingData, array $availabilityData): mixed
+    {
+
+        if (!empty($buildingData['sqftToM2'])) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
+            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        }
+
+        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
+            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $availabilityData) {
+            if (empty($buildingData['id'])) {
+                throw new \InvalidArgumentException('Missing building ID for update.');
+            }
+
+            $building = Building::findOrFail($buildingData['id']);
+            $building = $this->update($building, $buildingData);
+
+            if (empty($availabilityData['id'])) {
+                throw new \InvalidArgumentException('Missing availability ID for update.');
+            }
+
+            $availability = BuildingAvailable::findOrFail($availabilityData['id']);
+
+            if ($availability->building_state !== BuildingState::AVAILABILITY->value) {
+                throw ValidationException::withMessages([
+                    'availability.id' => __('The availability must be in AVAILABILITY state to update.'),
+                ]);
+            }
+
+            $availabilityData['building_id'] = $building->id;
+            $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
+
+            return [
+                'building' => $building,
+                'availability' => $availability,
+            ];
+        });
+    }
+
+    public function updateWithAbsorption(array $buildingData, array $availabilityData): mixed
+    {
+
+        if (!empty($buildingData['sqftToM2'])) {
+            $buildingData = $this->convertMetrics($buildingData);
+        }
+
+        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
+            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        }
+
+        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
+            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        }
+
+        return DB::transaction(function () use ($buildingData, $availabilityData) {
+            if (empty($buildingData['id'])) {
+                throw new \InvalidArgumentException('Missing building ID for update.');
+            }
+
+            $building = Building::findOrFail($buildingData['id']);
+            $building = $this->update($building, $buildingData);
+
+            if (empty($availabilityData['id'])) {
+                throw new \InvalidArgumentException('Missing availability ID for update.');
+            }
+
+            $availability = BuildingAvailable::findOrFail($availabilityData['id']);
+
+            if ($availability->building_state !== BuildingState::ABSORPTION->value) {
+                throw ValidationException::withMessages([
+                    'absorption.id' => __('The availability must be in ABSORPTION state to update.'),
+                ]);
+            }
+
+            $availabilityData['building_id'] = $building->id;
+
+            $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
+
+            return [
+                'building' => $building,
+                'absorption' => $availability,
+            ];
+        });
+    }
+
+
+
+    /**
+     * @param array $validated
+     * @return mixed
      */
     public function filter(array $validated): mixed
     {
@@ -20,17 +211,21 @@ class BuildingService
         $direction = $validated['state'] ?? 'desc';
 
         return Building::with(['market', 'subMarket', 'industrialPark'])
+            ->leftJoin('cat_markets', 'cat_markets.id', '=', 'buildings.market_id')
+            ->leftJoin('cat_sub_markets', 'cat_sub_markets.id', '=', 'buildings.sub_market_id')
+            ->leftJoin('industrial_parks', 'industrial_parks.id', '=', 'buildings.industrial_park_id')
+            ->select('buildings.*', 'cat_markets.name AS marketName', 'cat_sub_markets.name AS submarketName', 'industrial_parks.name AS industrialParkName')
             ->when($validated['search'] ?? false, function ($query, $search) {
                 $query->where(function ($query) use ($search){
-                    $query->where('status', 'like', "%{$search}%")
-                        ->orWhere('building_name', 'like', "%{$search}%");
+                    $query->where('buildings.status', 'like', "%{$search}%")
+                        ->orWhere('buildings.building_name', 'like', "%{$search}%");
                 });
             })
             ->when($validated['status'] ?? false, function ($query, $status) {
-                $query->where('status', $status);
+                $query->where('buildings.status', $status);
             })
             ->when($validated['building_name'] ??  false, function ($query, $building_name){
-                $query->where('building_name', 'like', "%{$building_name}%");
+                $query->where('buildings.building_name', 'like', "%{$building_name}%");
             })
             ->when($validated['marketName'] ?? false, function ($query, $marketName) {
                 $query->whereHas('market', function ($query) use ($marketName) {
@@ -61,8 +256,8 @@ class BuildingService
             'industrialPark',
             'developer',
             'owner',
-            'contact',
             'buildingsAvailable',
+//            'files',
         ]);
     }
 
@@ -73,6 +268,9 @@ class BuildingService
 
     public function update(Building $building, array $validated): Building
     {
+        /*if($validated['status'] === BuildingStatus::ENABLED->value) {
+            $this->makeBuildingLogRecord($building);
+        }*/
         $building->update($validated);
         return $building;
     }
@@ -132,8 +330,8 @@ class BuildingService
     {
         return Building::query()
             ->leftJoin('cat_markets as market', 'buildings.market_id', '=', 'market.id')
-            ->leftJoin('cat_submarkets as submarket', 'buildings.submarket_id', '=', 'submarket.id')
-            ->leftJoin('cat_industrial_parks as industrial_parks', 'buildings.industrial_park_id', '=', 'industrial_parks.id')
+            ->leftJoin('cat_sub_markets as submarket', 'buildings.sub_market_id', '=', 'submarket.id')
+            ->leftJoin('industrial_parks as industrial_parks', 'buildings.industrial_park_id', '=', 'industrial_parks.id')
             ->leftJoin('buildings_available as building_av', 'building_av.building_id', '=', 'buildings.id')
             ->select([
                 'buildings.id',
@@ -223,4 +421,105 @@ class BuildingService
         $pdf = Pdf::loadView('buildings.layout-design', compact('building', 'user', 'logoPath', 'images'));
         return $pdf->stream('layout-design.pdf');
     }
+
+    /**
+     * @param Building $building
+     * @return array
+     */
+    public function createDraft(Building $building): array
+    {
+        if ($building->status === BuildingStatus::DRAFT->value) {
+        return ['error' => 'Cannot create a draft from another draft.', 'status' => 400];
+    }
+
+        $existingDraft = Building::where('building_id', $building->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+
+        if ($existingDraft) {
+            return ['error' => 'Draft already exists for this building.', 'status' => 400];
+        }
+
+        $draft = $building->replicate();
+        $draft->status = BuildingStatus::DRAFT->value;
+        $draft->building_id = $building->id;
+        $draft->save();
+
+        return ['success' => 'Draft created successfully.', 'data' => $draft];
+    }
+
+    /**
+     * @param Building $building
+     * @return Building|null
+     */
+    public function getDraft(Building $building): ?Building
+    {
+        return Building::where('building_id', $building->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+    }
+
+    /**
+     * @param Building $building
+     * @param array $validated
+     * @return Building|null
+     */
+    public function updateDraft(Building $building, array $validated): ?Building
+    {
+        $draft = $this->getDraft($building);
+
+        if (!$draft) {
+            return null;
+        }
+
+        if ($validated['sqftToM2'] ?? false) {
+            $validated = $this->convertMetrics($validated);
+        }
+
+        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
+            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+        }
+
+        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
+            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
+        }
+
+        if (isset($validated['status']) && $validated['status'] === BuildingStatus::ENABLED->value) {
+        $updateData = Arr::except($validated, ['status']);
+        $this->makeBuildingLogRecord($building);
+        $building->update($updateData);
+        $draft->delete();
+        return $building;
+    }
+
+        $draft->update($validated);
+        return $draft;
+    }
+
+    /**
+     * @param Building $building
+     * @return array
+     */
+    public function deleteDraft(Building $building): array
+    {
+        $draft = Building::where('building_id', $building->id)
+            ->where('status', BuildingStatus::DRAFT->value)
+            ->first();
+        if (!$draft) {
+            return ['error' => 'Draft not found.', 'status' => 404];
+        }
+        $draft->delete();
+        return ['success' => 'Draft deleted successfully.', 'data' => $draft];
+    }
+
+    /**
+     * @param Building $building
+     */
+    private function makeBuildingLogRecord(Building $building):void
+    {
+        $logRecord = new BuildingLog($building->toArray());
+        $logRecord['building_id'] = $building->id;
+        $logRecord->save();
+    }
+
 }

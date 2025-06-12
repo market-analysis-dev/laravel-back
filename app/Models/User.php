@@ -79,6 +79,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutTrashed()
+ * @property string $type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereType($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
@@ -100,6 +102,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
         'status',
+        'type',
         'created_at',
         'updated_at',
         'deleted_at',

@@ -15,7 +15,7 @@ class DeveloperSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = storage_path('app/builders_new.csv');
+        $path = storage_path('app/developers.csv');
         $file = fopen($path, 'r');
 
         fgetcsv($file);
@@ -23,24 +23,12 @@ class DeveloperSeeder extends Seeder
         $data = [];
         $id = 1;
         while (($row = fgetcsv($file)) !== false) {
-            $market_id = null;
-            $submarket_id = null;
-            $market = Market::where('name', $row[4])->first();
-            $submarket = SubMarket::where('name', $row[5])->first();
-            if($market) {
-                $market_id = $market->id;
-            }
-            if($submarket) {
-                $submarket_id = $submarket->id;
-            }
             $data[] = [
                 'id' => $id++,
                 'name' => $row[0],
-                'market_id' => $market_id,
-                'submarket_id' => $submarket_id,
-                'is_developer' => false,
-                'is_owner' => false,
-                'is_builder' => true,
+                'is_developer' => $row[6],
+                'is_owner' => $row[7],
+                'is_builder' => $row[8],
             ];
         }
 
@@ -50,62 +38,5 @@ class DeveloperSeeder extends Seeder
             DB::table('cat_developers')->insert($chunk);
         }
 
-
-
-        $data = [
-            [
-                'name' => 'Intermex',
-                'is_developer' => true,
-                'is_owner' => false,
-                'is_builder' => false,
-            ],
-            [
-                'name' => 'Parks',
-                'is_developer' => true,
-                'is_owner' => true,
-                'is_builder' => true,
-            ],
-            [
-                'name' => 'MEOR',
-                'is_developer' => true,
-                'is_owner' => false,
-                'is_builder' => false,
-            ],
-            [
-                'name' => 'CPA',
-                'is_developer' => false,
-                'is_owner' => false,
-                'is_builder' => false,
-            ],
-
-            [
-                'name' => 'FUNO',
-                'is_developer' => false,
-                'is_owner' => true,
-                'is_builder' => false,
-            ],
-
-            [
-                'name' => 'Fibra Danhos',
-                'is_developer' => false,
-                'is_owner' => true,
-                'is_builder' => false,
-            ],
-            [
-                'name' => 'Zayat',
-                'is_developer' => false,
-                'is_owner' => true,
-                'is_builder' => false,
-            ],
-            [
-                'name' => 'User Owner',
-                'is_developer' => true,
-                'is_owner' => true,
-                'is_builder' => false,
-            ],
-        ];
-
-        Developer::insert($data);
-        /*Developer::factory()->count(50)->create();*/
     }
 }

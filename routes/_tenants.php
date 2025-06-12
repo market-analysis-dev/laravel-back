@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'tenants',
-    'as' => 'api.tenants',
+    'as' => 'api.tenants.',
     'middleware' => 'auth:sanctum'
 ], function () {
     Route::get('/', [TenantController::class, 'index'])->name('index');

@@ -4,12 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreIndustrialParkRequest;
 use App\Http\Requests\UpdateIndustrialParkRequest;
+use App\Http\Resources\TenantsByParkResource;
+use App\Models\BuildingAvailable;
 use App\Models\IndustrialPark;
+use App\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use App\Enums\BuildingState;
 
-class IndustrialParkController extends ApiController
+class IndustrialParkController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:industrial-parks.index', only: ['index']),
+            new Middleware('permission:industrial-parks.show', only: ['show']),
+            new Middleware('permission:industrial-parks.create', only: ['store']),
+            new Middleware('permission:industrial-parks.update', only: ['update']),
+            new Middleware('permission:industrial-parks.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @param Request $request
      * @return \App\Responses\ApiResponse
@@ -18,12 +35,16 @@ class IndustrialParkController extends ApiController
     {
         $query = IndustrialPark::query();
 
+        if ($request->has('region_id')) {
+            $query->where('region_id', $request->input('region_id'));
+        }
+
         if ($request->has('market_id')) {
             $query->where('market_id', $request->input('market_id'));
         }
 
-        if ($request->has('submarket_id')) {
-            $query->where('submarket_id', $request->input('submarket_id'));
+        if ($request->has('sub_market_id')) {
+            $query->where('sub_market_id', $request->input('sub_market_id'));
         }
 
         $industrialParks = $query->get();
@@ -83,5 +104,20 @@ class IndustrialParkController extends ApiController
         } catch (\Exception $e) {
             return $this->error('Error deleting industrial park: ' . $e->getMessage(), status: 500);
         }
+    }
+
+    /**
+     * @param IndustrialPark $industrialPark
+     * @return ApiResponse
+     */
+    public function getTenantsByPark(IndustrialPark $industrialPark): ApiResponse
+    {
+       $tenantsByPark =  BuildingAvailable::select()->with('building', 'tenant')
+            ->whereHas('building', function ($query) use ($industrialPark) {
+                $query->where('industrial_park_id', $industrialPark->id);
+            })
+        ->where('building_state', BuildingState::ABSORPTION->value)
+       ->get();
+       return $this->success(data: TenantsByParkResource::collection($tenantsByPark));
     }
 }

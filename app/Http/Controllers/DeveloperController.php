@@ -7,16 +7,29 @@ use App\Http\Requests\UpdateDeveloperRequest;
 use App\Http\Resources\DeveloperResource;
 use App\Models\Developer;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class DeveloperController extends ApiController
+class DeveloperController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:developers.index', only: ['index']),
+            new Middleware('permission:developers.show', only: ['show']),
+            new Middleware('permission:developers.create', only: ['store']),
+            new Middleware('permission:developers.update', only: ['update']),
+            new Middleware('permission:developers.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
 
     public function index(Request $request): \App\Responses\ApiResponse
     {
-        $filters = $request->only(['is_owner', 'is_builder', 'is_developer', 'market', 'submarket']);
+        $filters = $request->only(['is_owner', 'is_builder', 'is_developer']);
         $developers = Developer::query()->filter($filters)->get();
         return $this->success(data: DeveloperResource::collection($developers));
     }

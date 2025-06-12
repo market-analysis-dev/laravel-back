@@ -2,24 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexLandsAvailableRequest;
 use App\Http\Requests\StoreLandAvailableRequest;
 use App\Http\Requests\UpdateLandAvailableRequest;
 use App\Models\Land;
 use App\Models\LandAvailable;
+use App\Services\LandsAvailableService;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class LandAvailableController extends ApiController
+class LandAvailableController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:lands.available.index', only: ['index']),
+            new Middleware('permission:lands.available.show', only: ['show']),
+            new Middleware('permission:lands.available.create', only: ['store']),
+            new Middleware('permission:lands.available.update', only: ['update']),
+            new Middleware('permission:lands.available.destroy', only: ['destroy']),
+        ];
+    }
+
+    private LandsAvailableService $landsAvailableService;
+
+
+    public function __construct(LandsAvailableService $landsAvailableService)
+    {
+        $this->landsAvailableService = $landsAvailableService;
+    }
     /**
      * @param Land $land
      * @return ApiResponse
      */
-    public function index(Land $land): ApiResponse
+    public function index(IndexLandsAvailableRequest $request, Land $land): ApiResponse
     {
-        $landsAvailable = LandAvailable::where('land_id', $land->id)
-            ->where('state', '=', 'Availability')
-            ->paginate(10);
+        $validated = $request->validated();
+
+        $landsAvailable = $this->landsAvailableService->filterAvailable($validated, $land->id);
         return $this->success(data: $landsAvailable);
     }
 
@@ -112,7 +134,7 @@ class LandAvailableController extends ApiController
             if ($landAvailable->delete()) {
                 return $this->success('Land Available deleted successfully', $landAvailable);
             }
-            return $this->error('Land Available delete failed', 423);
+            return $this->error('Land Available delete failed', status: 422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }

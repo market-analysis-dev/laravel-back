@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('region_id')->constrained('cat_regions', 'id');
             $table->foreignId('market_id')->constrained('cat_markets', 'id');
-            $table->foreignId('sub_market_id')->constrained('cat_submarkets', 'id');
-            $table->foreignId('industrial_park_id')->constrained('cat_industrial_parks', 'id');
+            $table->foreignId('sub_market_id')->constrained('cat_sub_markets', 'id');
+            $table->foreignId('industrial_park_id')->constrained('industrial_parks', 'id');
             $table->foreignId('developer_id')->constrained('cat_developers', 'id');
             $table->foreignId('owner_id')->constrained('cat_developers', 'id');
             $table->foreignId('contact_id')->nullable()->constrained('contacts', 'id');
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('kvas', 20)->nullable();
             $table->enum('zoning', ['Industrial','Commercial','Residential']);
             $table->enum('parcel_shape', ['Regular', 'Irregular']);
-            $table->enum('status', ['Active', 'Inactive', 'Pending', 'Approved']);
+            $table->enum('status', ['Enabled', 'Disabled', 'Pending', 'Approved']);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();

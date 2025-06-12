@@ -2,36 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BuildingState;
+use App\Enums\BuildingStatus;
 use App\Http\Requests\ConvertToAbsorptionRequest;
 use App\Http\Requests\IndexBuildingsAvailableRequest;
-use App\Http\Requests\StoreBuildingsAvailableRequest;
-use App\Http\Requests\UpdateBuildingsAvailableRequest;
+use App\Http\Requests\StoreBuildingWithAvailabilityRequest;
+use App\Http\Requests\UpdateBuildingAvailableDraftRequest;
+use App\Http\Requests\UpdateBuildingWithAvailabilityRequest;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
-use App\Services\BuildingsAvailableService;
-use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
-use App\Enums\BuildingState;
+use App\Services\BuildingsAvailableService;
+use App\Services\BuildingService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BuildingsAvailableController extends ApiController
+class BuildingsAvailableController extends ApiController implements HasMiddleware
 {
-    /**
-     * @param Request $request
-     * @param Building $building
-     * @return ApiResponse
-     */
 
-    private BuildingsAvailableService $buildingAvailableService;
 
-    public function __construct(BuildingsAvailableService $buildingAvailableService)
+    public static function middleware()
     {
-        $this->buildingAvailableService = $buildingAvailableService;
+        return [
+            new Middleware('permission:buildings.availability.index', only: ['index']),
+            new Middleware('permission:buildings.availability.show', only: ['show']),
+            new Middleware('permission:buildings.availability.create', only: ['store']),
+            new Middleware('permission:buildings.availability.update', only: ['update']),
+            new Middleware('permission:buildings.availability.destroy', only: ['destroy']),
+            new Middleware('permission:buildings.availability.to-absorption', only: ['toAbsorption']),
+        ];
     }
 
-    public function index(IndexBuildingsAvailableRequest $request, Building $building): ApiResponse
+
+    public function __construct(
+        private readonly BuildingsAvailableService $buildingAvailableService,
+        private readonly BuildingService           $buildingService,
+    )
+    {
+    }
+
+    public function index(IndexBuildingsAvailableRequest $request): ApiResponse
     {
         $validated = $request->validated();
-        $availabilities = $this->buildingAvailableService->filterAvailable($validated, $building->id);
+        $availabilities = $this->buildingAvailableService->filterAvailable($validated);
 
         if (!empty($building->fire_protection_system)) {
             $building->fire_protection_system = explode(',', $building->fire_protection_system);
@@ -43,30 +56,35 @@ class BuildingsAvailableController extends ApiController
         return $this->success(data: $availabilities);
     }
 
-
     /**
-     * @param StoreBuildingsAvailableRequest $request
-     * @param Building $building
+     * @param StoreBuildingWithAvailabilityRequest $request
      * @return ApiResponse
      */
-    public function store(StoreBuildingsAvailableRequest $request, Building $building): ApiResponse
+    public function store(StoreBuildingWithAvailabilityRequest $request): ApiResponse
     {
-        $validated = $request->validated();
-        $validated['building_id'] = $building->id;
-        $validated['building_state'] = BuildingState::AVAILABILITY;
+        try {
+            $validated = $request->validated();
+            $buildingData = $validated['building'];
+            $availabilityData = $validated['availability'];
 
-        if ($validated['sqftToM2'] ?? false) {
-            $validated = $this->buildingAvailableService->convertMetrics($validated);
-        }
-        if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-            $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
-        }
-        if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
-            $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
-        }
+            $building = $this->buildingService->createWithAvailability($buildingData, $availabilityData);
 
-        $availability = $this->buildingAvailableService->create($validated);
+            return $this->success('Created successfully', $building);
+        } catch (\Throwable $e) {
+            report($e);
+            return $this->error(message: 'Error creating building with availability', data: [], status: 500);
+        }
+    }
 
+    /**
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function show(BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+            return $this->error('Availability not found', status: 404);
+        }
         if (!empty($building->fire_protection_system)) {
             $building->fire_protection_system = explode(',', $building->fire_protection_system);
         }
@@ -74,96 +92,61 @@ class BuildingsAvailableController extends ApiController
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
 
-        return $this->success('Building Available created successfully', $availability);
-    }
-
-    /**
-     * @param Building $building
-     * @param BuildingAvailable $buildingAvailable
-     * @return ApiResponse
-     */
-    public function show(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
-    {
-        if ($buildingAvailable->building_id !== $building->id) {
-            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
-        }
-
-        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
-        }
-
-        if (!empty($building->fire_protection_system)) {
-            $building->fire_protection_system = explode(',', $building->fire_protection_system);
-        }
-        if (!empty($building->above_market_tis)) {
-           $building->above_market_tis = explode(',', $building->above_market_tis);
-       }
-
-        return $this->success(data: $buildingAvailable);
+        return $this->success(data: [
+            'building' => $buildingAvailable->building,
+            'availability' => $buildingAvailable
+        ]);
     }
 
 
     /**
-     * @param UpdateBuildingsAvailableRequest $request
-     * @param Building $building
+     * @param UpdateBuildingWithAvailabilityRequest $request
      * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
      */
-    public function update(UpdateBuildingsAvailableRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    public function update(UpdateBuildingWithAvailabilityRequest $request, BuildingAvailable $buildingAvailable): ApiResponse
     {
-        if ($buildingAvailable->building_id !== $building->id) {
-            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
-        }
-        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
-        }
-
-        $validated = $request->validated();
-        $validated['building_id'] = $building->id;
-        $validated['building_state'] = 'Availability';
         try {
-            if ($validated['sqftToM2'] ?? false) {
-                $validated = $this->buildingAvailableService->convertMetrics($validated);
+            $validated = $request->validated();
+            $buildingData = $validated['building'];
+            $availabilityData = $validated['availability'];
+
+            if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
+                return $this->error('Building Availability not found', status: 404);
             }
-            if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
-                $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
+
+            if ($buildingAvailable->building_id !== $buildingData['id']) {
+                return $this->error('Building ID mismatch', status: 422);
             }
-            if (!empty($validated['above_market_tis']) && is_array($validated['above_market_tis'])) {
-                $validated['above_market_tis'] = implode(',', $validated['above_market_tis']);
-            }
-            $building = $this->buildingAvailableService->update($buildingAvailable, $validated);
-            if (!empty($building->fire_protection_system)) {
-                $building->fire_protection_system = explode(',', $building->fire_protection_system);
-            }
-            if (!empty($building->above_market_tis)) {
-                $building->above_market_tis = explode(',', $building->above_market_tis);
-            }
-            return $this->success('Building Available updated successfully', $buildingAvailable);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
+
+            $buildingData['id'] = $buildingAvailable->building_id;
+            $availabilityData['id'] = $buildingAvailable->id;
+
+            $result = $this->buildingService->updateWithAvailability($buildingData, $availabilityData);
+
+            return $this->success('Updated successfully', $result);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->error(
+                message: 'Error updating building with availability',
+                data: ['error' => $e->getMessage()],
+                status: 500
+            );
         }
     }
 
     /**
-     * @param Building $building
      * @param BuildingAvailable $buildingAvailable
      * @return ApiResponse
      */
-    public function destroy(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    public function destroy(BuildingAvailable $buildingAvailable): ApiResponse
     {
-        if ($buildingAvailable->building_id !== $building->id) {
-            return $this->error('Building Available not found for this Building', ['error_code' => 404]);
-        }
-
-        if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
-            return $this->error('Invalid building state', ['error_code' => 403]);
-        }
-
         try {
             if ($buildingAvailable->delete()) {
                 return $this->success('Building Available deleted successfully', $buildingAvailable);
             }
-            return $this->error('Building Available delete failed', ['error_code' => 423]);
+            return $this->error('Building Available delete failed', ['error_code' => 422]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), ['error_code' => 500]);
         }
@@ -177,6 +160,9 @@ class BuildingsAvailableController extends ApiController
      */
     public function toAbsorption(ConvertToAbsorptionRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
     {
+        if ($buildingAvailable->status === BuildingStatus::DRAFT->value) {
+            return $this->error('Cannot convert from one draft.', status: 400);
+        }
         $validated = $request->validated();
         if (!empty($validated['fire_protection_system']) && is_array($validated['fire_protection_system'])) {
             $validated['fire_protection_system'] = implode(',', $validated['fire_protection_system']);
@@ -196,6 +182,72 @@ class BuildingsAvailableController extends ApiController
         }
 
         return $this->success(data: $result['data']);
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function draft(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        $result = $this->buildingAvailableService->createDraft($building, $buildingAvailable, BuildingState::AVAILABILITY->value);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function getDraft(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        $result = $this->buildingAvailableService->getDraft($building, $buildingAvailable, BuildingState::AVAILABILITY->value);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+
+    /**
+     * @param UpdateBuildingAvailableDraftRequest $request
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function updateDraft(UpdateBuildingAvailableDraftRequest $request, Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        $validated = $request->validated();
+        $result = $this->buildingAvailableService->updateDraft($building, $buildingAvailable, $validated, BuildingState::AVAILABILITY->value);
+
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+
+        return $this->success($result['success'], data: $result['data']);
+    }
+
+    /**
+     * @param Building $building
+     * @param BuildingAvailable $buildingAvailable
+     * @return ApiResponse
+     */
+    public function deleteDraft(Building $building, BuildingAvailable $buildingAvailable): ApiResponse
+    {
+        $result = $this->buildingAvailableService->deleteDraft($building, $buildingAvailable, BuildingState::AVAILABILITY->value);
+        if (isset($result['error'])) {
+            return $this->error($result['error'], status: $result['status']);
+        }
+        return $this->success($result['success'], data: $result['data']);
     }
 
 

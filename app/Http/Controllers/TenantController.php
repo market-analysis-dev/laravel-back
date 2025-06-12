@@ -7,9 +7,22 @@ use App\Http\Requests\UpdateTenantRequest;
 use Illuminate\Http\Request;
 use App\Responses\ApiResponse;
 use App\Models\Tenant;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TenantController extends ApiController
+class TenantController extends ApiController implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:tenants.index', only: ['index']),
+            new Middleware('permission:tenants.show', only: ['show']),
+            new Middleware('permission:tenants.create', only: ['store']),
+            new Middleware('permission:tenants.update', only: ['update']),
+            new Middleware('permission:tenants.destroy', only: ['destroy']),
+        ];
+    }
+
     /**
      * @return ApiResponse
      */
@@ -51,7 +64,7 @@ class TenantController extends ApiController
                 return $this->success('Tenant updated successfully', $tenant);
             }
 
-            return $this->error('Tenant update failed', status:423);
+            return $this->error('Tenant update failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }
@@ -68,7 +81,7 @@ class TenantController extends ApiController
             if ($tenant->delete()) {
                 return $this->success('Tenant deleted successfully', $tenant);
             }
-            return $this->error('Tenant delete failed', status:423);
+            return $this->error('Tenant delete failed', status:422);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), status:500);
         }

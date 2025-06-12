@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -45,13 +46,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer withoutTrashed()
  * @property int $is_user_owner
- * @property int|null $market_id
- * @property int|null $submarket_id
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereMarketId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer whereSubmarketId($value)
- * @property-read \App\Models\Market|null $market
- * @property-read \App\Models\SubMarket|null $submarket
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Developer filter(array $filters)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Building> $buildings
+ * @property-read int|null $buildings_count
  * @mixin \Eloquent
  */
 class Developer extends Model
@@ -61,8 +58,6 @@ class Developer extends Model
     protected $table = 'cat_developers';
 
     protected $fillable = [
-        'market_id',
-        'submarket_id',
         'name',
         'is_developer',
         'is_builder',
@@ -81,32 +76,19 @@ class Developer extends Model
         'deleted_at',
     ];
 
-    public function market(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Market::class, 'market_id');
-    }
-
-    public function submarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Submarket::class, 'submarket_id');
-    }
-
     public function scopeFilter($query, array $filters)
     {
         foreach ($filters as $key => $value) {
             if (in_array($key, ['is_owner', 'is_builder', 'is_developer'])) {
                 $query->where($key, filter_var($value, FILTER_VALIDATE_BOOLEAN));
-            } elseif ($key === 'market' && !empty($value)) {
-                $query->whereHas('market', function ($q) use ($value) {
-                    $q->where('id', $value);
-                });
-            } elseif ($key === 'submarket' && !empty($value)) {
-                $query->whereHas('submarket', function ($q) use ($value) {
-                    $q->where('id', $value);
-                });
             }
         }
 
         return $query;
+    }
+
+    public function buildings(): HasMany
+    {
+        return $this->hasMany(Building::class, 'developer_id');
     }
 }

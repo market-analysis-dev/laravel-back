@@ -30,7 +30,7 @@ class IndexLandRequest extends FormRequest
             'marketName' => 'nullable|string',
             'submarketName' => 'nullable|string',
             'industrialParkName' => 'nullable|string',
-            'column' => 'nullable|in:status,land_name,marketName,submarketName,industrialPark',
+            'column' => 'nullable|in:status,land_name,marketName,submarketName,industrialParkName',
             'state' => 'nullable|in:asc,desc',
         ];
     }

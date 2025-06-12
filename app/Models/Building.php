@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Storage;
 
 
 /**
@@ -14,12 +17,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $region_id
  * @property int $market_id
- * @property int $submarket_id
+ * @property int $sub_market_id
  * @property int $builder_id
  * @property int $industrial_park_id
  * @property int $developer_id
  * @property int $owner_id
- * @property int|null $contact_id
  * @property string $building_name
  * @property int $building_size_sf
  * @property string $latitud
@@ -27,14 +29,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $year_built
  * @property int|null $clear_height_ft
  * @property int|null $total_land_sf
- * @property int|null $offices_space_sf
  * @property int $has_expansion_land
- * @property int $has_crane
  * @property int $has_hvac
- * @property int $has_rail_spur
  * @property int $has_sprinklers
  * @property int $has_office
- * @property int $has_leed
  * @property string|null $hvac_production_area
  * @property string|null $ventilation
  * @property string|null $transformer_capacity
@@ -45,15 +43,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $kvas
  * @property int $expansion_land
  * @property string $class
- * @property string $type_generation
+ * @property string $generation
  * @property string $currency
  * @property string $tenancy
  * @property string|null $construction_type
  * @property string|null $lightning
- * @property string $fire_protection_system
  * @property string $deal
  * @property string|null $loading_door
- * @property string|null $above_market_tis
  * @property string $status
  * @property int|null $created_by
  * @property int|null $updated_by
@@ -64,7 +60,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Developer $builder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingsAvailable
  * @property-read int|null $buildings_available_count
- * @property-read \App\Models\Contact|null $contact
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Developer $developer
  * @property-read \App\Models\IndustrialPark $industrialPark
@@ -87,7 +82,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereClearHeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereConstructionState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereConstructionType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereContactId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCoverage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCreatedBy($value)
@@ -132,7 +126,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building withoutTrashed()
  * @property string $columns_spacing
- * @property string $bay_size
  * @property int $floor_thickness
  * @property string $floor_resistance
  * @property int $expansion_up_to_sf
@@ -148,6 +141,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereFloorThicknessIn($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOfficesSpaceSf($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereTotalLandSf($value)
+ * @property-read Building|null $building
+ * @property-read int|null $files_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
+ * @property-read int|null $contacts_count
+ * @property string $building_type
+ * @property string $certifications
+ * @property string $owner_type
+ * @property string $stage
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereCertifications($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereGeneration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereOwnerType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStage($value)
+ * @property string|null $roofing
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRoofing($value)
  * @mixin \Eloquent
  */
 class Building extends Model
@@ -159,12 +169,11 @@ class Building extends Model
     protected $fillable = [
         'region_id',
         'market_id',
-        'submarket_id',
+        'sub_market_id',
         'builder_id',
         'industrial_park_id',
         'developer_id',
         'owner_id',
-        'contact_id',
         'building_name',
         'building_size_sf',
         'latitud',
@@ -172,33 +181,30 @@ class Building extends Model
         'year_built',
         'clear_height_ft',
         'total_land_sf',
-        'offices_space_sf',
-        'has_crane',
-        'has_rail_spur',
-        'has_leed',
         'hvac_production_area',
         'ventilation',
         'roof_system',
         'skylights_sf',
         'coverage',
-        'kvas',
+        'transformer_capacity',
         'expansion_land',
         'class',
-        'type_generation',
+        'generation',
         'currency',
         'tenancy',
         'construction_type',
         'lightning',
-        'fire_protection_system',
         'deal',
         'loading_door',
-        'above_market_tis',
         'status',
+        'building_type',
+        'certifications',
         'columns_spacing_ft',
         'floor_thickness_in',
         'floor_resistance',
         'expansion_up_to_sf',
-        'bay_size',
+        'owner_type',
+        'stage',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -206,6 +212,8 @@ class Building extends Model
         'updated_at',
         'deleted_at',
     ];
+
+
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -219,7 +227,7 @@ class Building extends Model
 
     public function subMarket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(SubMarket::class, 'submarket_id');
+        return $this->belongsTo(SubMarket::class, 'sub_market_id');
     }
 
     public function builder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -243,13 +251,27 @@ class Building extends Model
     }
 
 
-    public function contact(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Contact::class, 'contact_id');
-    }
-
     public function buildingsAvailable(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(BuildingAvailable::class, 'building_id');
     }
+
+
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'building_contacts', 'building_id', 'contact_id');
+    }
+
+    /*public function getFilesByTypeAttribute()
+    {
+        $filesByType = $this->files->groupBy('type');
+
+        $filesByType->each(function ($files) {
+            $files->each(function ($file) {
+            $file->path = Storage::disk('public')->url($file->path);
+            });
+        });
+
+        return $filesByType;
+    }*/
 }
