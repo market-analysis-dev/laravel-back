@@ -92,26 +92,29 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             $building->above_market_tis = explode(',', $building->above_market_tis);
         }
 
-        return $this->success(data: $buildingAbsorption);
+        return $this->success(data: [
+            'building' => $buildingAbsorption->building,
+            'absorption' => $buildingAbsorption
+        ]);
     }
 
 
-    public function update(UpdateBuildingWithAbsorptionRequest $request, BuildingAvailable $buildingAvailable): ApiResponse
+    public function update(UpdateBuildingWithAbsorptionRequest $request, BuildingAvailable $buildingAbsorption): ApiResponse
     {
         try {
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $availabilityData = $validated['absorption'];
 
-            if($buildingAvailable->building_state !== BuildingState::ABSORPTION->value) {
+            if($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
                 return $this->error('Building Absorption not found', status: 404);
             }
 
-            if ($buildingAvailable->building_id !== $buildingData['id']) {
+            if ($buildingAbsorption->building_id !== $buildingData['id']) {
                 return $this->error('Building ID mismatch', status: 400);
             }
 
-            $availabilityData['id'] = $buildingAvailable->id;
+            $availabilityData['id'] = $buildingAbsorption->id;
 
             $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData);
 
