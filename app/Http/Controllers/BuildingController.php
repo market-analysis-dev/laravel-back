@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\BuildingClass;
-use App\Enums\BuildingDeal;
-use App\Enums\BuildingFireProtectionSystem;
-use App\Enums\BuildingLightning;
-use App\Enums\BuildingLoadingDoor;
-use App\Enums\BuildingType;
-use App\Enums\BuildingTenancy;
-use App\Enums\BuildingTypeConstruction;
-use App\Enums\BuildingGeneration;
-use App\Enums\TechnicalImprovements;
-use App\Enums\BuildingStatus;
-use App\Enums\BuildingCompanyType;
-use App\Enums\BuildingFinalUse;
 use App\Enums\BuildingBuildingType;
 use App\Enums\BuildingCertifications;
+use App\Enums\BuildingClass;
+use App\Enums\BuildingCompanyType;
+use App\Enums\BuildingDeal;
+use App\Enums\BuildingFinalUse;
+use App\Enums\BuildingFireProtectionSystem;
+use App\Enums\BuildingGeneration;
+use App\Enums\BuildingLightning;
+use App\Enums\BuildingLoadingDoor;
 use App\Enums\BuildingOwnerType;
 use App\Enums\BuildingStage;
+use App\Enums\BuildingStatus;
+use App\Enums\BuildingTenancy;
+use App\Enums\BuildingType;
+use App\Enums\BuildingTypeConstruction;
+use App\Enums\TechnicalImprovements;
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Requests\IndexLocationRequest;
 use App\Http\Requests\StoreBuildingRequest;
@@ -27,16 +27,14 @@ use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
 use App\Models\Developer;
 use App\Models\IndustrialPark;
-use App\Services\BuildingService;
+use App\Models\Region;
 use App\Responses\ApiResponse;
+use App\Services\BuildingService;
 use App\Services\FileService;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use PDF;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Log;
+use PDF;
 
 class BuildingController extends ApiController implements HasMiddleware
 {
@@ -146,7 +144,7 @@ class BuildingController extends ApiController implements HasMiddleware
             ]);
 
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), status:500);
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 
@@ -161,10 +159,10 @@ class BuildingController extends ApiController implements HasMiddleware
                 return $this->success('Building deleted successfully', $building);
             }
             // return $this->error('Building delete failed', ['error_code' => 422]);
-            return $this->error('Building delete failed', status:422);
+            return $this->error('Building delete failed', status: 422);
         } catch (\Exception $e) {
             // return $this->error($e->getMessage(), ['error_code' => 500]);
-            return $this->error($e->getMessage(), status:500);
+            return $this->error($e->getMessage(), status: 500);
         }
     }
 
@@ -197,19 +195,19 @@ class BuildingController extends ApiController implements HasMiddleware
                 return $collection->filter(fn($phase) => in_array($phase, [
                     BuildingType::CONSTRUCTION->value,
                     BuildingType::PLANNED->value,
-                BuildingType::SUBLEASE->value,
-                BuildingType::EXPIRATION->value,
-                BuildingType::INVENTORY->value,
-            ]));
-        })
+                    BuildingType::SUBLEASE->value,
+                    BuildingType::EXPIRATION->value,
+                    BuildingType::INVENTORY->value,
+                ]));
+            })
             ->when(request()->boolean('absorption'), function ($collection) {
                 return $collection->filter(fn($phase) => in_array($phase, [
                     BuildingType::BTS->value,
                     BuildingType::EXPANSION->value,
                     BuildingType::INVENTORY->value,
                     BuildingType::BTS_EXPANSION->value,
-            ]));
-        });
+                ]));
+            });
 
         return $this->success(data: $filteredPhases->values());
     }
@@ -383,10 +381,43 @@ class BuildingController extends ApiController implements HasMiddleware
     public function deleteDraft(Building $building): ApiResponse
     {
         $result = $this->buildingService->deleteDraft($building);
-        if(isset($result['error'])) {
+        if (isset($result['error'])) {
             return $this->error($result['error'], status: $result['status']);
         }
         return $this->success($result['success'], data: $result['data']);
+    }
+
+    public function listRegions(IndexLocationRequest $request): ApiResponse
+    {
+        $requestQuery = $request->query();
+
+        $regions = Region::query();
+        $hasAnyParam = collect($requestQuery)->only([
+            'market_id',
+            'sub_market_id',
+            'developer_id',
+            'industrial_park_id'
+        ])->filter()->isNotEmpty();
+
+        if ($hasAnyParam) {
+            $regions->whereHas('buildings', function (Builder $query) use ($request) {
+                if ($request->query('market_id')) {
+                    $query->where('market_id', $request->query('market_id'));
+                }
+                if ($request->query('sub_market_id')) {
+                    $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+                if ($request->query('developer_id')) {
+                    $query->where('developer_id', $request->query('developer_id'));
+                }
+                if ($request->query('industrial_park_id')) {
+                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
+                }
+            });
+        }
+        $regions = $regions->select('id', 'name')->orderBy('name')->get();
+
+        return $this->success(data: $regions);
     }
 
     public function listDevelopers(IndexLocationRequest $request): ApiResponse
@@ -394,9 +425,14 @@ class BuildingController extends ApiController implements HasMiddleware
         $requestQuery = $request->query();
 
         $query = Developer::select('id', 'name')
-        ->where('is_developer', true);
+            ->where('is_developer', true);
 
-        $hasAnyParam = collect($requestQuery)->only(['region_id', 'market_id', 'sub_market_id'])->filter()->isNotEmpty();
+        $hasAnyParam = collect($requestQuery)->only([
+            'region_id',
+            'market_id',
+            'sub_market_id',
+            'industrial_park_id'
+        ])->filter()->isNotEmpty();
         if ($hasAnyParam) {
             $query->whereHas('buildings', function (Builder $query) use ($request) {
                 if ($request->query('region_id')) {
@@ -407,6 +443,9 @@ class BuildingController extends ApiController implements HasMiddleware
                 }
                 if ($request->query('sub_market_id')) {
                     $query->where('sub_market_id', $request->query('sub_market_id'));
+                }
+                if ($request->query('industrial_park_id')) {
+                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
                 }
             });
         }
@@ -420,7 +459,12 @@ class BuildingController extends ApiController implements HasMiddleware
 
         $query = IndustrialPark::query();
 
-        $hasAnyParam = collect($requestQuery)->only(['region_id', 'market_id', 'sub_market_id', 'developer_id'])->filter()->isNotEmpty();
+        $hasAnyParam = collect($requestQuery)->only([
+            'region_id',
+            'market_id',
+            'sub_market_id',
+            'developer_id'
+        ])->filter()->isNotEmpty();
         if ($hasAnyParam) {
             $query->whereHas('buildings', function (Builder $query) use ($request) {
                 if ($request->query('region_id')) {

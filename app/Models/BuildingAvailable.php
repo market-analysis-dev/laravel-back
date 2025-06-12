@@ -9,6 +9,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 
 /**
+ * 
  *
  * @property int $id
  * @property int $building_id

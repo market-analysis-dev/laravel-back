@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $market_id
@@ -77,6 +77,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereParkType($value)
  * @property string $reserve_land_ha
  * @method static \Illuminate\Database\Eloquent\Builder<static>|IndustrialPark whereReserveLandHa($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Building> $buildings
+ * @property-read int|null $buildings_count
  * @mixin \Eloquent
  */
 class IndustrialPark extends Model
