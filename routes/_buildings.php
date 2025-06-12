@@ -29,6 +29,7 @@ Route::group([
     Route::get('/developers', [BuildingController::class, 'listDevelopers'])->name('listDevelopers');
     Route::get('/industrial-parks', [BuildingController::class, 'listIndustrialParks'])->name('listIndustrialParks');
     Route::get('/regions', [BuildingController::class, 'listRegions'])->name('listRegions');
+    Route::get('/markets', [BuildingController::class, 'listMarkets'])->name('listMarkets');
     Route::get('/', [BuildingController::class, 'index'])->name('index');
     /*Route::post('/', [BuildingController::class, 'store'])->name('store');*/
     Route::get('/{building}', [BuildingController::class, 'show'])->name('show');

@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -144,7 +144,6 @@ use Storage;
  * @property-read Building|null $building
  * @property-read int|null $files_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
  * @property-read int|null $contacts_count
  * @property string $building_type
