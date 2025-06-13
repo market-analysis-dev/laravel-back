@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\File;
+use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 /**
  * 
@@ -45,6 +44,8 @@ use App\Models\File;
  * @property string|null $longitude
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereLatitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SubMarket whereLongitude($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Building> $buildings
+ * @property-read int|null $buildings_count
  * @mixin \Eloquent
  */
 class SubMarket extends Model
@@ -66,5 +67,11 @@ class SubMarket extends Model
         'updated_at',
         'deleted_at',
     ];
+
+
+    public function buildings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Building::class, 'sub_market_id');
+    }
 
 }
