@@ -404,7 +404,7 @@ class BuildingController extends ApiController implements HasMiddleware
         $query = Market::query();
 
         $this->filterLocations($query, $request);
-        $markets = $query->select('id', 'name')->orderBy('name')->get();
+        $markets = $query->select('id', 'name', 'region_id')->orderBy('name')->get();
 
         return $this->success(data: $markets);
     }
@@ -414,7 +414,7 @@ class BuildingController extends ApiController implements HasMiddleware
         $query = SubMarket::query();
 
         $this->filterLocations($query, $request);
-        $subMarkets = $query->select('id', 'name')->orderBy('name')->get();
+        $subMarkets = $query->select('id', 'name', 'market_id')->orderBy('name')->get();
 
         return $this->success(data: $subMarkets);
     }
@@ -435,7 +435,7 @@ class BuildingController extends ApiController implements HasMiddleware
         $query = IndustrialPark::query();
 
         $this->filterLocations($query, $request);
-        $industrialParks = $query->select('id', 'name')->orderBy('name')->get();
+        $industrialParks = $query->select('id', 'name', 'region_id', 'market_id', 'sub_market_id')->orderBy('name')->get();
 
         return $this->success(data: $industrialParks);
     }
@@ -478,6 +478,8 @@ class BuildingController extends ApiController implements HasMiddleware
                     $query->where('id', $request->query('building_id'));
                 }
             });
+        } else {
+            $query->has('buildings');
         }
     }
 }
