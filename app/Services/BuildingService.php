@@ -210,7 +210,7 @@ class BuildingService
         $order = $validated['column'] ?? 'id';
         $direction = $validated['state'] ?? 'desc';
 
-        return Building::with(['market', 'subMarket', 'industrialPark'])
+        return Building::with(['market', 'subMarket', 'industrialPark','developer'])
             ->leftJoin('cat_markets', 'cat_markets.id', '=', 'buildings.market_id')
             ->leftJoin('cat_sub_markets', 'cat_sub_markets.id', '=', 'buildings.sub_market_id')
             ->leftJoin('industrial_parks', 'industrial_parks.id', '=', 'buildings.industrial_park_id')
@@ -241,6 +241,21 @@ class BuildingService
                 $query->whereHas('industrialPark', function ($query) use ($industrialParkName) {
                     $query->where('name', 'like', "%{$industrialParkName}%");
                 });
+            })
+            ->when($validated['region_id'] ?? false, function ($query, $regionId) {
+                $query->where('buildings.region_id', $regionId);
+            })
+            ->when($validated['market_id'] ?? false, function ($query, $marketId) {
+                $query->where('buildings.market_id', $marketId);
+            })
+            ->when($validated['sub_market_id'] ?? false, function ($query, $subMarketId) {
+                $query->where('buildings.sub_market_id', $subMarketId);
+            })
+            ->when($validated['developer_id'] ?? false, function ($query, $developerId) {
+                $query->where('buildings.developer_id', $developerId);
+            })
+            ->when($validated['industrial_park_id'] ?? false, function ($query, $industrialParkId) {
+                $query->where('buildings.industrial_park_id', $industrialParkId);
             })
             ->orderBy($order, $direction)
             ->paginate($size);
