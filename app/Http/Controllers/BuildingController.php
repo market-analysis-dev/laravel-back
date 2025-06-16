@@ -33,7 +33,9 @@ use App\Models\SubMarket;
 use App\Responses\ApiResponse;
 use App\Services\BuildingService;
 use App\Services\FileService;
+use App\Services\ImageOptimizationService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use PDF;
@@ -482,4 +484,5 @@ class BuildingController extends ApiController implements HasMiddleware
             $query->has('buildings');
         }
     }
+
 }

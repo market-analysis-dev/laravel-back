@@ -21,6 +21,7 @@
     "phpoffice/phpspreadsheet": "^2.1",
     "richan-fongdasen/eloquent-blameable": "^1.10",
     "spatie/flysystem-dropbox": "*",
+    "spatie/image": "^3.8",
     "spatie/laravel-backup": "^8.8",
     "spatie/laravel-permission": "^6.10"
   },
