@@ -33,7 +33,9 @@ use App\Models\SubMarket;
 use App\Responses\ApiResponse;
 use App\Services\BuildingService;
 use App\Services\FileService;
+use App\Services\ImageOptimizeService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use PDF;
@@ -481,5 +483,22 @@ class BuildingController extends ApiController implements HasMiddleware
         } else {
             $query->has('buildings');
         }
+    }
+
+    /**
+     * @throws \Spatie\Image\Exceptions\CouldNotLoadImage
+     */
+    public function upload(Request $request, ImageOptimizeService $imageOptimizeService): void
+    {
+
+        $file = $request->file('file');
+        \Storage::putFileAs(
+            'public/uploads',
+            $file,
+            $file->getClientOriginalName()
+        );
+
+        $imageOptimizeService->optimize(storage_path('app/public/uploads/' . $file->getClientOriginalName()));
+
     }
 }
