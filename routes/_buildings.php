@@ -45,7 +45,5 @@ Route::group([
     Route::get('/{building}/draft', [BuildingController::class, 'getDraft'])->name('getDraft');
     Route::put('/{building}/draft', [BuildingController::class, 'updateDraft'])->name('updateDraft');
     Route::delete('/{building}/draft', [BuildingController::class, 'deleteDraft'])->name('deleteDraft');
-
-    Route::post('/upload', [BuildingController::class, 'upload'])->name('upload');
 });
 

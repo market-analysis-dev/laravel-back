@@ -5,7 +5,7 @@ namespace App\Services;
 
 use Spatie\Image\Image;
 
-class ImageOptimizeService
+class ImageOptimizationService
 {
 
     public function __construct(private readonly Image $image)
