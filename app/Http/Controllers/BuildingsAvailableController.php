@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\BuildingState;
 use App\Enums\BuildingStatus;
 use App\Http\Requests\ConvertToAbsorptionRequest;
+use App\Http\Requests\ImportBuildingAvailabilityRequest;
 use App\Http\Requests\IndexBuildingsAvailableRequest;
 use App\Http\Requests\StoreBuildingWithAvailabilityRequest;
 use App\Http\Requests\UpdateBuildingAvailableDraftRequest;
@@ -249,6 +250,137 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         }
         return $this->success($result['success'], data: $result['data']);
     }
+
+/**
+ * @param ImportBuildingAvailabilityRequest $request
+ * @return ApiResponse
+ */
+    public function importAvailability(ImportBuildingAvailabilityRequest $request): ApiResponse
+    {
+    $request->validated();
+
+    $path = $request->file('file')->getRealPath();
+    $csv = array_map('str_getcsv', file($path));
+    $header = array_map('trim', array_shift($csv));
+
+    $importedBuildings = 0;
+    $updatedBuildings = 0;
+    $importedAvailability = 0;
+    $updatedAvailability = 0;
+
+    $normalizeNulls = function (&$data) {
+        foreach ($data as $key => &$value) {
+            if (is_array($value)) {
+                $this($value);
+            } else {
+                if (is_string($value) && strtoupper($value) === 'NULL') {
+                    $value = null;
+                }
+            }
+        }
+    };
+
+    foreach ($csv as $row) {
+        $data = array_combine($header, $row);
+
+        if (empty($data['id']) || empty($data['ba_avl_date'])) {
+            continue;
+        }
+
+        $buildingData = [
+            'region_id' => $data['region_id'] ?? null,
+            'market_id' => $data['market_id'] ?? null,
+            'sub_market_id' => $data['sub_market_id'] ?? null,
+            'builder_id' => $data['builder_id'] ?? null,
+            'industrial_park_id' => $data['industrial_park_id'] ?? null,
+            'developer_id' => $data['developer_id'] ?? null,
+            'owner_id' => $data['owner_id'] ?? null,
+            'building_name' => $data['building_name'] ?? null,
+            'building_size_sf' => $data['building_size_sf'] ?? null,
+            'latitud' => $data['latitud'] ?? null,
+            'longitud' => $data['longitud'] ?? null,
+            'year_built' => $data['year_built'] ?? null,
+            'clear_height_ft' => $data['clear_height_ft'] ?? null,
+            'total_land_sf' => $data['total_land_sf'] ?? null,
+            'hvac_production_area' => $data['hvac_production_area'] ?? null,
+            'ventilation' => $data['ventilation'] ?? null,
+            'roofing' => $data['roofing'] ?? null,
+            'skylights_sf' => $data['skylights_sf'] ?? null,
+            'coverage' => $data['coverage'] ?? null,
+            'transformer_capacity' => $data['transformer_capacity'] ?? null,
+            'expansion_land' => $data['expansion_land'] ?? null,
+            'columns_spacing_ft' => $data['columns_spacing_ft'] ?? null,
+            'floor_thickness_in' => $data['floor_thickness_in'] ?? null,
+            'floor_resistance' => $data['floor_resistance'] ?? null,
+            'expansion_up_to_sf' => $data['expansion_up_to_sf'] ?? null,
+            'class' => $data['class'] ?? null,
+            'generation' => $data['generation'] ?? null,
+            'currency' => $data['currency'] ?? null,
+            'tenancy' => $data['tenancy'] ?? null,
+            'construction_type' => $data['construction_type'] ?? null,
+            'lightning' => $data['lightning'] ?? null,
+            'loading_door' => $data['loading_door'] ?? null,
+            'building_type' => $data['building_type'] ?? null,
+            'certifications' => $data['certifications'] ?? null,
+            'owner_type' => $data['owner_type'] ?? null,
+            'stage' => $data['stage'] ?? null,
+            'created_at' => $data['created_at'] ?? null,
+            'updated_at' => $data['updated_at'] ?? null,
+            'deleted_at' => $data['deleted_at'] ?? null,
+        ];
+
+
+        $normalizeNulls($buildingData);
+
+        $building = Building::updateOrCreate(
+            ['id' => $data['id']],
+            $buildingData
+        );
+
+        if ($building->wasRecentlyCreated) {
+            $importedBuildings++;
+        } else {
+            $updatedBuildings++;
+        }
+
+        $availabilityData = [];
+        foreach ($data as $key => $value) {
+            if (str_starts_with($key, 'ba_')) {
+                $availabilityKey = substr($key, 3);
+                $availabilityData[$availabilityKey] = $value;
+            }
+        }
+
+        $availabilityData['building_id'] = $building->id;
+
+        $normalizeNulls($availabilityData);
+
+        $availability = BuildingAvailable::updateOrCreate(
+            [
+                'building_id' => $building->id,
+                'avl_date' => $availabilityData['avl_date'] ?? null,
+            ],
+            $availabilityData
+        );
+
+        if ($availability->wasRecentlyCreated) {
+            $importedAvailability++;
+        } else {
+            $updatedAvailability++;
+        }
+    }
+
+    return $this->success("Imported", data: [
+        'message' => 'Import completed',
+        'imported_buildings' => $importedBuildings,
+        'updated_buildings' => $updatedBuildings,
+        'imported_availability' => $importedAvailability,
+        'updated_availability' => $updatedAvailability,
+    ]);
+}
+
+
+
 
 
 }

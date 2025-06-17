@@ -19,5 +19,7 @@ Route::group([
     Route::get('/{buildingAvailable}/draft', [BuildingsAvailableController::class, 'getDraft'])->name('getDraft');
     Route::put('/{buildingAvailable}/draft', [BuildingsAvailableController::class, 'updateDraft'])->name('updateDraft');
     Route::delete('/{buildingAvailable}/draft', [BuildingsAvailableController::class, 'deleteDraft'])->name('deleteDraft');
+    Route::post('/import', [BuildingsAvailableController::class, 'importAvailability'])->name('importAvailability');
+
 });
 
