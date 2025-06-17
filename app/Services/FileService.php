@@ -6,9 +6,16 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\File;
 use App\Models\BuildingFile;
 use Illuminate\Http\UploadedFile;
+use App\Services\ImageOptimizationService;
 
 class FileService
 {
+    private ImageOptimizationService $imageOptimizationService;
+
+    public function __construct(ImageOptimizationService $imageOptimizationService)
+    {
+        $this->imageOptimizationService = $imageOptimizationService;
+    }
     /**
      * @param $files
      * @param int $buildingId
@@ -58,38 +65,45 @@ class FileService
 
             $uploadedFile = $this->uploadSingleTypeFile($file, $buildingId, $type);
 
-            $fileRecord = File::create([
-                'name' => pathinfo($uploadedFile['path'], PATHINFO_FILENAME),
-                'original_name' => $file->getClientOriginalName(),
-                'extension' => $file->getClientOriginalExtension(),
-                'size' => $file->getSize(),
-                'mime_type' => $file->getMimeType(),
-                'path' => str_replace('public/', '', $uploadedFile['path']),
-                'created_by' => auth()->id(),
-                'updated_by' => auth()->id(),
-                'deleted_by' => null,
-            ]);
+            if($uploadedFile) {
+                if (str_starts_with($file->getMimeType(), 'image/')) {
+                    $fullPath = storage_path('app/' . $uploadedFile['path']);
+                    $this->imageOptimizationService->optimize($fullPath);
+                }
+
+                $fileRecord = File::create([
+                    'name' => pathinfo($uploadedFile['path'], PATHINFO_FILENAME),
+                    'original_name' => $file->getClientOriginalName(),
+                    'extension' => $file->getClientOriginalExtension(),
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                    'path' => str_replace('public/', '', $uploadedFile['path']),
+                    'created_by' => auth()->id(),
+                    'updated_by' => auth()->id(),
+                    'deleted_by' => null,
+                ]);
 
 
-            BuildingFile::create([
-                'building_id' => $buildingId,
-                'type' => $uploadedFile['type'],
-                'file_id' => $fileRecord->id,
-                'path' => str_replace('public/', '', $uploadedFile['path']),
-                'created_by' => auth()->id(),
-                'updated_by' => auth()->id(),
-                'deleted_by' => null,
-            ]);
+                BuildingFile::create([
+                    'building_id' => $buildingId,
+                    'type' => $uploadedFile['type'],
+                    'file_id' => $fileRecord->id,
+                    //'path' => str_replace('public/', '', $uploadedFile['path']),
+                    'created_by' => auth()->id(),
+                    'updated_by' => auth()->id(),
+                    'deleted_by' => null,
+                ]);
 
-            $uploadedFilesInfo[] = [
-                'file_id' => $fileRecord->id,
-                'building_id' => $buildingId,
-                'type' => $uploadedFile['type'],
-                'original_name' => $file->getClientOriginalName(),
-                'path' => $uploadedFile['path'],
-                'size' => $file->getSize(),
-                'mime_type' => $file->getMimeType(),
-            ];
+                $uploadedFilesInfo[] = [
+                    'file_id' => $fileRecord->id,
+                    'building_id' => $buildingId,
+                    'type' => $uploadedFile['type'],
+                    'original_name' => $file->getClientOriginalName(),
+                    'path' => $uploadedFile['path'],
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ];
+            }
         }
 
         return $uploadedFilesInfo;
@@ -101,12 +115,13 @@ class FileService
      * @param string|null $type
      * @return array
      */
-    public function uploadSingleTypeFile(UploadedFile $file, int $buildingId, ?string $type = null): array
+    public function uploadSingleTypeFile(UploadedFile $file, int $buildingId, ?string $type = null): ?array
     {
         $fileType = $type ?? $this->determineFileType($file->getClientOriginalName());
 
         if (!$fileType) {
-            throw new \InvalidArgumentException("Invalid file type or file name: {$file->getClientOriginalName()}");
+            //throw new \InvalidArgumentException("Invalid file type or file name: {$file->getClientOriginalName()}");
+            return null;
         }
 
         $path = "public/buildings/{$buildingId}/";
@@ -126,7 +141,7 @@ class FileService
      * @param string $fileName
      * @return string|null
      */
-    private function determineFileType(string $fileName): ?string
+    /*private function determineFileType(string $fileName): ?string
     {
         $name = strtolower($fileName);
 
@@ -147,7 +162,40 @@ class FileService
         }
 
         return null; // Invalid or undetermined type
+    }*/
+    private function determineFileType(string $fileName): ?string
+    {
+        $name = strtolower($fileName); // Приводим к нижнему регистру
+        $extension = pathinfo($name, PATHINFO_EXTENSION);
+
+        // 1. Portada → Frontpage
+        if (str_contains($name, 'portada')) {
+            return 'Frontpage';
+        }
+
+        // 2. 1-6 → Pictures
+        if (preg_match('/\b[1-6]\b/', $name) && in_array($extension, ['jpg', 'jpeg', 'png'])) {
+            return 'Pictures';
+        }
+
+        // 3. other
+        $mapping = [
+            '360aerial'   => '360Aerial',
+            '360interior' => '360Interior',
+            'layout'      => 'Layout',
+            'brochure'    => 'Brochure',
+            'kmz'         => 'KMZ',
+        ];
+
+        foreach ($mapping as $keyword => $type) {
+            if (str_contains($name, $keyword)) {
+                return $type;
+            }
+        }
+
+        return null;
     }
+
 
     /**
      * @param $buildingId

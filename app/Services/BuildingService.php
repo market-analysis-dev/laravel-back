@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BuildingAvailable;
 use App\Models\BuildingLog;
 use App\Services\BuildingsAvailableService;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use App\Models\Building;
 use App\Models\User;
@@ -19,10 +20,15 @@ use Illuminate\Validation\ValidationException;
 class BuildingService
 {
     private BuildingsAvailableService $buildingsAvailableService;
+    private FileService $fileService;
 
-    public function __construct(BuildingsAvailableService $buildingsAvailableService)
+    public function __construct(
+        BuildingsAvailableService $buildingsAvailableService,
+        FileService $fileService
+    )
     {
         $this->buildingsAvailableService = $buildingsAvailableService;
+        $this->fileService = $fileService;
     }
 
     /**
@@ -31,7 +37,12 @@ class BuildingService
      * @return \Illuminate\Database\TReturn|mixed
      * @throws \Throwable
      */
-    public function createWithAvailability(array $buildingData, array $availabilityData): mixed
+    public function createWithAvailability(
+        array $buildingData,
+        array $availabilityData,
+        ?array $files = null,
+        ?string $fileType = null
+    ): mixed
     {
         /* Building */
         if ($buildingData['sqftToM2']) {
@@ -46,7 +57,7 @@ class BuildingService
             $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
         }
 
-        return DB::transaction(function () use ($buildingData, $availabilityData) {
+        return DB::transaction(function () use ($buildingData, $availabilityData, $files, $fileType) {
 
             if ($buildingData['id']) {
                 $building = Building::findOrFail($buildingData['id']);
@@ -58,22 +69,32 @@ class BuildingService
             $absorptionData['building_state'] = BuildingState::AVAILABILITY->value;
             $availabilityBuilding = $this->buildingsAvailableService->create($availabilityData);
 
+            $uploadedFilesInfo = null;
+
+        if ($files && is_array($files)) {
+            $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($files, $building->id);
+        }
+
             return [
                 'building' => $building,
                 'availability' => $availabilityBuilding,
+                'uploaded_files' => $uploadedFilesInfo,
             ];
         });
     }
 
 
-    public function createWithAbsorption(array $buildingData, array $absorptionData): mixed
-    {
-        /* Building */
+
+    public function createWithAbsorption(
+        array $buildingData,
+        array $absorptionData,
+        ?array $files = null,
+        ?string $fileType = null
+    ): mixed {
         if ($buildingData['sqftToM2'] ?? false) {
             $buildingData = $this->convertMetrics($buildingData);
         }
 
-        /* Building Absorption */
         if (!empty($absorptionData['sqftToM2']) || !empty($absorptionData['yrToMo'])) {
             $absorptionData = $this->buildingsAvailableService->convertMetrics($absorptionData);
         }
@@ -81,24 +102,32 @@ class BuildingService
             $absorptionData['fire_protection_system'] = implode(',', $absorptionData['fire_protection_system']);
         }
 
-        return DB::transaction(function () use ($buildingData, $absorptionData) {
-
+        return DB::transaction(function () use ($buildingData, $absorptionData, $files, $fileType) {
             if (!empty($buildingData['id'])) {
                 $building = Building::findOrFail($buildingData['id']);
                 $building = $this->update($building, $buildingData);
             } else {
                 $building = $this->create($buildingData);
             }
+
             $absorptionData['building_id'] = $building->id;
             $absorptionData['building_state'] = BuildingState::ABSORPTION->value;
-            $absorptionBuilding = $this->buildingsAvailableService->create($absorptionData);
+        $absorptionBuilding = $this->buildingsAvailableService->create($absorptionData);
 
-            return [
-                'building' => $building,
-                'absorption' => $absorptionBuilding,
-            ];
-        });
+        $uploadedFilesInfo = null;
+
+        if ($files && is_array($files)) {
+            $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($files, $building->id);
+        }
+
+        return [
+            'building' => $building,
+            'absorption' => $absorptionBuilding,
+            'uploaded_files' => $uploadedFilesInfo,
+        ];
+    });
     }
+
 
 
     /**
@@ -107,7 +136,12 @@ class BuildingService
      * @return mixed
      * @throws \Throwable
      */
-    public function updateWithAvailability(array $buildingData, array $availabilityData): mixed
+    public function updateWithAvailability(
+        array $buildingData,
+        array $availabilityData,
+        ?array $files = null,
+        ?string $fileType = null
+    ): mixed
     {
 
         if (!empty($buildingData['sqftToM2'])) {
@@ -122,7 +156,7 @@ class BuildingService
             $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
         }
 
-        return DB::transaction(function () use ($buildingData, $availabilityData) {
+        return DB::transaction(function () use ($buildingData, $availabilityData, $files, $fileType) {
             if (empty($buildingData['id'])) {
                 throw new \InvalidArgumentException('Missing building ID for update.');
             }
@@ -145,29 +179,40 @@ class BuildingService
             $availabilityData['building_id'] = $building->id;
             $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
 
+            $uploadedFilesInfo = null;
+
+        if ($files && is_array($files)) {
+            $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($files, $building->id);
+        }
+
             return [
                 'building' => $building,
                 'availability' => $availability,
+                'uploaded_files' => $uploadedFilesInfo,
             ];
         });
     }
 
-    public function updateWithAbsorption(array $buildingData, array $availabilityData): mixed
-    {
 
+    public function updateWithAbsorption(
+        array $buildingData,
+        array $absorptionData,
+        ?array $files = null,
+        ?string $fileType = null
+    ): mixed {
         if (!empty($buildingData['sqftToM2'])) {
             $buildingData = $this->convertMetrics($buildingData);
         }
 
-        if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
-            $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
+        if (!empty($absorptionData['sqftToM2']) || !empty($absorptionData['yrToMo'])) {
+            $absorptionData = $this->buildingsAvailableService->convertMetrics($absorptionData);
         }
 
-        if (!empty($availabilityData['fire_protection_system']) && is_array($availabilityData['fire_protection_system'])) {
-            $availabilityData['fire_protection_system'] = implode(',', $availabilityData['fire_protection_system']);
+        if (!empty($absorptionData['fire_protection_system']) && is_array($absorptionData['fire_protection_system'])) {
+            $absorptionData['fire_protection_system'] = implode(',', $absorptionData['fire_protection_system']);
         }
 
-        return DB::transaction(function () use ($buildingData, $availabilityData) {
+        return DB::transaction(function () use ($buildingData, $absorptionData, $files, $fileType) {
             if (empty($buildingData['id'])) {
                 throw new \InvalidArgumentException('Missing building ID for update.');
             }
@@ -175,28 +220,36 @@ class BuildingService
             $building = Building::findOrFail($buildingData['id']);
             $building = $this->update($building, $buildingData);
 
-            if (empty($availabilityData['id'])) {
-                throw new \InvalidArgumentException('Missing availability ID for update.');
+            if (empty($absorptionData['id'])) {
+                throw new \InvalidArgumentException('Missing absorption ID for update.');
             }
 
-            $availability = BuildingAvailable::findOrFail($availabilityData['id']);
+            $absorption = BuildingAvailable::findOrFail($absorptionData['id']);
 
-            if ($availability->building_state !== BuildingState::ABSORPTION->value) {
+            if ($absorption->building_state !== BuildingState::ABSORPTION->value) {
                 throw ValidationException::withMessages([
                     'absorption.id' => __('The availability must be in ABSORPTION state to update.'),
                 ]);
             }
 
-            $availabilityData['building_id'] = $building->id;
+        $absorptionData['building_id'] = $building->id;
 
-            $availability = $this->buildingsAvailableService->update($availability, $availabilityData);
+        $absorption = $this->buildingsAvailableService->update($absorption, $absorptionData);
 
-            return [
-                'building' => $building,
-                'absorption' => $availability,
-            ];
-        });
+        $uploadedFilesInfo = null;
+
+        if ($files && is_array($files)) {
+            $uploadedFilesInfo = $this->fileService->uploadBuildingFiles($files, $building->id);
+        }
+
+        return [
+            'building' => $building,
+            'absorption' => $absorption,
+            'uploaded_files' => $uploadedFilesInfo,
+        ];
+    });
     }
+
 
 
 
@@ -272,7 +325,7 @@ class BuildingService
             'developer',
             'owner',
             'buildingsAvailable',
-//            'files',
+            'files',
         ]);
     }
 
