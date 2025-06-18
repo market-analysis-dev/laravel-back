@@ -267,6 +267,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     $updatedBuildings = 0;
     $importedAvailability = 0;
     $updatedAvailability = 0;
+    $errors = [];
 
     $normalizeNulls = function (&$data) use (&$normalizeNulls) {
         foreach ($data as $key => &$value) {
@@ -280,100 +281,105 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         }
     };
 
-    foreach ($csv as $row) {
-        $data = array_combine($header, $row);
+    foreach ($csv as $index => $row) {
+        try {
+            $data = array_combine($header, $row);
 
-        if (empty($data['building_name']) || empty($data['ba_avl_date'])) {
-            continue;
-        }
-
-        $buildingData = [
-            'region_id' => $data['region_id'] ?? null,
-            'market_id' => $data['market_id'] ?? null,
-            'sub_market_id' => $data['sub_market_id'] ?? null,
-            'builder_id' => $data['builder_id'] ?? null,
-            'industrial_park_id' => $data['industrial_park_id'] ?? null,
-            'developer_id' => $data['developer_id'] ?? null,
-            'owner_id' => $data['owner_id'] ?? null,
-            'building_name' => $data['building_name'] ?? null,
-            'building_size_sf' => $data['building_size_sf'] ?? null,
-            'latitud' => $data['latitud'] ?? null,
-            'longitud' => $data['longitud'] ?? null,
-            'year_built' => $data['year_built'] ?? null,
-            'clear_height_ft' => $data['clear_height_ft'] ?? null,
-            'total_land_sf' => $data['total_land_sf'] ?? null,
-            'hvac_production_area' => $data['hvac_production_area'] ?? null,
-            'ventilation' => $data['ventilation'] ?? null,
-            'roofing' => $data['roofing'] ?? null,
-            'skylights_sf' => $data['skylights_sf'] ?? null,
-            'coverage' => $data['coverage'] ?? null,
-            'transformer_capacity' => $data['transformer_capacity'] ?? null,
-            'expansion_land' => $data['expansion_land'] ?? null,
-            'columns_spacing_ft' => $data['columns_spacing_ft'] ?? null,
-            'floor_thickness_in' => $data['floor_thickness_in'] ?? null,
-            'floor_resistance' => $data['floor_resistance'] ?? null,
-            'expansion_up_to_sf' => $data['expansion_up_to_sf'] ?? null,
-            'class' => $data['class'] ?? null,
-            'generation' => $data['generation'] ?? null,
-            'currency' => $data['currency'] ?? null,
-            'tenancy' => $data['tenancy'] ?? null,
-            'construction_type' => $data['construction_type'] ?? null,
-            'lightning' => $data['lightning'] ?? null,
-            'loading_door' => $data['loading_door'] ?? null,
-            'building_type' => $data['building_type'] ?? null,
-            'certifications' => $data['certifications'] ?? null,
-            'owner_type' => $data['owner_type'] ?? null,
-            'stage' => $data['stage'] ?? null,
-            'created_at' => $data['created_at'] ?? null,
-            'updated_at' => $data['updated_at'] ?? null,
-            'deleted_at' => $data['deleted_at'] ?? null,
-        ];
-
-        $normalizeNulls($buildingData);
-
-        $building = Building::where('building_name', $buildingData['building_name'])
-            ->where('region_id', $buildingData['region_id'])
-            ->where('market_id', $buildingData['market_id'])
-            ->where('sub_market_id', $buildingData['sub_market_id'])
-            ->where('builder_id', $buildingData['builder_id'])
-            ->first();
-
-        if ($building) {
-            $building->fill($buildingData)->save();
-            $updatedBuildings++;
-        } else {
-            $building = Building::create($buildingData);
-            $importedBuildings++;
-        }
-
-        $availabilityData = [];
-        foreach ($data as $key => $value) {
-            if (str_starts_with($key, 'ba_')) {
-                $availabilityKey = substr($key, 3);
-                $availabilityData[$availabilityKey] = $value;
+            if (empty($data['building_name']) || empty($data['ba_avl_date'])) {
+                $errors[] = "Row " . ($index + 2) . ": Missing 'building_name' or 'ba_avl_date'";
+                continue;
             }
-        }
 
-        $availabilityData['building_id'] = $building->id;
-        $normalizeNulls($availabilityData);
+            $buildingData = [
+                'region_id' => $data['region_id'] ?? null,
+                'market_id' => $data['market_id'] ?? null,
+                'sub_market_id' => $data['sub_market_id'] ?? null,
+                'builder_id' => $data['builder_id'] ?? null,
+                'industrial_park_id' => $data['industrial_park_id'] ?? null,
+                'developer_id' => $data['developer_id'] ?? null,
+                'owner_id' => $data['owner_id'] ?? null,
+                'building_name' => $data['building_name'] ?? null,
+                'building_size_sf' => $data['building_size_sf'] ?? null,
+                'latitud' => $data['latitud'] ?? null,
+                'longitud' => $data['longitud'] ?? null,
+                'year_built' => $data['year_built'] ?? null,
+                'clear_height_ft' => $data['clear_height_ft'] ?? null,
+                'total_land_sf' => $data['total_land_sf'] ?? null,
+                'hvac_production_area' => $data['hvac_production_area'] ?? null,
+                'ventilation' => $data['ventilation'] ?? null,
+                'roofing' => $data['roofing'] ?? null,
+                'skylights_sf' => $data['skylights_sf'] ?? null,
+                'coverage' => $data['coverage'] ?? null,
+                'transformer_capacity' => $data['transformer_capacity'] ?? null,
+                'expansion_land' => $data['expansion_land'] ?? null,
+                'columns_spacing_ft' => $data['columns_spacing_ft'] ?? null,
+                'floor_thickness_in' => $data['floor_thickness_in'] ?? null,
+                'floor_resistance' => $data['floor_resistance'] ?? null,
+                'expansion_up_to_sf' => $data['expansion_up_to_sf'] ?? null,
+                'class' => $data['class'] ?? null,
+                'generation' => $data['generation'] ?? null,
+                'currency' => $data['currency'] ?? null,
+                'tenancy' => $data['tenancy'] ?? null,
+                'construction_type' => $data['construction_type'] ?? null,
+                'lightning' => $data['lightning'] ?? null,
+                'loading_door' => $data['loading_door'] ?? null,
+                'building_type' => $data['building_type'] ?? null,
+                'certifications' => $data['certifications'] ?? null,
+                'owner_type' => $data['owner_type'] ?? null,
+                'stage' => $data['stage'] ?? null,
+                'created_at' => $data['created_at'] ?? null,
+                'updated_at' => $data['updated_at'] ?? null,
+                'deleted_at' => $data['deleted_at'] ?? null,
+            ];
 
-        if (!empty($availabilityData['size_sf']) && !empty($building->building_size_sf)) {
-            if ((float)$availabilityData['size_sf'] > (float)$building->building_size_sf) {
-                $availabilityData['size_sf'] = $building->building_size_sf;
+            $normalizeNulls($buildingData);
+
+            $building = Building::where('building_name', $buildingData['building_name'])
+                ->where('region_id', $buildingData['region_id'])
+                ->where('market_id', $buildingData['market_id'])
+                ->where('sub_market_id', $buildingData['sub_market_id'])
+                ->where('builder_id', $buildingData['builder_id'])
+                ->first();
+
+            if ($building) {
+                $building->fill($buildingData)->save();
+                $updatedBuildings++;
+            } else {
+                $building = Building::create($buildingData);
+                $importedBuildings++;
             }
-        }
 
-        $existingAvailability = BuildingAvailable::where('building_id', $building->id)
-            ->where('building_state', BuildingState::AVAILABILITY->value)
-            ->first();
+            $availabilityData = [];
+            foreach ($data as $key => $value) {
+                if (str_starts_with($key, 'ba_')) {
+                    $availabilityKey = substr($key, 3);
+                    $availabilityData[$availabilityKey] = $value;
+                }
+            }
 
-        if ($existingAvailability) {
-            $existingAvailability->fill($availabilityData);
-            $existingAvailability->save();
-            $updatedAvailability++;
-        } else {
-            BuildingAvailable::create($availabilityData);
-            $importedAvailability++;
+            $availabilityData['building_id'] = $building->id;
+            $normalizeNulls($availabilityData);
+
+            if (!empty($availabilityData['size_sf']) && !empty($building->building_size_sf)) {
+                if ((float)$availabilityData['size_sf'] > (float)$building->building_size_sf) {
+                    $availabilityData['size_sf'] = $building->building_size_sf;
+                }
+            }
+
+            $existingAvailability = BuildingAvailable::where('building_id', $building->id)
+                ->where('building_state', BuildingState::AVAILABILITY->value)
+                ->first();
+
+            if ($existingAvailability) {
+                $existingAvailability->fill($availabilityData);
+                $existingAvailability->save();
+                $updatedAvailability++;
+            } else {
+                BuildingAvailable::create($availabilityData);
+                $importedAvailability++;
+            }
+        } catch (\Throwable $e) {
+            $errors[] = "Row " . ($index + 2) . ": " . $e->getMessage();
         }
     }
 
@@ -383,6 +389,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         'updated_buildings' => $updatedBuildings,
         'imported_availability' => $importedAvailability,
         'updated_availability' => $updatedAvailability,
+        'errors' => $errors,
     ]);
 }
 
