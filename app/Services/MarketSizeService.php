@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\BuildingState;
+use App\Enums\BuildingType;
 use App\Models\Building;
 
 class MarketSizeService
@@ -15,7 +17,16 @@ class MarketSizeService
         $sort = $validatedData['sort'] ?? 'desc';
 
         return Building::query()
-            ->with('market', 'subMarket', 'industrialPark', 'developer')
+            ->with('market', 'subMarket', 'industrialPark', 'developer', 'buildingAvailable')
+            ->where(
+                ['building_available.is_starting_construction', '=', true],
+                ['building_available.building_state', '=', BuildingState::AVAILABILITY->value]
+            )
+            ->orWhere(
+                ['building_available.abs_type', 'IN', [BuildingType::BTS_EXPANSION, BuildingType::BTS]],
+                ['building_available.is_starting_construction', '=', true],
+                ['building_available.building_state', '=', BuildingState::ABSORPTION->value]
+            )
             ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
             ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
             ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
@@ -23,9 +34,9 @@ class MarketSizeService
             ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
             ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")))
             ->when($validatedData['avl_type'] ?? false, fn($q, $val) => $q->where('avl_type', 'like', "%{$val}%"))
+            ->groupBy('id')
             ->orderBy($sort_column, $sort)
             ->paginate($page_size, page: $page);
     }
-
 
 }
