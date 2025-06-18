@@ -256,7 +256,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
  * @return ApiResponse
  */
     public function importAvailability(ImportBuildingAvailabilityRequest $request): ApiResponse
-    {
+{
     $request->validated();
 
     $path = $request->file('file')->getRealPath();
@@ -268,10 +268,10 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     $importedAvailability = 0;
     $updatedAvailability = 0;
 
-    $normalizeNulls = function (&$data) {
+    $normalizeNulls = function (&$data) use (&$normalizeNulls) {
         foreach ($data as $key => &$value) {
             if (is_array($value)) {
-                $this($value);
+                $normalizeNulls($value);
             } else {
                 if (is_string($value) && strtoupper($value) === 'NULL') {
                     $value = null;
@@ -283,7 +283,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     foreach ($csv as $row) {
         $data = array_combine($header, $row);
 
-        if (empty($data['id']) || empty($data['ba_avl_date'])) {
+        if (empty($data['building_name']) || empty($data['ba_avl_date'])) {
             continue;
         }
 
@@ -329,18 +329,21 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             'deleted_at' => $data['deleted_at'] ?? null,
         ];
 
-
         $normalizeNulls($buildingData);
 
-        $building = Building::updateOrCreate(
-            ['id' => $data['id']],
-            $buildingData
-        );
+        $building = Building::where('building_name', $buildingData['building_name'])
+            ->where('region_id', $buildingData['region_id'])
+            ->where('market_id', $buildingData['market_id'])
+            ->where('sub_market_id', $buildingData['sub_market_id'])
+            ->where('builder_id', $buildingData['builder_id'])
+            ->first();
 
-        if ($building->wasRecentlyCreated) {
-            $importedBuildings++;
-        } else {
+        if ($building) {
+            $building->fill($buildingData)->save();
             $updatedBuildings++;
+        } else {
+            $building = Building::create($buildingData);
+            $importedBuildings++;
         }
 
         $availabilityData = [];
@@ -352,21 +355,25 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         }
 
         $availabilityData['building_id'] = $building->id;
-
         $normalizeNulls($availabilityData);
 
-        $availability = BuildingAvailable::updateOrCreate(
-            [
-                'building_id' => $building->id,
-                'avl_date' => $availabilityData['avl_date'] ?? null,
-            ],
-            $availabilityData
-        );
+        if (!empty($availabilityData['size_sf']) && !empty($building->building_size_sf)) {
+            if ((float)$availabilityData['size_sf'] > (float)$building->building_size_sf) {
+                $availabilityData['size_sf'] = $building->building_size_sf;
+            }
+        }
 
-        if ($availability->wasRecentlyCreated) {
-            $importedAvailability++;
-        } else {
+        $existingAvailability = BuildingAvailable::where('building_id', $building->id)
+            ->where('building_state', BuildingState::AVAILABILITY->value)
+            ->first();
+
+        if ($existingAvailability) {
+            $existingAvailability->fill($availabilityData);
+            $existingAvailability->save();
             $updatedAvailability++;
+        } else {
+            BuildingAvailable::create($availabilityData);
+            $importedAvailability++;
         }
     }
 
@@ -378,9 +385,5 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         'updated_availability' => $updatedAvailability,
     ]);
 }
-
-
-
-
 
 }
