@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IndexBuildingRequest;
+use App\Http\Resources\MarketResource;
 use App\Responses\ApiResponse;
 use App\Services\MarketSizeService;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -25,6 +26,6 @@ class MarketSizeController extends ApiController implements HasMiddleware
     public function index(IndexBuildingRequest $request): ApiResponse
     {
         $buildings = $this->marketSizeService->filter($request->validated());
-        return $this->success(data: $buildings);
+        return $this->success(data: MarketResource::collection($buildings));
     }
 }
