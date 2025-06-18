@@ -148,6 +148,12 @@ class BuildingsAvailableService
      */
     public function update(BuildingAvailable $buildingAvailable, array $validated): BuildingAvailable
     {
+        $incomingSize = $validated['size_sf'] ?? null;
+
+        if (!empty($incomingSize) && $buildingAvailable->size_sf == 0) {
+            $validated['avl_date'] = now()->toDateString();
+        }
+
         if (($validated['status'] ?? BuildingStatus::ENABLED->value) === BuildingStatus::ENABLED->value) {
             $this->makeBuildingAvailableLogRecord($buildingAvailable);
         }

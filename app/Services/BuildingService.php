@@ -38,6 +38,12 @@ class BuildingService
             $buildingData = $this->convertMetrics($buildingData);
         }
 
+        if (isset($availabilityData['is_starting_construction']) && (int) $availabilityData['is_starting_construction'] === 1) {
+            $now = now();
+            $buildingData['year_built'] = $now->year;
+            $buildingData['construction_date'] = $now->toDateString();
+        }
+
         /* Building Availability */
         if (!empty($availabilityData['sqftToM2']) || !empty($availabilityData['yrToMo'])) {
             $availabilityData = $this->buildingsAvailableService->convertMetrics($availabilityData);
