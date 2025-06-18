@@ -19,4 +19,5 @@ Route::group([
     Route::get('/{buildingAbsorption}/draft', [BuildingsAbsorptionController::class, 'getDraft'])->name('getDraft');
     Route::put('/{buildingAbsorption}/draft', [BuildingsAbsorptionController::class, 'updateDraft'])->name('updateDraft');
     Route::delete('/{buildingAbsorption}/draft', [BuildingsAbsorptionController::class, 'deleteDraft'])->name('deleteDraft');
+    Route::post('/import', [BuildingsAbsorptionController::class, 'importAbsorption'])->name('importAbsorption');
 });
