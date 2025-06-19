@@ -5,10 +5,12 @@ namespace App\Services;
 use App\Enums\BuildingState;
 use App\Enums\BuildingStatus;
 use App\Enums\BuildingType;
+use App\Enums\BuildingTenancy;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
 use App\Models\BuildingAvailableLog;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 class BuildingsAvailableService
 {
@@ -138,7 +140,40 @@ class BuildingsAvailableService
         /*if($validated['building_state'] == BuildingState::ABSORPTION && $validated['abs_type'] == BuildingType::INVENTORY->value) {
             $validated['building_state'] = true;
     }*/
-        return BuildingAvailable::create($validated);
+        $isAbsorption = ($validated['building_state'] ?? null) === BuildingState::ABSORPTION->value;
+        $hasBuilding = !empty($validated['building_id']);
+        $hasSize = !empty($validated['size_sf']);
+
+    // Only if create from existing building
+    if ($isAbsorption && $hasBuilding && $hasSize) {
+        $building = Building::findOrFail($validated['building_id']);
+        if ($building->tenancy === BuildingTenancy::MULTITENANT->value) {
+            $availability = $building->buildingsAvailable()
+                ->where('building_state', BuildingState::AVAILABILITY->value)
+                ->first();
+
+            $availableSize = $availability?->size_sf ?? $building->size_sf;
+            $minimumSpace = $availability?->avl_minimum_space_sf ?? null;
+
+            if ($validated['size_sf'] > $availableSize) {
+                throw ValidationException::withMessages([
+                    'size_sf' => __('Absorption size cannot exceed availability.'),
+                ]);
+            }
+
+            if (!is_null($minimumSpace) && $validated['size_sf'] < $minimumSpace) {
+                throw ValidationException::withMessages([
+                    'size_sf' => __('Absorption size cannot be less than the minimum available space.'),
+                ]);
+            }
+
+            if ($availability) {
+                $availability->size_sf -= $validated['size_sf'];
+                $availability->save();
+            }
+        }
+    }
+    return BuildingAvailable::create($validated);
     }
 
     /**
@@ -148,6 +183,12 @@ class BuildingsAvailableService
      */
     public function update(BuildingAvailable $buildingAvailable, array $validated): BuildingAvailable
     {
+        $incomingSize = $validated['size_sf'] ?? null;
+
+        if (!empty($incomingSize) && $buildingAvailable->size_sf == 0) {
+            $validated['avl_date'] = now()->toDateString();
+        }
+
         if (($validated['status'] ?? BuildingStatus::ENABLED->value) === BuildingStatus::ENABLED->value) {
             $this->makeBuildingAvailableLogRecord($buildingAvailable);
         }

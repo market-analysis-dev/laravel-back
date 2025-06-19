@@ -11,7 +11,7 @@ Route::group([
     Route::get('/', [BuildingsAbsorptionController::class, 'index'])->name('index');
     Route::post('/', [BuildingsAbsorptionController::class, 'store'])->name('store');
     Route::get('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'show'])->name('show');
-    Route::put('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'update'])->name('update');
+    Route::post('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'update'])->name('update');
     Route::delete('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'destroy'])->name('destroy');
 
     Route::put('/{buildingAbsorption}/to-available', [BuildingsAbsorptionController::class, 'toAvailable'])->name('to-available');
