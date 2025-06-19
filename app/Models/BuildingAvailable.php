@@ -9,7 +9,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -156,6 +156,12 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingDate(?string $quarter, ?int $year)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlMonth()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlYear()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlQuarter()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingMonth()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingYear()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingQuarter()
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -277,6 +283,61 @@ class BuildingAvailable extends Model
         }
 
         return $query;
+    }
+
+
+    public function scopeAvlMonth(): ?string
+    {
+        return $this->avl_date ? date('F', strtotime($this->avl_date)) : null;
+    }
+
+    public function scopeAvlYear(): ?string
+    {
+        return $this->avl_date ? date('Y', strtotime($this->avl_date)) : null;
+    }
+
+    public function scopeAvlQuarter(): ?string
+    {
+        $quarters = [
+            'Q1' => [1, 2, 3],
+            'Q2' => [4, 5, 6],
+            'Q3' => [7, 8, 9],
+            'Q4' => [10, 11, 12],
+        ];
+        $month = date('n', strtotime($this->avl_date));
+        foreach ($quarters as $quarter => $months) {
+            if (in_array($month, $months)) {
+                return $quarter;
+            }
+        }
+        return null;
+    }
+
+    public function scopeClosingMonth(): ?string
+    {
+        return $this->abs_closing_date ? date('F', strtotime($this->abs_closing_date)) : null;
+    }
+
+    public function scopeClosingYear(): ?string
+    {
+        return $this->abs_closing_date ? date('Y', strtotime($this->abs_closing_date)) : null;
+    }
+
+    public function scopeClosingQuarter(): ?string
+    {
+        $quarters = [
+            'Q1' => [1, 2, 3],
+            'Q2' => [4, 5, 6],
+            'Q3' => [7, 8, 9],
+            'Q4' => [10, 11, 12],
+        ];
+        $month = date('n', strtotime($this->abs_closing_date));
+        foreach ($quarters as $quarter => $months) {
+            if (in_array($month, $months)) {
+                return $quarter;
+            }
+        }
+        return null;
     }
 
 }
