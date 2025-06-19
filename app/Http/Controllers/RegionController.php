@@ -11,16 +11,16 @@ use App\Http\Requests\UpdateRegionRequest;
 
 class RegionController extends ApiController
 {
-    // public static function middleware()
-    // {
-    //     return [
-    //         new Middleware('permission:regions.index', only: ['index']),
-    //         new Middleware('permission:regions.show', only: ['show']),
-    //         new Middleware('permission:regions.create', only: ['store']),
-    //         new Middleware('permission:regions.update', only: ['update']),
-    //         new Middleware('permission:regions.destroy', only: ['destroy']),
-    //     ];
-    // }
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:regions.index', only: ['index']),
+            new Middleware('permission:regions.show', only: ['show']),
+            new Middleware('permission:regions.create', only: ['store']),
+            new Middleware('permission:regions.update', only: ['update']),
+            new Middleware('permission:regions.destroy', only: ['destroy']),
+        ];
+    }
 
     public function index(): ApiResponse
     {
