@@ -10,8 +10,18 @@ use App\Http\Requests\IndexBuildingsAbsorptionRequest;
 use App\Http\Requests\StoreBuildingWithAbsorptionRequest;
 use App\Http\Requests\UpdateBuildingAbsorptionDraftRequest;
 use App\Http\Requests\UpdateBuildingWithAbsorptionRequest;
+use App\Models\Broker;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
+use App\Models\Country;
+use App\Models\Developer;
+use App\Models\IndustrialPark;
+use App\Models\Industry;
+use App\Models\Market;
+use App\Models\Region;
+use App\Models\Shelter;
+use App\Models\SubMarket;
+use App\Models\Tenant;
 use App\Responses\ApiResponse;
 use App\Services\BuildingsAvailableService;
 use App\Services\BuildingService;
@@ -106,7 +116,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
         try {
             $validated = $request->validated();
             $buildingData = $validated['building'];
-            $availabilityData = $validated['absorption'];
+            $absorptionData = $validated['absorption'];
 
             if($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
                 return $this->error('Building Absorption not found', status: 404);
@@ -116,9 +126,9 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
                 return $this->error('Building ID mismatch', status: 400);
             }
 
-            $availabilityData['id'] = $buildingAbsorption->id;
+            $absorptionData['id'] = $buildingAbsorption->id;
 
-            $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData);
+            $result = $this->buildingService->updateWithAbsorption($buildingData, $absorptionData);
 
             return $this->success('Updated successfully', $result);
         } catch (\Throwable $e) {
@@ -255,7 +265,8 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
  * @param ImportBuildingAbsorptionRequest $request
  * @return ApiResponse
  */
-    public function importAbsorption(ImportBuildingAbsorptionRequest $request): ApiResponse
+
+public function importAbsorption(ImportBuildingAbsorptionRequest $request): ApiResponse
 {
     $request->validated();
 
@@ -265,151 +276,150 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
 
     $importedBuildings = 0;
     $updatedBuildings = 0;
-    $importedAbsorptions = 0;
-    $updatedAbsorptions = 0;
+    $importedAbsorption = 0;
+    $updatedAbsorption = 0;
     $errors = [];
 
     $normalizeNulls = function (&$data) use (&$normalizeNulls) {
         foreach ($data as $key => &$value) {
             if (is_array($value)) {
                 $normalizeNulls($value);
-            } elseif (is_string($value) && strtoupper($value) === 'NULL') {
-                $value = null;
+            } else {
+                if (is_string($value) && strtoupper($value) === 'NULL') {
+                    $value = null;
+                }
             }
         }
     };
 
+    $getIdByName = function ($model, $column, $value, $label, $rowIndex) use (&$errors) {
+        if (!$value) return null;
+        $record = $model::where($column, $value)->first();
+        if (!$record) {
+            $errors[] = "Row " . ($rowIndex + 2) . ": $label \"$value\" not found.";
+            return null;
+        }
+        return $record->id;
+    };
+
     foreach ($csv as $index => $row) {
-        $rowNumber = $index + 2;
+        try {
+            $data = array_combine($header, $row);
+            $normalizeNulls($data);
 
-        $data = array_combine($header, $row);
-        if (empty($data['building_name']) || empty($data['ba_avl_date'])) {
-            $errors[] = ["row" => $rowNumber, "error" => "Missing building_name or ba_avl_date"];
-            continue;
-        }
-
-        // --- Prepare Building data ---
-        $buildingData = [
-            'region_id' => $data['region_id'] ?? null,
-            'market_id' => $data['market_id'] ?? null,
-            'sub_market_id' => $data['sub_market_id'] ?? null,
-            'builder_id' => $data['builder_id'] ?? null,
-            'industrial_park_id' => $data['industrial_park_id'] ?? null,
-            'developer_id' => $data['developer_id'] ?? null,
-            'owner_id' => $data['owner_id'] ?? null,
-            'building_name' => $data['building_name'] ?? null,
-            'building_size_sf' => $data['building_size_sf'] ?? null,
-            'latitud' => $data['latitud'] ?? null,
-            'longitud' => $data['longitud'] ?? null,
-            'year_built' => $data['year_built'] ?? null,
-            'clear_height_ft' => $data['clear_height_ft'] ?? null,
-            'total_land_sf' => $data['total_land_sf'] ?? null,
-            'hvac_production_area' => $data['hvac_production_area'] ?? null,
-            'ventilation' => $data['ventilation'] ?? null,
-            'roofing' => $data['roofing'] ?? null,
-            'skylights_sf' => $data['skylights_sf'] ?? null,
-            'coverage' => $data['coverage'] ?? null,
-            'transformer_capacity' => $data['transformer_capacity'] ?? null,
-            'expansion_land' => $data['expansion_land'] ?? null,
-            'columns_spacing_ft' => $data['columns_spacing_ft'] ?? null,
-            'floor_thickness_in' => $data['floor_thickness_in'] ?? null,
-            'floor_resistance' => $data['floor_resistance'] ?? null,
-            'expansion_up_to_sf' => $data['expansion_up_to_sf'] ?? null,
-            'class' => $data['class'] ?? null,
-            'generation' => $data['generation'] ?? null,
-            'currency' => $data['currency'] ?? null,
-            'tenancy' => $data['tenancy'] ?? null,
-            'construction_type' => $data['construction_type'] ?? null,
-            'lightning' => $data['lightning'] ?? null,
-            'loading_door' => $data['loading_door'] ?? null,
-            'building_type' => $data['building_type'] ?? null,
-            'certifications' => $data['certifications'] ?? null,
-            'owner_type' => $data['owner_type'] ?? null,
-            'stage' => $data['stage'] ?? null,
-            'created_at' => $data['created_at'] ?? null,
-            'updated_at' => $data['updated_at'] ?? null,
-            'deleted_at' => $data['deleted_at'] ?? null,
-        ];
-
-        $normalizeNulls($buildingData);
-
-        $building = Building::where('building_name', $buildingData['building_name'])
-            ->where('region_id', $buildingData['region_id'])
-            ->where('market_id', $buildingData['market_id'])
-            ->where('sub_market_id', $buildingData['sub_market_id'])
-            ->where('developer_id', $buildingData['developer_id'])
-            ->first();
-
-        if ($building) {
-            $building->fill($buildingData)->save();
-            $updatedBuildings++;
-        } else {
-            $building = Building::create($buildingData);
-            $importedBuildings++;
-        }
-
-        // --- Absorption data ---
-        $absorptionData = [];
-        foreach ($data as $key => $value) {
-            if (str_starts_with($key, 'ba_')) {
-                $absorptionKey = substr($key, 3);
-                $absorptionData[$absorptionKey] = $value;
+            if (empty($data['building_name']) || empty($data['ba_avl_date'])) {
+                $errors[] = "Row " . ($index + 2) . ": Missing 'building_name' or 'ba_avl_date'";
+                continue;
             }
-        }
-        $absorptionData['building_id'] = $building->id;
-        $normalizeNulls($absorptionData);
 
-        $size = (float) ($absorptionData['size_sf'] ?? 0);
-        $buildingSize = (float) ($building->building_size_sf ?? 0);
-        $tenancy = $building->tenancy ?? '';
+            // BUILDING DATA
+            $buildingData = [
+                'region_id' => Region::where('name', $data['region'] ?? '')->value('id'),
+                'market_id' => Market::where('name', $data['market'] ?? '')->value('id'),
+                'sub_market_id' => SubMarket::where('name', $data['sub_market'] ?? '')->value('id'),
+                'builder_id' => Developer::where('name', $data['builder'] ?? '')->value('id'),
+                'industrial_park_id' => IndustrialPark::where('name', $data['industrial_park'] ?? '')->value('id'),
+                'developer_id' => Developer::where('name', $data['developer'] ?? '')->value('id'),
+                'owner_id' => Developer::where('name', $data['owner'] ?? '')->value('id'),
+                'building_name' => $data['building_name'],
+                'building_size_sf' => $data['building_size_sf'] ?? null,
+                'latitud' => $data['latitud'] ?? null,
+                'longitud' => $data['longitud'] ?? null,
+                'year_built' => $data['year_built'] ?? null,
+                'clear_height_ft' => $data['clear_height_ft'] ?? null,
+                'total_land_sf' => $data['total_land_sf'] ?? null,
+                'hvac_production_area' => $data['hvac_production_area'] ?? null,
+                'ventilation' => $data['ventilation'] ?? null,
+                'roofing' => $data['roofing'] ?? null,
+                'skylights_sf' => $data['skylights_sf'] ?? null,
+                'coverage' => $data['coverage'] ?? null,
+                'transformer_capacity' => $data['transformer_capacity'] ?? null,
+                'expansion_land' => $data['expansion_land'] ?? null,
+                'columns_spacing_ft' => $data['columns_spacing_ft'] ?? null,
+                'floor_thickness_in' => $data['floor_thickness_in'] ?? null,
+                'floor_resistance' => $data['floor_resistance'] ?? null,
+                'expansion_up_to_sf' => $data['expansion_up_to_sf'] ?? null,
+                'class' => $data['class'] ?? null,
+                'generation' => $data['generation'] ?? null,
+                'currency' => $data['currency'] ?? null,
+                'tenancy' => $data['tenancy'] ?? null,
+                'construction_type' => $data['construction_type'] ?? null,
+                'lightning' => $data['lightning'] ?? null,
+                'loading_door' => $data['loading_door'] ?? null,
+                'building_type' => $data['building_type'] ?? null,
+                'certifications' => $data['certifications'] ?? null,
+                'owner_type' => $data['owner_type'] ?? null,
+                'stage' => $data['stage'] ?? null,
+            ];
 
-        if ($size <= 0) {
-            $errors[] = ["row" => $rowNumber, "error" => "Absorption size must be > 0"];
-            continue;
-        }
+            $normalizeNulls($buildingData);
 
-        if ($buildingSize <= 0) {
-            $errors[] = ["row" => $rowNumber, "error" => "Building size must be > 0"];
-            continue;
-        }
+            $building = Building::where('building_name', $buildingData['building_name'])
+                ->where('region_id', $buildingData['region_id'])
+                ->where('market_id', $buildingData['market_id'])
+                ->where('sub_market_id', $buildingData['sub_market_id'])
+                ->where('developer_id', $buildingData['developer_id'])
+                ->first();
 
-        $existingAbsorptions = BuildingAvailable::where('building_id', $building->id)
-            ->where('building_state', BuildingState::ABSORPTION->value);
+            if ($building) {
+                $building->fill($buildingData)->save();
+                $updatedBuildings++;
+            } else {
+                $building = Building::create($buildingData);
+                $importedBuildings++;
+            }
 
-        if ($tenancy !== BuildingTenancy::MULTITENANT->value && $existingAbsorptions->exists()) {
-            $errors[] = ["row" => $rowNumber, "error" => "Only multitenant buildings can have multiple absorptions"];
-            continue;
-        }
+            // AVAILABILITY DATA
+            $absorptionData = [];
+            foreach ($data as $key => $value) {
+                if (str_starts_with($key, 'ba_')) {
+                    $field = substr($key, 3);
+                    $absorptionData[$field] = $value;
+                }
+            }
 
-        $totalAbsorbed = (float) $existingAbsorptions->sum('size_sf');
-        if ($totalAbsorbed + $size > $buildingSize) {
-            $errors[] = ["row" => $rowNumber, "error" => "Absorption exceeds building size"];
-            continue;
-        }
+            $absorptionData['building_id'] = $building->id;
 
-        // --- Save absorption ---
-        $absorptionData['building_state'] = BuildingState::ABSORPTION->value;
-        $existing = $existingAbsorptions
-            ->where('avl_date', $absorptionData['avl_date'])
-            ->first();
+            $absorptionData['abs_tenant_id'] = $getIdByName(Tenant::class, 'name', $data['ba_avl_tenant_name'] ?? null, 'Tenant', $index);
+            $absorptionData['abs_industry_id'] = $getIdByName(Industry::class, 'name', $data['ba_avl_industry_name'] ?? null, 'Industry', $index);
+            $absorptionData['abs_country_id'] = $getIdByName(Country::class, 'name', $data['ba_avl_country_name'] ?? null, 'Country', $index);
+            $absorptionData['broker_id'] = $getIdByName(Broker::class, 'name', $data['ba_avl_broker_name'] ?? null, 'Broker', $index);
+            $absorptionData['abs_shelter_id'] = $getIdByName(Shelter::class, 'name', $data['ba_avl_shelter_name'] ?? null, 'Shelter', $index);
 
-        if ($existing) {
-            $existing->fill($absorptionData)->save();
-            $updatedAbsorptions++;
-        } else {
-            BuildingAvailable::create($absorptionData);
-            $importedAbsorptions++;
+            $normalizeNulls($absorptionData);
+
+            if (!empty($absorptionData['size_sf']) && !empty($building->building_size_sf)) {
+                if ((float)$absorptionData['size_sf'] > (float)$building->building_size_sf) {
+                    $absorptionData['size_sf'] = $building->building_size_sf;
+                }
+            }
+
+            $existingAbsorption = BuildingAvailable::where('building_id', $building->id)
+                ->where('building_state', BuildingState::ABSORPTION->value)
+                ->first();
+
+            if ($existingAbsorption) {
+                $existingAbsorption->fill($absorptionData)->save();
+                $updatedAbsorption++;
+            } else {
+                BuildingAvailable::create($absorptionData);
+                $importedAbsorption++;
+            }
+
+        } catch (\Throwable $e) {
+            $errors[] = "Row " . ($index + 2) . ": " . $e->getMessage();
         }
     }
 
-    return $this->success("Import finished", data: [
+    return $this->success("Import completed", data: [
         'imported_buildings' => $importedBuildings,
         'updated_buildings' => $updatedBuildings,
-        'imported_absorptions' => $importedAbsorptions,
-        'updated_absorptions' => $updatedAbsorptions,
+        'imported_absorption' => $importedAbsorption,
+        'updated_absorption' => $updatedAbsorption,
         'errors' => $errors,
-        'total_errors' => count($errors),
     ]);
 }
+
+
 
 }
