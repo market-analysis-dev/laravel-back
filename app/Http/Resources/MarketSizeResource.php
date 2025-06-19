@@ -2,21 +2,17 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\BuildingState;
 use App\Models\Building;
-use App\Models\IndustrialPark;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class MarketSizeCollection extends ResourceCollection
+class MarketSizeResource extends JsonResource
 {
     /**
-
      * The resource that this resource collects.
-
      *
-
      * @var string
-
      */
 
     public $collects = Building::class;
@@ -32,20 +28,13 @@ class MarketSizeCollection extends ResourceCollection
 
         return [
             'id' => $this->id,
-            'region_id' => $this->region_id,
-            'region' => RegionResource::make($this->whenLoaded('region')),
-            'market_id' => $this->market_id,
-            'market'=> MarketResource::make($this->whenLoaded('market')),
-            'sub_market_id' => $this->sub_market_id,
-            'sub_market' => SubMarketResource::make($this->whenLoaded('sub_market')),
-            'builder_id' => $this->builder_id,
-            'builder' => BuilderResource::make($this->whenLoaded('builder')),
-            'industrial_park_id' => $this->industrial_park_id,
-            'industrial_park' => IndustrialPark::make($this->whenLoaded('industrialPark')),
-            'developer_id' => $this->developer_id,
-            'developer' => DeveloperResource::make($this->whenLoaded('developer')),
-            'owner_id' => $this->owner_id,
-            'owner' => OwnerResource::make($this->whenLoaded('owner')),
+            'region' => $this->region?->name,
+            'market' => $this->market?->name,
+            'sub_market' => $this->subMarket?->name,
+            'builder' => $this->builder?->name,
+            'industrial_park' => $this->industrialPark?->name,
+            'developer' => $this->developer?->name,
+            'owner' => $this->owner?->name,
             'building_name' => $this->building_name,
             'building_size_sf' => $this->building_size_sf,
             'construction_size_sf' => $this->building_size_sf,
@@ -76,10 +65,11 @@ class MarketSizeCollection extends ResourceCollection
             'certifications' => $this->certifications,
             'owner_type' => $this->owner_type,
             'stage' => $this->stage,
-            'type_avl' => $this->buildingsAvailable[0]->avl_type,
+            'type_avl' => $this->buildingsAvailable->filter(fn($ba) => $ba->building_state == BuildingState::AVAILABILITY->value)->map(fn($ba) => $ba->type)->implode(', '),
             'type_abs' => $this->buildingsAvailable->map(fn($ba) => $ba->abs_type)->implode(', '),
-            'buildingsAvailable' => $this->buildingsAvailable,
-
+            'tenant' => $this->buildingsAvailable->count() > 1 ? $this->building_name : $this->buildingsAvailable[0]->tenant?->name,
+            'avl_size_sf' => $this->buildingsAvailable->filter(fn($ba) => $ba->size_sf > 0 && $ba->building_state == BuildingState::AVAILABILITY->value)->sum('size_sf'),
+            'avl_minimum_space_sf' => $this->buildingsAvailable[0]->avl_minimum_space_sf ?? 0,
         ];
     }
 }

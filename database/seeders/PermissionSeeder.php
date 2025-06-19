@@ -194,6 +194,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'configurations.index'],
             ['name' => 'configurations.update'],
             ['name' => 'configurations.uploadKmz'],
+
+            ['name' => 'market-size.index'],
         ];
         foreach ($permissions as $permission) {
             Permission::create($permission);
