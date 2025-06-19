@@ -45,9 +45,13 @@ class BuildingFile extends Model
         'file_id',
         'building_id',
         'type',
-        'path',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
+
+    public function file(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(File::class);
+    }
 }
