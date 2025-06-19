@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -213,7 +213,7 @@ class Building extends Model
         'deleted_at',
     ];
 
-
+    protected $appends = ['files_by_type'];
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -262,7 +262,13 @@ class Building extends Model
         return $this->belongsToMany(Contact::class, 'building_contacts', 'building_id', 'contact_id');
     }
 
-    /*public function getFilesByTypeAttribute()
+    public function files(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
+    }
+
+
+    public function getFilesByTypeAttribute()
     {
         $filesByType = $this->files->groupBy('type');
 
@@ -273,5 +279,5 @@ class Building extends Model
         });
 
         return $filesByType;
-    }*/
+    }
 }

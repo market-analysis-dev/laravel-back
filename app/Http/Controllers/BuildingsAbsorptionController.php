@@ -65,8 +65,10 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $absorptionData = $validated['absorption'];
+            $files = $request->file('files') ?? null;
+            $fileType = $request->input('type');
 
-            $building = $this->buildingService->createWithAbsorption($buildingData, $absorptionData);
+            $building = $this->buildingService->createWithAbsorption($buildingData, $absorptionData, $files, $fileType);
 
             return $this->success('Created successfully', $building);
         } catch (\Throwable $e) {
@@ -105,6 +107,8 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $availabilityData = $validated['absorption'];
+            $files = $request->file('files') ?? null;
+            $fileType = $request->input('type');
 
             if($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
                 return $this->error('Building Absorption not found', status: 404);
@@ -116,7 +120,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
 
             $availabilityData['id'] = $buildingAbsorption->id;
 
-            $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData);
+            $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData, $files, $fileType);
 
             return $this->success('Updated successfully', $result);
         } catch (\Throwable $e) {
