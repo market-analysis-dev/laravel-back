@@ -66,8 +66,10 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $availabilityData = $validated['availability'];
+            $files = $request->file('files') ?? null;
+            $fileType = $request->input('type');
 
-            $building = $this->buildingService->createWithAvailability($buildingData, $availabilityData);
+            $building = $this->buildingService->createWithAvailability($buildingData, $availabilityData, $files, $fileType);
 
             return $this->success('Created successfully', $building);
         } catch (\Throwable $e) {
@@ -110,6 +112,8 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $availabilityData = $validated['availability'];
+            $files = $request->file('files') ?? null;
+            $fileType = $request->input('type');
 
             if ($buildingAvailable->building_state !== BuildingState::AVAILABILITY->value) {
                 return $this->error('Building Availability not found', status: 404);
@@ -122,7 +126,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             $buildingData['id'] = $buildingAvailable->building_id;
             $availabilityData['id'] = $buildingAvailable->id;
 
-            $result = $this->buildingService->updateWithAvailability($buildingData, $availabilityData);
+            $result = $this->buildingService->updateWithAvailability($buildingData, $availabilityData, $files, $fileType);
 
             return $this->success('Updated successfully', $result);
         } catch (\Throwable $e) {

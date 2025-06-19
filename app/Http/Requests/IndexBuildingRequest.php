@@ -31,6 +31,10 @@ class IndexBuildingRequest extends FormRequest
             'industrialParkName' => 'nullable|string',
             'column' => 'nullable|in:status,building_name,marketName,submarketName,industrialParkName',
             'state' => 'nullable|in:asc,desc',
+            'region_id' => 'nullable|integer|exists:cat_regions,id',
+            'market_id' => 'nullable|integer|exists:cat_markets,id',
+            'sub_market_id' => 'nullable|integer|exists:cat_sub_markets,id',
+            'developer_id' => 'nullable|integer|exists:cat_developers,id',
         ];
     }
 }

@@ -27,11 +27,15 @@ use App\Http\Requests\UpdateBuildingRequest;
 use App\Models\Building;
 use App\Models\Developer;
 use App\Models\IndustrialPark;
+use App\Models\Market;
 use App\Models\Region;
+use App\Models\SubMarket;
 use App\Responses\ApiResponse;
 use App\Services\BuildingService;
 use App\Services\FileService;
+use App\Services\ImageOptimizationService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use PDF;
@@ -389,82 +393,72 @@ class BuildingController extends ApiController implements HasMiddleware
 
     public function listRegions(IndexLocationRequest $request): ApiResponse
     {
-        $requestQuery = $request->query();
-
         $regions = Region::query();
-        $hasAnyParam = collect($requestQuery)->only([
-            'market_id',
-            'sub_market_id',
-            'developer_id',
-            'industrial_park_id'
-        ])->filter()->isNotEmpty();
 
-        if ($hasAnyParam) {
-            $regions->whereHas('buildings', function (Builder $query) use ($request) {
-                if ($request->query('market_id')) {
-                    $query->where('market_id', $request->query('market_id'));
-                }
-                if ($request->query('sub_market_id')) {
-                    $query->where('sub_market_id', $request->query('sub_market_id'));
-                }
-                if ($request->query('developer_id')) {
-                    $query->where('developer_id', $request->query('developer_id'));
-                }
-                if ($request->query('industrial_park_id')) {
-                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
-                }
-            });
-        }
+        $this->filterLocations($regions, $request);
         $regions = $regions->select('id', 'name')->orderBy('name')->get();
 
         return $this->success(data: $regions);
     }
 
+    public function listMarkets(IndexLocationRequest $request): ApiResponse
+    {
+        $query = Market::query();
+
+        $this->filterLocations($query, $request);
+        $markets = $query->select('id', 'name', 'region_id')->orderBy('name')->get();
+
+        return $this->success(data: $markets);
+    }
+
+    public function listSubMarkets(IndexLocationRequest $request): ApiResponse
+    {
+        $query = SubMarket::query();
+
+        $this->filterLocations($query, $request);
+        $subMarkets = $query->select('id', 'name', 'market_id')->orderBy('name')->get();
+
+        return $this->success(data: $subMarkets);
+    }
+
     public function listDevelopers(IndexLocationRequest $request): ApiResponse
     {
-        $requestQuery = $request->query();
-
         $query = Developer::select('id', 'name')
             ->where('is_developer', true);
 
-        $hasAnyParam = collect($requestQuery)->only([
-            'region_id',
-            'market_id',
-            'sub_market_id',
-            'industrial_park_id'
-        ])->filter()->isNotEmpty();
-        if ($hasAnyParam) {
-            $query->whereHas('buildings', function (Builder $query) use ($request) {
-                if ($request->query('region_id')) {
-                    $query->where('region_id', $request->query('region_id'));
-                }
-                if ($request->query('market_id')) {
-                    $query->where('market_id', $request->query('market_id'));
-                }
-                if ($request->query('sub_market_id')) {
-                    $query->where('sub_market_id', $request->query('sub_market_id'));
-                }
-                if ($request->query('industrial_park_id')) {
-                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
-                }
-            });
-        }
-        $developers = $query->orderBy('name')->get();
+        $this->filterLocations($query, $request);
+
+        $developers = $query->select('id', 'name')->orderBy('name')->get();
         return $this->success(data: $developers);
     }
 
     public function listIndustrialParks(IndexLocationRequest $request): ApiResponse
     {
-        $requestQuery = $request->query();
-
         $query = IndustrialPark::query();
 
-        $hasAnyParam = collect($requestQuery)->only([
+        $this->filterLocations($query, $request);
+        $industrialParks = $query->select('id', 'name', 'region_id', 'market_id', 'sub_market_id')->orderBy('name')->get();
+
+        return $this->success(data: $industrialParks);
+    }
+
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder|\App\Models\Region|\App\Models\Market|\App\Models\SubMarket|\App\Models\IndustrialPark $query
+     * @param \App\Http\Requests\IndexLocationRequest $request
+     * @return void
+     */
+    private function filterLocations(Builder|Region|Market|SubMarket|IndustrialPark $query, IndexLocationRequest $request): void
+    {
+        $hasAnyParam = collect($request->query())->only([
             'region_id',
             'market_id',
             'sub_market_id',
-            'developer_id'
+            'developer_id',
+            'industrial_park_id',
+            'building_id',
         ])->filter()->isNotEmpty();
+
         if ($hasAnyParam) {
             $query->whereHas('buildings', function (Builder $query) use ($request) {
                 if ($request->query('region_id')) {
@@ -479,10 +473,16 @@ class BuildingController extends ApiController implements HasMiddleware
                 if ($request->query('developer_id')) {
                     $query->where('developer_id', $request->query('developer_id'));
                 }
+                if ($request->query('industrial_park_id')) {
+                    $query->where('industrial_park_id', $request->query('industrial_park_id'));
+                }
+                if ($request->query('building_id')) {
+                    $query->where('id', $request->query('building_id'));
+                }
             });
+        } else {
+            $query->has('buildings');
         }
-        $industrialParks = $query->orderBy('name')->get();
-
-        return $this->success(data: $industrialParks);
     }
+
 }

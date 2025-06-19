@@ -12,7 +12,7 @@ use Storage;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -144,7 +144,6 @@ use Storage;
  * @property-read Building|null $building
  * @property-read int|null $files_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereBuildingId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Contact> $contacts
  * @property-read int|null $contacts_count
  * @property string $building_type
@@ -158,6 +157,7 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStage($value)
  * @property string|null $roofing
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRoofing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @mixin \Eloquent
  */
 class Building extends Model
@@ -213,7 +213,7 @@ class Building extends Model
         'deleted_at',
     ];
 
-
+    protected $appends = ['files_by_type'];
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -262,7 +262,13 @@ class Building extends Model
         return $this->belongsToMany(Contact::class, 'building_contacts', 'building_id', 'contact_id');
     }
 
-    /*public function getFilesByTypeAttribute()
+    public function files(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
+    }
+
+
+    public function getFilesByTypeAttribute()
     {
         $filesByType = $this->files->groupBy('type');
 
@@ -273,5 +279,5 @@ class Building extends Model
         });
 
         return $filesByType;
-    }*/
+    }
 }

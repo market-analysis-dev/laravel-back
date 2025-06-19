@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -42,6 +43,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market withoutTrashed()
  * @property int $region_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Market whereRegionId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Building> $buildings
+ * @property-read int|null $buildings_count
  * @mixin \Eloquent
  */
 class Market extends Model
@@ -65,5 +68,10 @@ class Market extends Model
     public function region():BelongsTo
     {
         return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public function buildings(): HasMany
+    {
+        return $this->hasMany(Building::class, 'market_id');
     }
 }

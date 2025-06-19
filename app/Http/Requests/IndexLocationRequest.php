@@ -27,6 +27,7 @@ class IndexLocationRequest extends FormRequest
             'sub_market_id' => 'nullable|integer|exists:cat_sub_markets,id',
             'developer_id' => 'nullable|integer|exists:cat_developers,id',
             'industrial_park_id' => 'nullable|integer|exists:industrial_parks,id',
+            'building_id' => 'nullable|integer|exists:buildings,id',
         ];
     }
 }
