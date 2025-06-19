@@ -10,8 +10,18 @@ use App\Http\Requests\IndexBuildingsAvailableRequest;
 use App\Http\Requests\StoreBuildingWithAvailabilityRequest;
 use App\Http\Requests\UpdateBuildingAvailableDraftRequest;
 use App\Http\Requests\UpdateBuildingWithAvailabilityRequest;
+use App\Models\Broker;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
+use App\Models\Country;
+use App\Models\Developer;
+use App\Models\IndustrialPark;
+use App\Models\Industry;
+use App\Models\Market;
+use App\Models\Region;
+use App\Models\Shelter;
+use App\Models\SubMarket;
+use App\Models\Tenant;
 use App\Responses\ApiResponse;
 use App\Services\BuildingsAvailableService;
 use App\Services\BuildingService;
@@ -255,7 +265,9 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
  * @param ImportBuildingAvailabilityRequest $request
  * @return ApiResponse
  */
-    public function importAvailability(ImportBuildingAvailabilityRequest $request): ApiResponse
+
+
+public function importAvailability(ImportBuildingAvailabilityRequest $request): ApiResponse
 {
     $request->validated();
 
@@ -284,21 +296,33 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
     foreach ($csv as $index => $row) {
         try {
             $data = array_combine($header, $row);
+            $normalizeNulls($data);
 
             if (empty($data['building_name']) || empty($data['ba_avl_date'])) {
                 $errors[] = "Row " . ($index + 2) . ": Missing 'building_name' or 'ba_avl_date'";
                 continue;
             }
 
+
+            $getIdByName = function ($model, $column, $value, $label, $rowIndex) use (&$errors) {
+                if (!$value) return null;
+                $record = $model::where($column, $value)->first();
+                if (!$record) {
+                    $errors[] = "Row " . ($rowIndex + 2) . ": $label \"$value\" not found.";
+                    return null;
+                }
+                return $record->id;
+            };
+
             $buildingData = [
-                'region_id' => $data['region_id'] ?? null,
-                'market_id' => $data['market_id'] ?? null,
-                'sub_market_id' => $data['sub_market_id'] ?? null,
-                'builder_id' => $data['builder_id'] ?? null,
-                'industrial_park_id' => $data['industrial_park_id'] ?? null,
-                'developer_id' => $data['developer_id'] ?? null,
-                'owner_id' => $data['owner_id'] ?? null,
-                'building_name' => $data['building_name'] ?? null,
+                'region_id' => Region::where('name', $data['region'] ?? '')->value('id'),
+                'market_id' => Market::where('name', $data['market'] ?? '')->value('id'),
+                'sub_market_id' => SubMarket::where('name', $data['sub_market'] ?? '')->value('id'),
+                'builder_id' => Developer::where('name', $data['builder'] ?? '')->value('id'),
+                'industrial_park_id' => IndustrialPark::where('name', $data['industrial_park'] ?? '')->value('id'),
+                'developer_id' => Developer::where('name', $data['developer'] ?? '')->value('id'),
+                'owner_id' => Developer::where('name', $data['owner'] ?? '')->value('id'),
+                'building_name' => $data['building_name'],
                 'building_size_sf' => $data['building_size_sf'] ?? null,
                 'latitud' => $data['latitud'] ?? null,
                 'longitud' => $data['longitud'] ?? null,
@@ -327,9 +351,6 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
                 'certifications' => $data['certifications'] ?? null,
                 'owner_type' => $data['owner_type'] ?? null,
                 'stage' => $data['stage'] ?? null,
-                'created_at' => $data['created_at'] ?? null,
-                'updated_at' => $data['updated_at'] ?? null,
-                'deleted_at' => $data['deleted_at'] ?? null,
             ];
 
             $normalizeNulls($buildingData);
@@ -352,12 +373,19 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
             $availabilityData = [];
             foreach ($data as $key => $value) {
                 if (str_starts_with($key, 'ba_')) {
-                    $availabilityKey = substr($key, 3);
-                    $availabilityData[$availabilityKey] = $value;
+                    $field = substr($key, 3);
+                    $availabilityData[$field] = $value;
                 }
             }
 
             $availabilityData['building_id'] = $building->id;
+
+            $availabilityData['abs_tenant_id'] = $getIdByName(Tenant::class, 'name', $data['ba_avl_tenant_name'] ?? null, 'Tenant', $index);
+            $availabilityData['abs_industry_id'] = $getIdByName(Industry::class, 'name', $data['ba_avl_industry_name'] ?? null, 'Industry', $index);
+            $availabilityData['abs_country_id'] = $getIdByName(Country::class, 'name', $data['ba_avl_country_name'] ?? null, 'Country', $index);
+            $availabilityData['broker_id'] = $getIdByName(Broker::class, 'name', $data['ba_avl_broker_name'] ?? null, 'Broker', $index);
+            $availabilityData['abs_shelter_id'] = $getIdByName(Shelter::class, 'name', $data['ba_avl_shelter_name'] ?? null, 'Shelter', $index);
+
             $normalizeNulls($availabilityData);
 
             if (!empty($availabilityData['size_sf']) && !empty($building->building_size_sf)) {
@@ -371,20 +399,19 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
                 ->first();
 
             if ($existingAvailability) {
-                $existingAvailability->fill($availabilityData);
-                $existingAvailability->save();
+                $existingAvailability->fill($availabilityData)->save();
                 $updatedAvailability++;
             } else {
                 BuildingAvailable::create($availabilityData);
                 $importedAvailability++;
             }
+
         } catch (\Throwable $e) {
             $errors[] = "Row " . ($index + 2) . ": " . $e->getMessage();
         }
     }
 
-    return $this->success("Imported", data: [
-        'message' => 'Import completed',
+    return $this->success("Import completed", data: [
         'imported_buildings' => $importedBuildings,
         'updated_buildings' => $updatedBuildings,
         'imported_availability' => $importedAvailability,
@@ -392,5 +419,6 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
         'errors' => $errors,
     ]);
 }
+
 
 }
