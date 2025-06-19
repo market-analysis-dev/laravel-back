@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingFile withoutTrashed()
+ * @property-read \App\Models\File $file
  * @mixin \Eloquent
  */
 class BuildingFile extends Model

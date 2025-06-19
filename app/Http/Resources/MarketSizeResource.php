@@ -79,13 +79,14 @@ class MarketSizeResource extends JsonResource
             'ramps' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : ($this->buildingsAvailable[0]?->ramps ?? 0),
             'kvas_fees_paid' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : $this->buildingsAvailable[0]?->kvas_fees_paid ?? 'Pending',
             'fire_protection_system' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : ($this->buildingsAvailable->map(fn($ba) => $ba->fire_protection_system)->implode(', ')),
+            'shared_trunk' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : ($this->buildingsAvailable[0]?->shared_trunk ?? 'Pending'),
             'deal' => $avlCount + $absCount > 1 ? 'Multitenant' : ($avlCount == 1 ? $avl[0]->deal : ($absCount == 1 ? $abs[0]->deal : 'Pending')),
-            'avl_month' => $avlCount == 1 ? $avl[0]->avlMonth() : 'Pending',
-            'avl_quarter' => $avlCount == 1 ? $avl[0]->avlQuarter() : 'Pending',
-            'avl_year' => $avlCount == 1 ? $avl[0]->avlYear() : 'Pending',
-            'abs_closing_month' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->closingMonth() : 'Pending'),
-            'abs_closing_quarter' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->closingQuarter() : 'Pending'),
-            'abs_closing_year' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->closingYear() : 'Pending'),
+            'avl_month' => $avlCount == 1 ? $avl[0]->avl_month : 'Pending',
+            'avl_quarter' => $avlCount == 1 ? $avl[0]->avl_quarter : 'Pending',
+            'avl_year' => $avlCount == 1 ? $avl[0]->avl_year : 'Pending',
+            'abs_closing_month' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->closing_month : 'Pending'),
+            'abs_closing_quarter' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->closing_quarter : 'Pending'),
+            'abs_closing_year' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->closing_year : 'Pending'),
             'abs_industry' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->industry?->name ?? 'Pending' : 'Pending'),
             'abs_final_use' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->abs_final_use ?? 'Pending' : 'Pending'),
             'abs_country' => $absCount > 1 ? 'Multitenant' : ($absCount == 1 ? $abs[0]->country?->name ?? 'Pending' : 'Pending'),
@@ -101,6 +102,11 @@ class MarketSizeResource extends JsonResource
             'has_tis_land_expansion' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : ($this->buildingsAvailable[0]?->has_tis_land_expansion ?? 'Pending'),
             'is_new_construction' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : ($this->buildingsAvailable[0]?->is_new_construction ?? 'Pending'),
             'is_starting_construction' => $this->buildingsAvailable->count() > 1 ? 'Multitenant' : ($this->buildingsAvailable[0]?->is_starting_construction ?? 'Pending'),
+            'action' => [
+                'type' => $this->tenancy == 'Single' ? 'link' : 'modal',
+                'to' => $this->tenancy == 'Single' ? ($avlCount == 1 ? 'avl' : 'abs') : '',
+                'id' => $this->tenancy == 'Single' ? ($avlCount == 1 ? $avl[0]->id : ($absCount == 1 ? $abs[0]->id : '')) : '',
+            ]
         ];
     }
 }

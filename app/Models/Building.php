@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -162,6 +162,7 @@ use Illuminate\Support\Str;
  * @property-read int|null $building_available_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingFile> $files
  * @property-read mixed $files_by_type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @mixin \Eloquent
  */
 class Building extends Model

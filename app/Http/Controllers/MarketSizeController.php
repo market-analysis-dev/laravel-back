@@ -26,6 +26,21 @@ class MarketSizeController extends ApiController implements HasMiddleware
     public function index(IndexBuildingRequest $request): ApiResponse
     {
         $buildings = $this->marketSizeService->filter($request->validated());
-        return $this->success(data:  MarketSizeResource::collection($buildings));
+        return $this->success(
+            data: MarketSizeResource::collection($buildings),
+            extraData: [
+                'meta' => [
+                    'total' => $buildings->total(),
+                    'per_page' => $buildings->perPage(),
+                    'current_page' => $buildings->currentPage(),
+                    'last_page' => $buildings->lastPage(),
+                ],
+                'links' => [
+                    'first' => $buildings->url(1),
+                    'last' => $buildings->url($buildings->lastPage()),
+                    'prev' => $buildings->previousPageUrl(),
+                    'next' => $buildings->nextPageUrl(),
+                ],
+            ]);
     }
 }

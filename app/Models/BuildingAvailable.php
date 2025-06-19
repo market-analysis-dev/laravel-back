@@ -9,7 +9,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $building_id
@@ -157,12 +157,13 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlDateType(string $type, string $value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereClosingDate(string $type, string $value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlMonth()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlYear()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlQuarter()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingMonth()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingYear()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingQuarter()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereClosingDateType(string $type, string $value)
+ * @property-read string|null $avl_month
+ * @property-read string|null $avl_quarter
+ * @property-read string|null $avl_year
+ * @property-read string|null $closing_month
+ * @property-read string|null $closing_quarter
+ * @property-read string|null $closing_year
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -289,7 +290,8 @@ class BuildingAvailable extends Model
     }
 
 
-    public function scopeWhereAvlDateType($query, string $type, string $value){
+    public function scopeWhereAvlDateType($query, string $type, string $value)
+    {
         if ($type === 'quarter') {
             $startMonth = match ($value) {
                 'Q1' => 1,
@@ -312,17 +314,17 @@ class BuildingAvailable extends Model
     }
 
 
-    public function scopeAvlMonth(): ?string
+    protected function getAvlMonthAttribute(): ?string
     {
         return $this->avl_date ? date('F', strtotime($this->avl_date)) : null;
     }
 
-    public function scopeAvlYear(): ?string
+    public function getAvlYearAttribute(): ?string
     {
         return $this->avl_date ? date('Y', strtotime($this->avl_date)) : null;
     }
 
-    public function scopeAvlQuarter(): ?string
+    public function getAvlQuarterAttribute(): ?string
     {
         $quarters = [
             'Q1' => [1, 2, 3],
@@ -339,17 +341,17 @@ class BuildingAvailable extends Model
         return null;
     }
 
-    public function scopeClosingMonth(): ?string
+    public function getClosingMonthAttribute(): ?string
     {
         return $this->abs_closing_date ? date('F', strtotime($this->abs_closing_date)) : null;
     }
 
-    public function scopeClosingYear(): ?string
+    public function getClosingYearAttribute(): ?string
     {
         return $this->abs_closing_date ? date('Y', strtotime($this->abs_closing_date)) : null;
     }
 
-    public function scopeClosingQuarter(): ?string
+    public function getClosingQuarterAttribute(): ?string
     {
         $quarters = [
             'Q1' => [1, 2, 3],
