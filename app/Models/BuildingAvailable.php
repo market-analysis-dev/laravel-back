@@ -155,7 +155,8 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingDate(?string $quarter, ?int $year)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlDateType(string $type, string $value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereClosingDate(string $type, string $value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlMonth()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlYear()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable avlQuarter()
@@ -264,22 +265,47 @@ class BuildingAvailable extends Model
         return $this->belongsTo(Shelter::class, 'abs_shelter_id');
     }
 
-    public function scopeClosingDate($query, ?string $quarter, ?int $year)
+    public function scopeWhereClosingDateType($query, string $type, string $value)
     {
-        if ($year) {
-            $query->whereYear('closing_date', $year);
-        }
-
-        if ($quarter) {
-            $startMonth = match ($quarter) {
+        if ($type === 'quarter') {
+            $startMonth = match ($value) {
                 'Q1' => 1,
                 'Q2' => 4,
                 'Q3' => 7,
                 'Q4' => 10,
-                default => throw new \InvalidArgumentException("Invalid quarter: {$quarter}"),
+                default => throw new \InvalidArgumentException("Invalid quarter: {$value}"),
             };
-            $query->whereMonth('closing_date', '>=', $startMonth)
-                ->whereMonth('closing_date', '<', $startMonth + 3);
+            $query->whereMonth('abs_closing_date', '>=', $startMonth)
+                ->whereMonth('abs_closing_date', '<', $startMonth + 3);
+        } elseif ($type === 'year') {
+            $query->whereYear('abs_closing_date', $value);
+        } elseif ($type === 'month') {
+            $query->whereMonth('abs_closing_date', $value);
+        } else {
+            throw new \InvalidArgumentException("Invalid type: {$type}");
+        }
+
+        return $query;
+    }
+
+
+    public function scopeWhereAvlDateType($query, string $type, string $value){
+        if ($type === 'quarter') {
+            $startMonth = match ($value) {
+                'Q1' => 1,
+                'Q2' => 4,
+                'Q3' => 7,
+                'Q4' => 10,
+                default => throw new \InvalidArgumentException("Invalid quarter: {$value}"),
+            };
+            $query->whereMonth('avl_date', '>=', $startMonth)
+                ->whereMonth('avl_date', '<', $startMonth + 3);
+        } elseif ($type === 'year') {
+            $query->whereYear('avl_date', $value);
+        } elseif ($type === 'month') {
+            $query->whereMonth('avl_date', $value);
+        } else {
+            throw new \InvalidArgumentException("Invalid type: {$type}");
         }
 
         return $query;
