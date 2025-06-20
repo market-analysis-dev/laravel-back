@@ -9,7 +9,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -266,7 +266,7 @@ class BuildingAvailable extends Model
         return $this->belongsTo(Shelter::class, 'abs_shelter_id');
     }
 
-    public function scopeWhereClosingDateType($query, string $type, string $value)
+    public function scopeWhereClosingDateType($query, string $type, ?string $value)
     {
         if ($type === 'quarter') {
             $startMonth = match ($value) {

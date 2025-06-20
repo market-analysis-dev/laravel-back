@@ -33,8 +33,8 @@ class BuildingsAvailableService
                 $query->when($validatedData['broker_name'] ?? false, fn($q, $val) => $q->where('name', 'like', "%{$val}%"));
             })
             ->when($validatedData['abs_type'] ?? false, fn($q, $val) => $q->where('abs_type', 'like', "%{$val}%"))
-            ->whereClosingDate('quarter', $validatedData['closing_quarter'] ?? null)
-            ->whereClosingDate('year', $validatedData['closing_year'] ?? null)
+            ->when($validatedData['closing_quarter'] ?? false, fn($q, $val) => $q->whereClosingDateType('quarter', $validatedData['closing_quarter']))
+            ->when($validatedData['closing_year'] ?? false, fn($q, $val) => $q->whereClosingDateType('year', $validatedData['closing_year'] ?? null))
             ->orderBy($sort_column, $sort)
             ->with(['building.market', 'building.subMarket', 'building.industrialPark', 'building.developer', 'broker'])
             ->paginate($page_size, page: $page);
