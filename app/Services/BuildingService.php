@@ -91,7 +91,12 @@ class BuildingService
 
 
 
-    public function createWithAbsorption(array $buildingData, array $absorptionData): mixed
+    public function createWithAbsorption(
+        array $buildingData,
+        array $absorptionData,
+        ?array $files = null,
+        ?string $fileType = null
+    ): mixed
     {
         if (isset($absorptionData['is_starting_construction']) && (int) $absorptionData['is_starting_construction'] === 1) {
             $now = now();
