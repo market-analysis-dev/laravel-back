@@ -10,6 +10,7 @@ Route::group([
 ], function () {
     Route::get('/', [BuildingsAbsorptionController::class, 'index'])->name('index');
     Route::post('/', [BuildingsAbsorptionController::class, 'store'])->name('store');
+    Route::post('/import', [BuildingsAbsorptionController::class, 'importAbsorption'])->name('importAbsorption');
     Route::get('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'show'])->name('show');
     Route::post('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'update'])->name('update');
     Route::delete('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'destroy'])->name('destroy');
@@ -19,5 +20,4 @@ Route::group([
     Route::get('/{buildingAbsorption}/draft', [BuildingsAbsorptionController::class, 'getDraft'])->name('getDraft');
     Route::put('/{buildingAbsorption}/draft', [BuildingsAbsorptionController::class, 'updateDraft'])->name('updateDraft');
     Route::delete('/{buildingAbsorption}/draft', [BuildingsAbsorptionController::class, 'deleteDraft'])->name('deleteDraft');
-    Route::post('/import', [BuildingsAbsorptionController::class, 'importAbsorption'])->name('importAbsorption');
 });
