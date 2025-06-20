@@ -105,7 +105,7 @@ class MarketSizeResource extends JsonResource
             'action' => [
                 'type' => $this->tenancy == 'Single' ? 'link' : 'modal',
                 'to' => $this->tenancy == 'Single' ? ($avlCount == 1 ? 'avl' : 'abs') : '',
-                'id' => $this->tenancy == 'Single' ? ($avlCount == 1 ? $avl[0]->id : ($absCount == 1 ? $abs[0]->id : '')) : '',
+                'id' => $this->tenancy == 'Single' ? ($avlCount == 1 ? $avl[0]->id : ($absCount == 1 ? $abs[0]->id : '')) : $this->id,
             ]
         ];
     }

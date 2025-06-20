@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IndexBuildingRequest;
 use App\Http\Resources\MarketSizeResource;
+use App\Models\Building;
 use App\Responses\ApiResponse;
 use App\Services\MarketSizeService;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -15,7 +16,7 @@ class MarketSizeController extends ApiController implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:market-size.index', only: ['index']),
+            new Middleware('permission:market-size.index', only: ['index','listAvl']),
         ];
     }
 
@@ -42,5 +43,13 @@ class MarketSizeController extends ApiController implements HasMiddleware
                     'next' => $buildings->nextPageUrl(),
                 ],
             ]);
+    }
+
+    public function listAvl(Building $building): ApiResponse
+    {
+        $buildingsAvailable = $building->buildingsAvailable;
+
+        return $this->success(data: $buildingsAvailable);
+
     }
 }
