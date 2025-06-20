@@ -10,5 +10,9 @@ Route::group([
     'middleware' => 'auth:sanctum',
 ], function () {
     Route::get('/', [RegionController::class, 'index'])->name('index');
+    Route::post('/', [RegionController::class, 'store'])->name('store');
+    Route::get('/{region}', [RegionController::class, 'show'])->name('show');
+    Route::put('/{region}', [RegionController::class, 'update'])->name('update');
+    Route::delete('/{region}', [RegionController::class, 'destroy'])->name('destroy');
 });
 

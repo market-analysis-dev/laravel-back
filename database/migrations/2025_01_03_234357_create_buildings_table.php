@@ -51,6 +51,7 @@ return new class extends Migration
             $table->enum('certifications', ['None', 'LEED', 'EDGE', 'BOMA']);
             $table->enum('owner_type', ['Investor', 'REITS', 'Developer', 'User Owner', 'Builder', 'Private Owner']);
             $table->enum('stage', ['Availability', 'Construction', 'Leased', 'Sold']);
+            $table->date('construction_date')->nullable();
 
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

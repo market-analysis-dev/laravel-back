@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Storage;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 /**
@@ -157,6 +158,10 @@ use Storage;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStage($value)
  * @property string|null $roofing
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRoofing($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingAvailable
+ * @property-read int|null $building_available_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingFile> $files
+ * @property-read mixed $files_by_type
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @mixin \Eloquent
  */
@@ -214,7 +219,7 @@ class Building extends Model
         'deleted_at',
     ];
 
-
+    protected $appends = ['files_by_type'];
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -263,16 +268,38 @@ class Building extends Model
         return $this->belongsToMany(Contact::class, 'building_contacts', 'building_id', 'contact_id');
     }
 
-    /*public function getFilesByTypeAttribute()
+    public function files(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        $filesByType = $this->files->groupBy('type');
+        return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
+    }
 
-        $filesByType->each(function ($files) {
-            $files->each(function ($file) {
-            $file->path = Storage::disk('public')->url($file->path);
+    public function buildingAvailable(): HasMany
+    {
+        return $this->hasMany(BuildingAvailable::class, 'building_id');
+    }
+
+
+    public function getFilesByTypeAttribute()
+    {
+        $buildingFiles = $this->files()->with('file')->get();
+
+        return $buildingFiles->groupBy('type')->map(function ($files) {
+            return $files->map(function ($buildingFile) {
+                $path = $buildingFile->file?->path;
+
+                // Преобразуем относительный путь через Storage, если нужно
+                if (!empty($path) && !Str::startsWith($path, ['http://', 'https://'])) {
+                    $path = Storage::disk('public')->url($path);
+                }
+
+                return [
+                    'id' => $buildingFile->id,
+                    'type' => $buildingFile->type,
+                    'url' => $path,
+                    'name' => $buildingFile->file?->name,
+                ];
             });
         });
+    }
 
-        return $filesByType;
-    }*/
 }

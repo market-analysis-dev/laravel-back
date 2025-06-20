@@ -9,7 +9,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $building_id
@@ -155,7 +155,15 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereUpdatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable withoutTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable closingDate(?string $quarter, ?int $year)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereAvlDateType(string $type, string $value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereClosingDate(string $type, string $value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BuildingAvailable whereClosingDateType(string $type, string $value)
+ * @property-read string|null $avl_month
+ * @property-read string|null $avl_quarter
+ * @property-read string|null $avl_year
+ * @property-read string|null $closing_month
+ * @property-read string|null $closing_quarter
+ * @property-read string|null $closing_year
  * @mixin \Eloquent
  */
 class BuildingAvailable extends Model
@@ -258,25 +266,106 @@ class BuildingAvailable extends Model
         return $this->belongsTo(Shelter::class, 'abs_shelter_id');
     }
 
-    public function scopeClosingDate($query, ?string $quarter, ?int $year)
+    public function scopeWhereClosingDateType($query, string $type, ?string $value)
     {
-        if ($year) {
-            $query->whereYear('closing_date', $year);
-        }
-
-        if ($quarter) {
-            $startMonth = match ($quarter) {
+        if ($type === 'quarter') {
+            $startMonth = match ($value) {
                 'Q1' => 1,
                 'Q2' => 4,
                 'Q3' => 7,
                 'Q4' => 10,
-                default => throw new \InvalidArgumentException("Invalid quarter: {$quarter}"),
+                default => throw new \InvalidArgumentException("Invalid quarter: {$value}"),
             };
-            $query->whereMonth('closing_date', '>=', $startMonth)
-                ->whereMonth('closing_date', '<', $startMonth + 3);
+            $query->whereMonth('abs_closing_date', '>=', $startMonth)
+                ->whereMonth('abs_closing_date', '<', $startMonth + 3);
+        } elseif ($type === 'year') {
+            $query->whereYear('abs_closing_date', $value);
+        } elseif ($type === 'month') {
+            $query->whereMonth('abs_closing_date', $value);
+        } else {
+            throw new \InvalidArgumentException("Invalid type: {$type}");
         }
 
         return $query;
+    }
+
+
+    public function scopeWhereAvlDateType($query, string $type, string $value)
+    {
+        if ($type === 'quarter') {
+            $startMonth = match ($value) {
+                'Q1' => 1,
+                'Q2' => 4,
+                'Q3' => 7,
+                'Q4' => 10,
+                default => throw new \InvalidArgumentException("Invalid quarter: {$value}"),
+            };
+            $query->whereMonth('avl_date', '>=', $startMonth)
+                ->whereMonth('avl_date', '<', $startMonth + 3);
+        } elseif ($type === 'year') {
+            $query->whereYear('avl_date', $value);
+        } elseif ($type === 'month') {
+            $query->whereMonth('avl_date', $value);
+        } else {
+            throw new \InvalidArgumentException("Invalid type: {$type}");
+        }
+
+        return $query;
+    }
+
+
+    protected function getAvlMonthAttribute(): ?string
+    {
+        return $this->avl_date ? date('F', strtotime($this->avl_date)) : null;
+    }
+
+    public function getAvlYearAttribute(): ?string
+    {
+        return $this->avl_date ? date('Y', strtotime($this->avl_date)) : null;
+    }
+
+    public function getAvlQuarterAttribute(): ?string
+    {
+        $quarters = [
+            'Q1' => [1, 2, 3],
+            'Q2' => [4, 5, 6],
+            'Q3' => [7, 8, 9],
+            'Q4' => [10, 11, 12],
+        ];
+        $month = date('n', strtotime($this->avl_date));
+        foreach ($quarters as $quarter => $months) {
+            if (in_array($month, $months)) {
+                return $quarter;
+            }
+        }
+        return null;
+    }
+
+    public function getClosingMonthAttribute(): ?string
+    {
+        return $this->abs_closing_date ? date('F', strtotime($this->abs_closing_date)) : null;
+    }
+
+    public function getClosingYearAttribute(): ?string
+    {
+        return $this->abs_closing_date ? date('Y', strtotime($this->abs_closing_date)) : null;
+    }
+
+    public function getClosingQuarterAttribute(): ?string
+    {
+        $quarters = [
+            'Q1' => [1, 2, 3],
+            'Q2' => [4, 5, 6],
+            'Q3' => [7, 8, 9],
+            'Q4' => [10, 11, 12],
+        ];
+        $month = date('n', strtotime($this->abs_closing_date));
+        foreach ($quarters as $quarter => $months) {
+            if (in_array($month, $months)) {
+                return $quarter;
+            }
+        }
+        return null;
     }
 
 }
