@@ -6,6 +6,7 @@ use App\Enums\BuildingState;
 use App\Models\Building;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
 class MarketSizeResource extends JsonResource
 {
@@ -25,9 +26,9 @@ class MarketSizeResource extends JsonResource
     public function toArray(Request $request): array
     {
         /* @var Building $this */
-        $avl = $this->buildingsAvailable->filter(fn($ba) => $ba->building_state == BuildingState::AVAILABILITY->value);
+        $avl = $this->buildingsAvailable->filter(fn($ba) => $ba->building_state == BuildingState::AVAILABILITY->value)->values();
         $avlCount = $avl->count();
-        $abs = $this->buildingsAvailable->filter(fn($ba) => $ba->building_state == BuildingState::ABSORPTION->value);
+        $abs = $this->buildingsAvailable->filter(fn($ba) => $ba->building_state == BuildingState::ABSORPTION->value)->values();
         $absCount = $abs->count();
 
         return [
