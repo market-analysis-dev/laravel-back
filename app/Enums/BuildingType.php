@@ -10,8 +10,9 @@ enum BuildingType: string
     use EnumHelper;
 
     case BTS = 'BTS';
-    case EXPANSION = 'Expansion';
+/*    case EXPANSION = 'Expansion';*/
     case INVENTORY = 'Inventory';
+    case INVENTORY_EXPANSION = 'Inventory Expansion';
     case CONSTRUCTION = 'Construction';
     case PLANNED = 'Planned';
     case SUBLEASE = 'Sublease';

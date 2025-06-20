@@ -207,9 +207,9 @@ class BuildingController extends ApiController implements HasMiddleware
             ->when(request()->boolean('absorption'), function ($collection) {
                 return $collection->filter(fn($phase) => in_array($phase, [
                     BuildingType::BTS->value,
-                    BuildingType::EXPANSION->value,
-                    BuildingType::INVENTORY->value,
                     BuildingType::BTS_EXPANSION->value,
+                    BuildingType::INVENTORY_EXPANSION->value,
+                    BuildingType::INVENTORY->value,
                 ]));
             });
 
