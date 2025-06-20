@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $region_id
@@ -210,6 +210,7 @@ class Building extends Model
         'expansion_up_to_sf',
         'owner_type',
         'stage',
+        'construction_date',
         'created_by',
         'updated_by',
         'deleted_by',

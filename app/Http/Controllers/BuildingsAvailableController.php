@@ -130,7 +130,7 @@ class BuildingsAvailableController extends ApiController implements HasMiddlewar
                 return $this->error('Building Availability not found', status: 404);
             }
 
-            if ($buildingAvailable->building_id !== $buildingData['id']) {
+            if ($buildingAvailable->building_id != $buildingData['id']) {
                 return $this->error('Building ID mismatch', status: 422);
             }
 
