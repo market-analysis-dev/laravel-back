@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $region_id
@@ -158,6 +158,10 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereStage($value)
  * @property string|null $roofing
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereRoofing($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingAvailable> $buildingAvailable
+ * @property-read int|null $building_available_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BuildingFile> $files
+ * @property-read mixed $files_by_type
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Building whereSubMarketId($value)
  * @mixin \Eloquent
  */
@@ -266,6 +270,11 @@ class Building extends Model
     public function files(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(BuildingFile::class, 'building_id')->whereNull('deleted_at');
+    }
+
+    public function buildingAvailable(): HasMany
+    {
+        return $this->hasMany(BuildingAvailable::class, 'building_id');
     }
 
 

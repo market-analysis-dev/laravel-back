@@ -59,7 +59,7 @@ class BuildingService
 
         return DB::transaction(function () use ($buildingData, $availabilityData, $files, $fileType) {
 
-            if ($buildingData['id']) {
+            if (isset($buildingData['id'])) {
                 $building = Building::findOrFail($buildingData['id']);
                 $building = $this->update($building, $buildingData);
             } else {

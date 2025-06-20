@@ -9,4 +9,5 @@ Route::group([
     'middleware' => 'auth:sanctum',
 ], function () {
     Route::get('/', [MarketSizeController::class, 'index'])->name('index');
+    Route::get('/{building}', [MarketSizeController::class, 'listAvl'])->name('show');
 });

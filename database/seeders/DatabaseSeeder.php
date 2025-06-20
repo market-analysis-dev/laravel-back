@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             CamSeeder::class,
             ConfigurationSeeder::class,
-            UserClientSeeder::class,
+//            UserClientSeeder::class,
         ]);
     }
 }
