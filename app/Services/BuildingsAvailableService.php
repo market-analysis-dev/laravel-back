@@ -18,53 +18,115 @@ class BuildingsAvailableService
     {
         $page_size = $validatedData['page_size'] ?? 10;
         $page = $validatedData['page'] ?? 1;
-        $sort_column = $validatedData['sort_column'] ?? 'id';
         $sort = $validatedData['sort'] ?? 'desc';
 
-        return BuildingAvailable::where('building_state', BuildingState::ABSORPTION->value)
-            ->whereHas('building', function ($query) use ($validatedData) {
-                $query
-                    ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
-                    ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
-                    ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
-            })
-            ->whereHas('broker', function ($query) use ($validatedData) {
-                $query->when($validatedData['broker_name'] ?? false, fn($q, $val) => $q->where('name', 'like', "%{$val}%"));
-            })
-            ->when($validatedData['abs_type'] ?? false, fn($q, $val) => $q->where('abs_type', 'like', "%{$val}%"))
-            ->when($validatedData['closing_quarter'] ?? false, fn($q, $val) => $q->whereClosingDateType('quarter', $validatedData['closing_quarter']))
-            ->when($validatedData['closing_year'] ?? false, fn($q, $val) => $q->whereClosingDateType('year', $validatedData['closing_year'] ?? null))
-            ->orderBy($sort_column, $sort)
-            ->with(['building.market', 'building.subMarket', 'building.industrialPark', 'building.developer', 'broker'])
-            ->paginate($page_size, page: $page);
+
+        $sortable = [
+            'id' => 'buildings_available.id',
+            'avl_type' => 'buildings_available.avl_type',
+            'building_state' => 'buildings_available.building_state',
+            'building_name' => 'buildings.building_name',
+            'class' => 'buildings.class',
+        ];
+
+        $sort_column = $sortable[$validatedData['sort_column'] ?? 'id'] ?? 'buildings_available.id';
+
+        $query = BuildingAvailable::query()
+            ->where('building_state', BuildingState::ABSORPTION->value)
+        ->whereHas('building', function ($query) use ($validatedData) {
+        $query
+            ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
+            ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
+            ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
+            ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
+            ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
+            ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
+    })
+        ->when($validatedData['avl_type'] ?? false, fn($q, $val) => $q->where('avl_type', 'like', "%{$val}%"))
+        ->with(
+            'building.region',
+            'building.market',
+            'building.subMarket',
+            'building.industrialPark',
+            'building.builder',
+            'building.developer',
+            'building.owner',
+            'tenant',
+            'industry',
+            'country',
+            'broker',
+            'absShelter',
+        );
+
+    if (str_starts_with($sort_column, 'buildings.')) {
+        $query->join('buildings', 'buildings_available.building_id', '=', 'buildings.id')
+            ->select('buildings_available.*')
+            ->orderBy($sort_column, $sort);
+    } else {
+        $query->orderBy($sort_column, $sort);
+    }
+     return $query->paginate($page_size, page: $page);
     }
 
+    /**
+     * @param array $validatedData
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function filterAvailable(array $validatedData): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $page_size = $validatedData['page_size'] ?? 10;
         $page = $validatedData['page'] ?? 1;
-        $sort_column = $validatedData['sort_column'] ?? 'id';
         $sort = $validatedData['sort'] ?? 'desc';
 
-        return BuildingAvailable::query()
+
+        $sortable = [
+            'id' => 'buildings_available.id',
+            'avl_type' => 'buildings_available.avl_type',
+            'building_state' => 'buildings_available.building_state',
+            'building_name' => 'buildings.building_name',
+            'class' => 'buildings.class',
+        ];
+
+        $sort_column = $sortable[$validatedData['sort_column'] ?? 'id'] ?? 'buildings_available.id';
+
+        $query = BuildingAvailable::query()
             ->where('building_state', BuildingState::AVAILABILITY->value)
-            ->whereHas('building', function ($query) use ($validatedData) {
-                $query
-                    ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
-                    ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
-                    ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
-            })
-            ->when($validatedData['avl_type'] ?? false, fn($q, $val) => $q->where('avl_type', 'like', "%{$val}%"))
-            ->orderBy($sort_column, $sort)
-            ->with('building.market', 'building.subMarket', 'building.industrialPark', 'building.developer')
-            ->paginate($page_size, page: $page);
+        ->whereHas('building', function ($query) use ($validatedData) {
+        $query
+            ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
+            ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
+            ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
+            ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
+            ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
+            ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
+    })
+        ->when($validatedData['avl_type'] ?? false, fn($q, $val) => $q->where('avl_type', 'like', "%{$val}%"))
+        ->with(
+            'building.region',
+            'building.market',
+            'building.subMarket',
+            'building.industrialPark',
+            'building.builder',
+            'building.developer',
+            'building.owner',
+            'tenant',
+            'industry',
+            'country',
+            'broker',
+            'absShelter',
+        );
+
+    if (str_starts_with($sort_column, 'buildings.')) {
+        $query->join('buildings', 'buildings_available.building_id', '=', 'buildings.id')
+            ->select('buildings_available.*')
+            ->orderBy($sort_column, $sort);
+    } else {
+        $query->orderBy($sort_column, $sort);
     }
+
+    return $query->paginate($page_size, page: $page);
+}
+
 
 
     /**

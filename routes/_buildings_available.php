@@ -8,6 +8,7 @@ Route::group([
     'as' => 'api.buildings.availability.',
     'middleware' => 'auth:sanctum',
 ], function () {
+    Route::get('/export', [BuildingsAvailableController::class, 'exportAvailability'])->name('exportAvailability');
     Route::get('/', [BuildingsAvailableController::class, 'index'])->name('index');
     Route::get('/{buildingAvailable}', [BuildingsAvailableController::class, 'show'])->name('show');
     Route::post('/', [BuildingsAvailableController::class, 'store'])->name('store');

@@ -11,6 +11,7 @@ Route::group([
     Route::get('/', [BuildingsAbsorptionController::class, 'index'])->name('index');
     Route::post('/', [BuildingsAbsorptionController::class, 'store'])->name('store');
     Route::post('/import', [BuildingsAbsorptionController::class, 'importAbsorption'])->name('importAbsorption');
+    Route::get('/export', [BuildingsAbsorptionController::class, 'exportAbsorption'])->name('exportAbsorption');
     Route::get('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'show'])->name('show');
     Route::post('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'update'])->name('update');
     Route::delete('/{buildingAbsorption}', [BuildingsAbsorptionController::class, 'destroy'])->name('destroy');
