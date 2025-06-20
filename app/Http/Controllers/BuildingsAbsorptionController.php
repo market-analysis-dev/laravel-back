@@ -16,6 +16,7 @@ use App\Services\BuildingsAvailableService;
 use App\Services\BuildingService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Validation\ValidationException;
 
 class BuildingsAbsorptionController extends ApiController implements HasMiddleware
 {
@@ -71,6 +72,8 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             $building = $this->buildingService->createWithAbsorption($buildingData, $absorptionData, $files, $fileType);
 
             return $this->success('Created successfully', $building);
+        } catch (ValidationException $e) {
+            return $this->error(message: $e->getMessage(), data: $e->errors(), status: 422);
         } catch (\Throwable $e) {
             report($e);
             return $this->error(message: 'Error creating building with absorption', data: [], status: 500);
@@ -114,7 +117,7 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
                 return $this->error('Building Absorption not found', status: 404);
             }
 
-            if ($buildingAbsorption->building_id !== $buildingData['id']) {
+            if ($buildingAbsorption->building_id != $buildingData['id']) {
                 return $this->error('Building ID mismatch', status: 400);
             }
 

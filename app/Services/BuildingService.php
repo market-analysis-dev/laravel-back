@@ -91,16 +91,20 @@ class BuildingService
 
 
 
-    public function createWithAbsorption(
-        array $buildingData,
-        array $absorptionData,
-        ?array $files = null,
-        ?string $fileType = null
-    ): mixed {
+    public function createWithAbsorption(array $buildingData, array $absorptionData): mixed
+    {
+        if (isset($absorptionData['is_starting_construction']) && (int) $absorptionData['is_starting_construction'] === 1) {
+            $now = now();
+            $buildingData['year_built'] = $now->year;
+            $buildingData['construction_date'] = $now->toDateString();
+        }
+
+        /* Building */
         if ($buildingData['sqftToM2'] ?? false) {
             $buildingData = $this->convertMetrics($buildingData);
         }
 
+        /* Building Absorption */
         if (!empty($absorptionData['sqftToM2']) || !empty($absorptionData['yrToMo'])) {
             $absorptionData = $this->buildingsAvailableService->convertMetrics($absorptionData);
         }
