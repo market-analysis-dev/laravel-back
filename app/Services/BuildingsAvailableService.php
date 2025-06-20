@@ -14,33 +14,6 @@ use Illuminate\Validation\ValidationException;
 
 class BuildingsAvailableService
 {
-    /*public function filterAbsorption(array $validatedData): \Illuminate\Contracts\Pagination\LengthAwarePaginator
-    {
-        $page_size = $validatedData['page_size'] ?? 10;
-        $page = $validatedData['page'] ?? 1;
-        $sort_column = $validatedData['sort_column'] ?? 'id';
-        $sort = $validatedData['sort'] ?? 'desc';
-
-        return BuildingAvailable::where('building_state', BuildingState::ABSORPTION->value)
-            ->whereHas('building', function ($query) use ($validatedData) {
-                $query
-                    ->when($validatedData['building_name'] ?? false, fn($q, $val) => $q->where('building_name', 'like', "%{$val}%"))
-                    ->when($validatedData['building_class'] ?? false, fn($q, $val) => $q->where('class', 'like', "%{$val}%"))
-                    ->when($validatedData['market'] ?? false, fn($q, $val) => $q->whereHas('market', fn($mq) => $mq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['sub_market'] ?? false, fn($q, $val) => $q->whereHas('subMarket', fn($sq) => $sq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['industrial_park'] ?? false, fn($q, $val) => $q->whereHas('industrialPark', fn($iq) => $iq->where('name', 'like', "%{$val}%")))
-                    ->when($validatedData['developer'] ?? false, fn($q, $val) => $q->whereHas('developer', fn($dq) => $dq->where('name', 'like', "%{$val}%")));
-            })
-            ->whereHas('broker', function ($query) use ($validatedData) {
-                $query->when($validatedData['broker_name'] ?? false, fn($q, $val) => $q->where('name', 'like', "%{$val}%"));
-            })
-            ->when($validatedData['abs_type'] ?? false, fn($q, $val) => $q->where('abs_type', 'like', "%{$val}%"))
-            ->when($validatedData['closing_quarter'] ?? false, fn($q, $val) => $q->whereClosingDateType('quarter', $validatedData['closing_quarter']))
-            ->when($validatedData['closing_year'] ?? false, fn($q, $val) => $q->whereClosingDateType('year', $validatedData['closing_year'] ?? null))
-            ->orderBy($sort_column, $sort)
-            ->with(['building.market', 'building.subMarket', 'building.industrialPark', 'building.developer', 'broker'])
-            ->paginate($page_size, page: $page);
-    }*/
     public function filterAbsorption(array $validatedData): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $page_size = $validatedData['page_size'] ?? 10;
