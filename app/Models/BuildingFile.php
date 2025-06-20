@@ -14,7 +14,6 @@ class BuildingFile extends Model
         'file_id',
         'building_id',
         'type',
-        'path',
         'created_by',
         'updated_by',
         'deleted_by',

@@ -165,7 +165,7 @@ class FileService
     }*/
     private function determineFileType(string $fileName): ?string
     {
-        $name = strtolower($fileName); // Приводим к нижнему регистру
+        $name = strtolower($fileName);
         $extension = pathinfo($name, PATHINFO_EXTENSION);
 
         // 1. Portada → Frontpage

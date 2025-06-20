@@ -272,12 +272,6 @@ class Building extends Model
     {
         $filesByType = $this->files->groupBy('type');
 
-        $filesByType->each(function ($files) {
-            $files->each(function ($file) {
-            $file->path = Storage::disk('public')->url($file->path);
-            });
-        });
-
         return $filesByType;
     }
 }

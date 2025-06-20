@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('file_id');
             $table->unsignedBigInteger('building_id');
-            $table->enum('type', ['Front Page', 'Gallery', 'Aerial', '360', 'Layout', 'Brochure', 'KMZ']);
+            $table->enum('type', ['Front Page', 'Pictures', '360Aerial', '360Interior', 'Layout', 'Brochure', 'KMZ']);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
