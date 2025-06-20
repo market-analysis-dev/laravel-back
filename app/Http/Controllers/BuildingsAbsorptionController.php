@@ -5,29 +5,17 @@ namespace App\Http\Controllers;
 use App\Enums\BuildingState;
 use App\Enums\BuildingStatus;
 use App\Http\Requests\ConvertToAvailableRequest;
-use App\Http\Requests\ImportBuildingAbsorptionRequest;
 use App\Http\Requests\IndexBuildingsAbsorptionRequest;
 use App\Http\Requests\StoreBuildingWithAbsorptionRequest;
 use App\Http\Requests\UpdateBuildingAbsorptionDraftRequest;
 use App\Http\Requests\UpdateBuildingWithAbsorptionRequest;
-use App\Models\Broker;
 use App\Models\Building;
 use App\Models\BuildingAvailable;
-use App\Models\Country;
-use App\Models\Developer;
-use App\Models\IndustrialPark;
-use App\Models\Industry;
-use App\Models\Market;
-use App\Models\Region;
-use App\Models\Shelter;
-use App\Models\SubMarket;
-use App\Models\Tenant;
 use App\Responses\ApiResponse;
 use App\Services\BuildingsAvailableService;
 use App\Services\BuildingService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Enums\BuildingTenancy;
 
 class BuildingsAbsorptionController extends ApiController implements HasMiddleware
 {
@@ -77,8 +65,10 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
             $validated = $request->validated();
             $buildingData = $validated['building'];
             $absorptionData = $validated['absorption'];
+            $files = $request->file('files') ?? null;
+            $fileType = $request->input('type');
 
-            $building = $this->buildingService->createWithAbsorption($buildingData, $absorptionData);
+            $building = $this->buildingService->createWithAbsorption($buildingData, $absorptionData, $files, $fileType);
 
             return $this->success('Created successfully', $building);
         } catch (\Throwable $e) {
@@ -116,7 +106,9 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
         try {
             $validated = $request->validated();
             $buildingData = $validated['building'];
-            $absorptionData = $validated['absorption'];
+            $availabilityData = $validated['absorption'];
+            $files = $request->file('files') ?? null;
+            $fileType = $request->input('type');
 
             if($buildingAbsorption->building_state !== BuildingState::ABSORPTION->value) {
                 return $this->error('Building Absorption not found', status: 404);
@@ -126,9 +118,9 @@ class BuildingsAbsorptionController extends ApiController implements HasMiddlewa
                 return $this->error('Building ID mismatch', status: 400);
             }
 
-            $absorptionData['id'] = $buildingAbsorption->id;
+            $availabilityData['id'] = $buildingAbsorption->id;
 
-            $result = $this->buildingService->updateWithAbsorption($buildingData, $absorptionData);
+            $result = $this->buildingService->updateWithAbsorption($buildingData, $availabilityData, $files, $fileType);
 
             return $this->success('Updated successfully', $result);
         } catch (\Throwable $e) {
