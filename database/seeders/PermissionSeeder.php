@@ -190,6 +190,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'submarkets.create'],
             ['name' => 'submarkets.update'],
             ['name' => 'submarkets.destroy'],
+            
+            ['name' => 'regions.index'],
+            ['name' => 'regions.show'],
+            ['name' => 'regions.create'],
+            ['name' => 'regions.update'],
+            ['name' => 'regions.destroy'],
 
             ['name' => 'configurations.index'],
             ['name' => 'configurations.update'],
